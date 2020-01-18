@@ -7,23 +7,39 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3CC1A7BF326195C4B1026B1F /* Pods_JuggleTechnologies.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */; };
 		4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0DF23D341B1007933AF /* AppDelegate.swift */; };
 		4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0E123D341B1007933AF /* SceneDelegate.swift */; };
-		4446E0E423D341B2007933AF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0E323D341B2007933AF /* ContentView.swift */; };
 		4446E0E623D341B2007933AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4446E0E523D341B2007933AF /* Assets.xcassets */; };
 		4446E0E923D341B2007933AF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4446E0E823D341B2007933AF /* Preview Assets.xcassets */; };
 		4446E0EC23D341B2007933AF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4446E0EA23D341B2007933AF /* LaunchScreen.storyboard */; };
+		4446E0F423D3426F007933AF /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0F323D3426F007933AF /* MainTabBarController.swift */; };
+		4446E0F823D34FFC007933AF /* ViewTasksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0F723D34FFC007933AF /* ViewTasksVC.swift */; };
+		4446E0FB23D3533F007933AF /* NotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0FA23D3533F007933AF /* NotificationsVC.swift */; };
+		4446E0FE23D35678007933AF /* TaskCategoryPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0FD23D35678007933AF /* TaskCategoryPickerVC.swift */; };
+		4446E10123D358E5007933AF /* MyTasksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10023D358E5007933AF /* MyTasksVC.swift */; };
+		4446E10423D3620D007933AF /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10323D3620D007933AF /* ProfileVC.swift */; };
+		4446E10723D36898007933AF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4446E10623D36898007933AF /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JuggleTechnologies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		17387714FA7FC2D262439057 /* Pods-JuggleTechnologies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.release.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.release.xcconfig"; sourceTree = "<group>"; };
 		4446E0DC23D341B1007933AF /* JuggleTechnologies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JuggleTechnologies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4446E0DF23D341B1007933AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4446E0E123D341B1007933AF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		4446E0E323D341B2007933AF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4446E0E523D341B2007933AF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4446E0E823D341B2007933AF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4446E0EB23D341B2007933AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4446E0ED23D341B2007933AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4446E0F323D3426F007933AF /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
+		4446E0F723D34FFC007933AF /* ViewTasksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTasksVC.swift; sourceTree = "<group>"; };
+		4446E0FA23D3533F007933AF /* NotificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsVC.swift; sourceTree = "<group>"; };
+		4446E0FD23D35678007933AF /* TaskCategoryPickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategoryPickerVC.swift; sourceTree = "<group>"; };
+		4446E10023D358E5007933AF /* MyTasksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTasksVC.swift; sourceTree = "<group>"; };
+		4446E10323D3620D007933AF /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
+		4446E10623D36898007933AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		81CAA12A52D96C73A9544D1C /* Pods-JuggleTechnologies.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.debug.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CC1A7BF326195C4B1026B1F /* Pods_JuggleTechnologies.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +59,8 @@
 			children = (
 				4446E0DE23D341B1007933AF /* JuggleTechnologies */,
 				4446E0DD23D341B1007933AF /* Products */,
+				F39666D87C158762EC46E878 /* Pods */,
+				911AB0CACF07F3DF91F5F3B7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,10 +77,15 @@
 			children = (
 				4446E0DF23D341B1007933AF /* AppDelegate.swift */,
 				4446E0E123D341B1007933AF /* SceneDelegate.swift */,
-				4446E0E323D341B2007933AF /* ContentView.swift */,
-				4446E0E523D341B2007933AF /* Assets.xcassets */,
-				4446E0EA23D341B2007933AF /* LaunchScreen.storyboard */,
+				4446E0F323D3426F007933AF /* MainTabBarController.swift */,
+				4446E0F623D34FD5007933AF /* ViewTasks */,
+				4446E0F923D35325007933AF /* Notifications */,
+				4446E0FC23D3546A007933AF /* PostATask */,
+				4446E0FF23D358CA007933AF /* MyTasks */,
+				4446E10223D361C4007933AF /* Profile */,
+				4446E0F523D34366007933AF /* Views */,
 				4446E0ED23D341B2007933AF /* Info.plist */,
+				4446E10523D36882007933AF /* SupportingFiles */,
 				4446E0E723D341B2007933AF /* Preview Content */,
 			);
 			path = JuggleTechnologies;
@@ -75,6 +99,81 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		4446E0F523D34366007933AF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4446E0E523D341B2007933AF /* Assets.xcassets */,
+				4446E0EA23D341B2007933AF /* LaunchScreen.storyboard */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4446E0F623D34FD5007933AF /* ViewTasks */ = {
+			isa = PBXGroup;
+			children = (
+				4446E0F723D34FFC007933AF /* ViewTasksVC.swift */,
+			);
+			path = ViewTasks;
+			sourceTree = "<group>";
+		};
+		4446E0F923D35325007933AF /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				4446E0FA23D3533F007933AF /* NotificationsVC.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		4446E0FC23D3546A007933AF /* PostATask */ = {
+			isa = PBXGroup;
+			children = (
+				4446E0FD23D35678007933AF /* TaskCategoryPickerVC.swift */,
+			);
+			path = PostATask;
+			sourceTree = "<group>";
+		};
+		4446E0FF23D358CA007933AF /* MyTasks */ = {
+			isa = PBXGroup;
+			children = (
+				4446E10023D358E5007933AF /* MyTasksVC.swift */,
+			);
+			path = MyTasks;
+			sourceTree = "<group>";
+		};
+		4446E10223D361C4007933AF /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				4446E10323D3620D007933AF /* ProfileVC.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		4446E10523D36882007933AF /* SupportingFiles */ = {
+			isa = PBXGroup;
+			children = (
+				4446E10623D36898007933AF /* GoogleService-Info.plist */,
+			);
+			path = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		911AB0CACF07F3DF91F5F3B7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F39666D87C158762EC46E878 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				81CAA12A52D96C73A9544D1C /* Pods-JuggleTechnologies.debug.xcconfig */,
+				17387714FA7FC2D262439057 /* Pods-JuggleTechnologies.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -82,9 +181,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4446E0F023D341B2007933AF /* Build configuration list for PBXNativeTarget "JuggleTechnologies" */;
 			buildPhases = (
+				42691BDB4CA44166F4E72F98 /* [CP] Check Pods Manifest.lock */,
 				4446E0D823D341B1007933AF /* Sources */,
 				4446E0D923D341B1007933AF /* Frameworks */,
 				4446E0DA23D341B1007933AF /* Resources */,
+				4F2A9FD1A50CDA2FCA706BAE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -134,6 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4446E0EC23D341B2007933AF /* LaunchScreen.storyboard in Resources */,
+				4446E10723D36898007933AF /* GoogleService-Info.plist in Resources */,
 				4446E0E923D341B2007933AF /* Preview Assets.xcassets in Resources */,
 				4446E0E623D341B2007933AF /* Assets.xcassets in Resources */,
 			);
@@ -141,14 +243,74 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		42691BDB4CA44166F4E72F98 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-JuggleTechnologies-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4F2A9FD1A50CDA2FCA706BAE /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4446E0D823D341B1007933AF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4446E0FB23D3533F007933AF /* NotificationsVC.swift in Sources */,
+				4446E0FE23D35678007933AF /* TaskCategoryPickerVC.swift in Sources */,
 				4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */,
 				4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */,
-				4446E0E423D341B2007933AF /* ContentView.swift in Sources */,
+				4446E10423D3620D007933AF /* ProfileVC.swift in Sources */,
+				4446E0F823D34FFC007933AF /* ViewTasksVC.swift in Sources */,
+				4446E10123D358E5007933AF /* MyTasksVC.swift in Sources */,
+				4446E0F423D3426F007933AF /* MainTabBarController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +444,7 @@
 		};
 		4446E0F123D341B2007933AF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 81CAA12A52D96C73A9544D1C /* Pods-JuggleTechnologies.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -289,19 +452,21 @@
 				DEVELOPMENT_TEAM = 6ZT386G464;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = JuggleTechnologies/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = NathanielRemy.JuggleTechnologies;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JuggleTechnologies;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		4446E0F223D341B2007933AF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 17387714FA7FC2D262439057 /* Pods-JuggleTechnologies.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -309,14 +474,15 @@
 				DEVELOPMENT_TEAM = 6ZT386G464;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = JuggleTechnologies/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = NathanielRemy.JuggleTechnologies;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JuggleTechnologies;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
