@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
@@ -20,5 +21,30 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     
     fileprivate func setupTopNavigationBar() {
         navigationController?.navigationBar.tintColor = .black
+        let settingsBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "SettingsGearPH"), style: .plain, target: self, action: #selector(handleSettingsBarButton))
+        settingsBarButton.tintColor = UIColor.mainBlue()
+        navigationItem.rightBarButtonItem = settingsBarButton
+    }
+    
+    @objc fileprivate func handleSettingsBarButton() {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alertController.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { (_) in
+            do {
+                try Auth.auth().signOut()
+                
+                let loginVC = LoginVC()
+                let signupNavController = UINavigationController(rootViewController: loginVC)
+                signupNavController.modalPresentationStyle = .fullScreen
+                
+                self.present(signupNavController, animated: true, completion: nil)
+                
+            } catch let signOutError {
+                print("Unable to sign out: \(signOutError)")
+                let alert = UIView.okayAlert(title: "Unable to Log out", message: "You are unnable to log out at this moment.")
+                self.present(alert, animated: true, completion: nil)
+            }
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alertController, animated: true, completion: nil)
     }
 }

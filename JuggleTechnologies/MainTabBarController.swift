@@ -6,8 +6,8 @@
 //  Copyright © 2020 Nathaniel Remy. All rights reserved.
 //
 
-import Foundation
 import UIKit
+import Firebase
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
@@ -34,11 +34,19 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         self.delegate = self
         
         //Must be on main thread to present view from root view
-        DispatchQueue.main.async {
-            //If user is logged out, present the login VC
+        if Auth.auth().currentUser == nil {
+            DispatchQueue.main.async {
+                let logInVC = LoginVC()
+                let loginNavController = UINavigationController(rootViewController: logInVC)
+                loginNavController.modalPresentationStyle = .fullScreen
+
+                self.present(loginNavController, animated: true, completion: nil)
+                
+                return
+            }
+        } else {
+            setupViewControllers()
         }
-        
-        setupViewControllers()
     }
     
     func setupViewControllers() {
