@@ -22,7 +22,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     fileprivate func setupTopNavigationBar() {
         navigationController?.navigationBar.tintColor = .black
         let settingsBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "SettingsGearPH"), style: .plain, target: self, action: #selector(handleSettingsBarButton))
-        settingsBarButton.tintColor = UIColor.mainBlue()
+        settingsBarButton.tintColor = UIColor.darkText
         navigationItem.rightBarButtonItem = settingsBarButton
     }
     

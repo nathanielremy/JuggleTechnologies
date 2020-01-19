@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3CC1A7BF326195C4B1026B1F /* Pods_JuggleTechnologies.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */; };
+		4407527323D4AAA00025D8AA /* TaskSpecificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */; };
 		4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0DF23D341B1007933AF /* AppDelegate.swift */; };
 		4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0E123D341B1007933AF /* SceneDelegate.swift */; };
 		4446E0E623D341B2007933AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4446E0E523D341B2007933AF /* Assets.xcassets */; };
@@ -32,6 +33,7 @@
 /* Begin PBXFileReference section */
 		159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JuggleTechnologies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17387714FA7FC2D262439057 /* Pods-JuggleTechnologies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.release.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.release.xcconfig"; sourceTree = "<group>"; };
+		4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSpecificationsVC.swift; sourceTree = "<group>"; };
 		4446E0DC23D341B1007933AF /* JuggleTechnologies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JuggleTechnologies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4446E0DF23D341B1007933AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4446E0E123D341B1007933AF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				4446E0FD23D35678007933AF /* TaskCategoryPickerVC.swift */,
+				4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */,
 			);
 			path = PostATask;
 			sourceTree = "<group>";
@@ -356,6 +359,7 @@
 				4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */,
 				4446E10423D3620D007933AF /* ProfileVC.swift in Sources */,
 				44FB732B23D37427000B8987 /* SignupVC.swift in Sources */,
+				4407527323D4AAA00025D8AA /* TaskSpecificationsVC.swift in Sources */,
 				44FB732423D36C13000B8987 /* Extensions.swift in Sources */,
 				44FB732123D36BEC000B8987 /* LoginVC.swift in Sources */,
 				44FB732923D36D96000B8987 /* User.swift in Sources */,

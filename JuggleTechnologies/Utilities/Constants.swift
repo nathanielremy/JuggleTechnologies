@@ -26,6 +26,23 @@ class Constants {
         static let creationDate = "creationDate"
     }
     
+    struct TaskCategories {
+        static let all = "All"
+        static let cleaning = "Cleaning"
+        static let delivery = "Delivery"
+        static let moving = "Moving"
+        static let computerIT = "Computer/IT"
+        static let photoVideo = "Photo/Video"
+        static let handyMan = "Handyman"
+        static let assembly = "Assembly"
+        static let pets = "Pets"
+        static let anything = "Anything"
+        
+        static func categoryArray() -> [String] {
+            return [self.cleaning, self.handyMan, self.computerIT, self.photoVideo, self.assembly, self.delivery, self.moving, self.pets, self.anything]
+        }
+    }
+    
     struct ErrorDescriptions {
         static let invalidPassword = "The password is invalid or the user does not have a password."
         static let invalidEmailAddress = "There is no user record corresponding to this identifier. The user may have been deleted."

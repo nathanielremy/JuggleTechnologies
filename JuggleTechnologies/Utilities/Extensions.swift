@@ -73,14 +73,14 @@ extension UIColor {
     static func mainBlue() -> UIColor {
         return rgb(0, 161, 255)
     }
-    
-    static func mainAmarillo() -> UIColor {
-        return rgb(249, 186, 0)
-    }
-    
-    static func chatBubbleGray() -> UIColor {
-        return rgb(240, 240, 240)
-    }
+//
+//    static func mainAmarillo() -> UIColor {
+//        return rgb(249, 186, 0)
+//    }
+//
+//    static func chatBubbleGray() -> UIColor {
+//        return rgb(240, 240, 240)
+//    }
 }
 
 //MARK: UIView
