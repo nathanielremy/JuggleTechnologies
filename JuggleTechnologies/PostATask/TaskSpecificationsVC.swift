@@ -8,10 +8,14 @@
 
 import UIKit
 import MapKit
+import Firebase
 
 class TaskSpecificationsVC: UIViewController {
     
     //MARK: Stored prperties
+    var isTaskOnline = false
+    var addressString: String?
+    
     var taskCategory: String? {
         didSet {
             guard let category = taskCategory else {
@@ -54,7 +58,7 @@ class TaskSpecificationsVC: UIViewController {
     
     lazy var taskTitleTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Minimum 10 characters, max 40 characters"
+        tf.placeholder = "Entre 10 y 40 caracteres"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = .darkText
@@ -77,7 +81,7 @@ class TaskSpecificationsVC: UIViewController {
     lazy var taskDescriptionTextView: UITextView = {
         let tv = UITextView()
         tv.textColor = UIColor.lightGray
-        tv.text = "(Minimum 25 charcaters, max 250 characters)"
+        tv.text = "Entre 25 y 250 caracteres"
         tv.tintColor = .darkText
         tv.layer.borderWidth = 0.5
         tv.layer.borderColor = UIColor.lightGray.cgColor
@@ -106,7 +110,7 @@ class TaskSpecificationsVC: UIViewController {
     
     lazy var durationTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "2.5"
+        tf.placeholder = "2,5"
         tf.keyboardType = .decimalPad
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
@@ -124,7 +128,7 @@ class TaskSpecificationsVC: UIViewController {
         label.textAlignment = .left
         
         let attributedText = NSMutableAttributedString(string: "Presupuesto € ", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "Cuanto le gustaría pagar por esta tarea?", attributes: [.font : UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.darkText]))
+        attributedText.append(NSAttributedString(string: "¿Cuánto le gustaría pagar por esta tarea?", attributes: [.font : UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.darkText]))
         
         label.attributedText = attributedText
         
@@ -168,7 +172,14 @@ class TaskSpecificationsVC: UIViewController {
     
     @objc fileprivate func handleOnlineSwitch() {
         if onlineSwitch.isOn {
-//            isTaskOnline = true
+            isTaskOnline = true
+            addressString = nil
+            if !mapView.annotations.isEmpty {
+                mapView.removeAnnotations([mapView.annotations[0]])
+            }
+            streetTextField.text = ""
+            numberTextField.text = ""
+            cpTextField.text = ""
             mapView.isUserInteractionEnabled = false
             mapView.alpha = 0.5
             streetLabel.textColor = UIColor.darkText.withAlphaComponent(0.3)
@@ -181,7 +192,7 @@ class TaskSpecificationsVC: UIViewController {
             cpTextField.isUserInteractionEnabled = false
             cityTextField.textColor = .lightGray
         } else {
-//            isTaskOnline = false
+            isTaskOnline = false
             mapView.isUserInteractionEnabled = true
             mapView.alpha = 1
             streetLabel.textColor = UIColor.darkText.withAlphaComponent(1)
@@ -313,7 +324,7 @@ class TaskSpecificationsVC: UIViewController {
     let mapViewActivityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
         ai.hidesWhenStopped = true
-        ai.color = UIColor.mainBlue()
+        ai.color = UIColor.darkText
         ai.translatesAutoresizingMaskIntoConstraints = false
         
         return ai
@@ -331,24 +342,128 @@ class TaskSpecificationsVC: UIViewController {
     }()
     
     @objc fileprivate func handleDoneButton() {
-//        if mapView.annotations.isEmpty {
-//            let alert = UIView.okayAlert(title: "No location provided", message: "Please specify the location for where your needed service will take place.")
-//            present(alert, animated: true, completion: nil)
-//
-//        } else {
-        guard let taskValues: [String : Any] = verifyTaskValues() else {
-            // Simply return since alert message gets display from within verifyTaskValues()
-            return
+        if !isTaskOnline && mapView.annotations.isEmpty {
+            let alert = UIView.okayAlert(title: "Especifique la Dirección", message: "Ingrese la dirección o nota si la tarea se puede hacer en línea o por teléfono.")
+            present(alert, animated: true, completion: nil)
+        } else {
+            guard let taskValues: [String : Any] = verifyTaskValues() else {
+                // Simply return since alert message gets display from within verifyTaskValues()
+                return
+            }
+
+            postTask(withValues: taskValues)
         }
-//        }
+    }
+    
+    fileprivate func postTask(withValues taskValues: [String : Any]) {
+        
+        let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef)
+        let autoRef = tasksRef.childByAutoId()
+
+        autoRef.updateChildValues(taskValues) { (err, _) in
+            if let error = err {
+                print("PostTask(): Error updating to Firebase: ", error)
+                
+                DispatchQueue.main.async {
+                    let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
+                    self.present(alert, animated: true, completion: nil)
+                    self.disableAndAnimate(false)
+                    
+                    return
+                }
+            }
+            
+            self.disableAndAnimate(false)
+            let postCompleteNavVC = PostCompleteVC()
+            let task = Task(id: "PLACEHOLDER STRING", dictionary: taskValues)
+            postCompleteNavVC.task = task
+            DispatchQueue.main.async {
+                self.navigationController?.pushViewController(postCompleteNavVC, animated: true)
+            }
+        }
     }
     
     fileprivate func verifyTaskValues() -> [String : Any]? {
-        var taskValues = [String : Any]()
-        
         disableAndAnimate(true)
         
+        var taskValues = [String : Any]()
+        
+        if !isTaskOnline {
+            let latitude = mapView.annotations[0].coordinate.latitude as Double
+            let longitude = mapView.annotations[0].coordinate.longitude as Double
+
+            guard let locationString = self.addressString else {
+                let alert = UIView.okayAlert(title: "Ubicación Invalida", message: "Por favor, introduzca una ubicación válida.")
+                present(alert, animated: true, completion: nil)
+                disableAndAnimate(false)
+                
+                return nil
+            }
+            
+            taskValues[Constants.FirebaseDatabase.latitude] = latitude
+            taskValues[Constants.FirebaseDatabase.longitude] = longitude
+            taskValues[Constants.FirebaseDatabase.stringLocation] = locationString
+        }
+        
+        guard let userId = Auth.auth().currentUser?.uid else {
+            let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
+            present(alert, animated: true, completion: nil)
+            disableAndAnimate(false)
+            
+            return nil
+        }
+        
+        guard let inputs = areTextFieldInputsValid() else {
+             // Simply return since alert message gets display from within areTextFieldInputsValid()
+            disableAndAnimate(false)
+            
+            return nil
+        }
+        
+        taskValues[Constants.FirebaseDatabase.taskTitle] = inputs.title
+        taskValues[Constants.FirebaseDatabase.taskDescription] = inputs.description
+        taskValues[Constants.FirebaseDatabase.taskCategory] = inputs.category
+        taskValues[Constants.FirebaseDatabase.taskDuration] = inputs.duration
+        taskValues[Constants.FirebaseDatabase.taskBudget] = inputs.budget
+        taskValues[Constants.FirebaseDatabase.taskStatus] = 0
+        taskValues[Constants.FirebaseDatabase.isTaskReviewed] = 0
+        taskValues[Constants.FirebaseDatabase.isTaskOnline] = isTaskOnline ? 1 : 0
+        taskValues[Constants.FirebaseDatabase.userId] = userId
+        taskValues[Constants.FirebaseDatabase.creationDate] = Date().timeIntervalSince1970
+        taskValues[Constants.FirebaseDatabase.isJugglerComplete] = 0
+        taskValues[Constants.FirebaseDatabase.isUserComplete] = 0
+        
         return taskValues
+    }
+    
+    fileprivate func areTextFieldInputsValid() -> (title: String, description: String, category: String, duration: Double, budget: Double)? {
+        guard let title = taskTitleTextField.text, title.count > 9, title.count < 41 else {
+            let alert = UIView.okayAlert(title: "Error con el Titulo", message: "Tiene que estar entre 10 y 40 caracteres.")
+            present(alert, animated: true, completion: nil); return nil
+        }
+        
+        guard let description = taskDescriptionTextView.text, description.count > 24, description.count < 251, description != "Entre 25 y 250 caracteres" else {
+            let alert = UIView.okayAlert(title: "Error con la Descripción", message: "Tiene que estar entre 25 y 250 caracteres.")
+            present(alert, animated: true, completion: nil); return nil
+        }
+        
+        guard let category = self.taskCategory else {
+            self.navigationController?.popViewController(animated: true)
+            return nil
+        }
+        
+        let doubleDurationString = durationTextField.text?.replacingOccurrences(of: ",", with: ".") ?? ""
+        guard let duration = Double(doubleDurationString) else {
+            let alert = UIView.okayAlert(title: "Error con la Duración", message: "Indique cuántas horas requiere esta tarea.")
+            present(alert, animated: true, completion: nil); return nil
+        }
+        
+        guard let budgetString = budgetTextField.text, let budget = Double(budgetString) else {
+            let alert = UIView.okayAlert(title: "Error con el Presupuesto", message: "Indique cuánto le gustaría pagar por esta tarea.")
+            present(alert, animated: true, completion: nil); return nil
+        }
+        
+        return (title, description, category, duration, budget)
     }
     
     override func viewDidLoad() {
@@ -431,8 +546,8 @@ class TaskSpecificationsVC: UIViewController {
         mapView.layer.cornerRadius = 5
         
         mapView.addSubview(mapViewActivityIndicator)
-        mapViewActivityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        mapViewActivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        mapViewActivityIndicator.centerXAnchor.constraint(equalTo: mapView.centerXAnchor).isActive = true
+        mapViewActivityIndicator.centerYAnchor.constraint(equalTo: mapView.centerYAnchor).isActive = true
         
         scrollView.addSubview(postTaskActivityIndicator)
         postTaskActivityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -441,6 +556,67 @@ class TaskSpecificationsVC: UIViewController {
         scrollView.addSubview(doneButton)
         doneButton.anchor(top: mapView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
         doneButton.layer.cornerRadius = 5
+    }
+    
+    fileprivate func verifyCoordinates() {
+        guard let street = streetTextField.text, street != "", let number = numberTextField.text, let intNumber = Int(number), let postalCode = cpTextField.text, postalCode != "" else {
+            addressString = nil
+            
+            return
+        }
+        
+        self.mapViewActivityIndicator.startAnimating()
+        
+        let address = street + ", " + "\(intNumber)" + ", " + "\(postalCode)" + ", Barcelona, España"
+        self.addressString = address
+        
+        getCoordinates(fromAdress: address) { (success, coordinates) in
+            guard let coordinate = coordinates, success else {
+                self.mapViewActivityIndicator.stopAnimating()
+                let alert = UIView.okayAlert(title: "Ubicación Invalida", message: "Por favor, introduzca una ubicación válida.")
+                self.present(alert, animated: true, completion: nil)
+                
+                self.addressString = nil
+                
+                return
+            }
+            
+            let latitude = coordinate.latitude as Double
+            let longitude = coordinate.longitude as Double
+            
+            if (latitude > Constants.BarcalonaCoordinates.maximumLatitude) || (latitude < Constants.BarcalonaCoordinates.minimumLatitude) || (longitude > Constants.BarcalonaCoordinates.maximumLongitude) || (longitude < Constants.BarcalonaCoordinates.minimumLongitude) {
+                
+                DispatchQueue.main.async {
+                    let alert = UIView.okayAlert(title: "Ubicación fuera de Barcelona", message: "Pronto estaremos disponibles en su área!")
+                    self.present(alert, animated: true, completion: nil)
+                    
+                    self.mapViewActivityIndicator.stopAnimating()
+                }
+                
+                self.addressString = nil
+                
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.placePinAt(coordinate: coordinate)
+                self.mapViewActivityIndicator.stopAnimating()
+            }
+        }
+        
+    }
+    
+    func getCoordinates(fromAdress address: String, completionHandlerForCoordinates: @escaping (_ success: Bool, _ location: CLLocationCoordinate2D?) -> Void) {
+        let geoCoder = CLGeocoder()
+        geoCoder.geocodeAddressString(address) { (placemarks, error) in
+            guard let placemarks = placemarks, let location = placemarks.first?.location else {
+                completionHandlerForCoordinates(false, nil)
+                
+                return
+            }
+            
+            completionHandlerForCoordinates(true, location.coordinate)
+        }
     }
     
     fileprivate func makeTextFieldToolBar() -> UIToolbar {
@@ -492,7 +668,14 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
         if textField.isFirstResponder {
             textField.resignFirstResponder()
         }
+        
         return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if (textField == streetTextField) || (textField == numberTextField) || textField == cpTextField {
+            self.verifyCoordinates()
+        }
     }
     
     // When done button is clicked on keyboard input accessory view
@@ -509,7 +692,7 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
-            textView.text = "(Minimum 25 charcaters, max 250 characters)"
+            textView.text = "Entre 25 y 250 caracteres"
             textView.textColor = UIColor.lightGray
         }
     }
@@ -549,7 +732,7 @@ extension TaskSpecificationsVC: MKMapViewDelegate {
             pinView.annotation = annotation
         } else {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
-            pinView!.pinTintColor = UIColor.mainBlue()
+            pinView!.pinTintColor = UIColor.darkText
         }
         return pinView
     }

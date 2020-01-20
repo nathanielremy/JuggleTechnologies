@@ -24,6 +24,21 @@ class Constants {
         static let hasAppliedForJuggler = "hasAppliedForJuggler"
         
         static let creationDate = "creationDate"
+        
+        static let tasksRef = "tasks"
+        static let latitude = "latitude"
+        static let longitude = "longitude"
+        static let stringLocation = "stringLocation"
+        static let taskTitle = "taskTitle"
+        static let taskDescription = "taskDescription"
+        static let taskCategory = "taskCategory"
+        static let taskDuration = "taskDuration"
+        static let taskBudget = "taskBudget"
+        static let isTaskOnline = "isTaskOnline"
+        static let taskStatus = "taskStatus"
+        static let isTaskReviewed = "isTaskReviewed"
+        static let isJugglerComplete = "isJugglerComplete"
+        static let isUserComplete = "isUserComplete"
     }
     
     struct TaskCategories {
@@ -41,6 +56,13 @@ class Constants {
         static func categoryArray() -> [String] {
             return [self.cleaning, self.handyMan, self.computerIT, self.photoVideo, self.assembly, self.delivery, self.moving, self.pets, self.anything]
         }
+    }
+    
+    struct BarcalonaCoordinates {
+        static let maximumLatitude: Double = 41.5
+        static let minimumLatitude: Double = 41.0
+        static let maximumLongitude: Double = 2.21
+        static let minimumLongitude: Double = 2.0
     }
     
     struct ErrorDescriptions {

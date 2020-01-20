@@ -70,9 +70,9 @@ extension UIColor {
         return UIColor(red: red/255, green: green/255, blue: blue/255, alpha: alpha)
     }
     
-    static func mainBlue() -> UIColor {
-        return rgb(0, 161, 255)
-    }
+//    static func mainBlue() -> UIColor {
+//        return rgb(0, 161, 255)
+//    }
 //
 //    static func mainAmarillo() -> UIColor {
 //        return rgb(249, 186, 0)
