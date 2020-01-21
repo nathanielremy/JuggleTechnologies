@@ -99,11 +99,14 @@ class TaskSpecificationsVC: UIViewController {
     
     let durationLabel: UILabel = {
         let label = UILabel()
-        label.text = "Duración Estimada"
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textColor = .darkText
         label.textAlignment = .left
         
+        let attributedText = NSMutableAttributedString(string: "Duración Estimada ", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.darkText])
+        attributedText.append(NSAttributedString(string: "¿Cuántas horas requiere esta tarea?", attributes: [.font : UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.darkText]))
+        
+        label.attributedText = attributedText
         
         return label
     }()
@@ -342,17 +345,12 @@ class TaskSpecificationsVC: UIViewController {
     }()
     
     @objc fileprivate func handleDoneButton() {
-        if !isTaskOnline && mapView.annotations.isEmpty {
-            let alert = UIView.okayAlert(title: "Especifique la Dirección", message: "Ingrese la dirección o nota si la tarea se puede hacer en línea o por teléfono.")
-            present(alert, animated: true, completion: nil)
-        } else {
-            guard let taskValues: [String : Any] = verifyTaskValues() else {
-                // Simply return since alert message gets display from within verifyTaskValues()
-                return
-            }
-
-            postTask(withValues: taskValues)
+        guard let taskValues: [String : Any] = verifyTaskValues() else {
+            // Simply return since alert message gets display from within verifyTaskValues()
+            return
         }
+
+        postTask(withValues: taskValues)
     }
     
     fileprivate func postTask(withValues taskValues: [String : Any]) {
@@ -374,11 +372,11 @@ class TaskSpecificationsVC: UIViewController {
             }
             
             self.disableAndAnimate(false)
-            let postCompleteNavVC = PostCompleteVC()
+            let postCompleteVC = PostCompleteVC()
             let task = Task(id: "PLACEHOLDER STRING", dictionary: taskValues)
-            postCompleteNavVC.task = task
+            postCompleteVC.task = task
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(postCompleteNavVC, animated: true)
+                self.navigationController?.pushViewController(postCompleteVC, animated: false)
             }
         }
     }
@@ -388,17 +386,24 @@ class TaskSpecificationsVC: UIViewController {
         
         var taskValues = [String : Any]()
         
+        guard let inputs = areTextFieldInputsValid() else {
+             // Simply return since alert message gets display from within areTextFieldInputsValid()
+            disableAndAnimate(false)
+            
+            return nil
+        }
+        
         if !isTaskOnline {
-            let latitude = mapView.annotations[0].coordinate.latitude as Double
-            let longitude = mapView.annotations[0].coordinate.longitude as Double
-
-            guard let locationString = self.addressString else {
+            guard let locationString = self.addressString, !mapView.annotations.isEmpty else {
                 let alert = UIView.okayAlert(title: "Ubicación Invalida", message: "Por favor, introduzca una ubicación válida.")
                 present(alert, animated: true, completion: nil)
                 disableAndAnimate(false)
                 
                 return nil
             }
+            
+            let latitude = mapView.annotations[0].coordinate.latitude as Double
+            let longitude = mapView.annotations[0].coordinate.longitude as Double
             
             taskValues[Constants.FirebaseDatabase.latitude] = latitude
             taskValues[Constants.FirebaseDatabase.longitude] = longitude
@@ -408,13 +413,6 @@ class TaskSpecificationsVC: UIViewController {
         guard let userId = Auth.auth().currentUser?.uid else {
             let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
             present(alert, animated: true, completion: nil)
-            disableAndAnimate(false)
-            
-            return nil
-        }
-        
-        guard let inputs = areTextFieldInputsValid() else {
-             // Simply return since alert message gets display from within areTextFieldInputsValid()
             disableAndAnimate(false)
             
             return nil
@@ -642,6 +640,8 @@ class TaskSpecificationsVC: UIViewController {
 
         }
         
+        cityTextField.isUserInteractionEnabled = false // Remains Barcelona
+        
         taskTitleTextField.isUserInteractionEnabled = !bool
         taskDescriptionTextView.isUserInteractionEnabled = !bool
         durationTextField.isUserInteractionEnabled = !bool
@@ -651,7 +651,6 @@ class TaskSpecificationsVC: UIViewController {
         if !onlineSwitch.isOn {
             streetTextField.isUserInteractionEnabled = !bool
             numberTextField.isUserInteractionEnabled = !bool
-            cityTextField.isUserInteractionEnabled = !bool
             cpTextField.isUserInteractionEnabled = !bool
             mapView.isUserInteractionEnabled = !bool
         }
