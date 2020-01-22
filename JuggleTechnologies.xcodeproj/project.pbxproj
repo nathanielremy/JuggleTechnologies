@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		3CC1A7BF326195C4B1026B1F /* Pods_JuggleTechnologies.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */; };
 		4407527323D4AAA00025D8AA /* TaskSpecificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */; };
+		441FB4B323D8A39800D8B115 /* UserProfileStatisticsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */; };
+		441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */; };
 		442698A523D610870095A495 /* PostCompleteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442698A423D610870095A495 /* PostCompleteVC.swift */; };
 		442698A723D610D90095A495 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442698A623D610D90095A495 /* Task.swift */; };
 		4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0DF23D341B1007933AF /* AppDelegate.swift */; };
@@ -23,6 +25,8 @@
 		4446E10123D358E5007933AF /* MyTasksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10023D358E5007933AF /* MyTasksVC.swift */; };
 		4446E10423D3620D007933AF /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10323D3620D007933AF /* ProfileVC.swift */; };
 		4446E10723D36898007933AF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4446E10623D36898007933AF /* GoogleService-Info.plist */; };
+		4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */; };
+		4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */; };
 		44FB732123D36BEC000B8987 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732023D36BEC000B8987 /* LoginVC.swift */; };
 		44FB732423D36C13000B8987 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732323D36C13000B8987 /* Extensions.swift */; };
 		44FB732623D36CAA000B8987 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732523D36CAA000B8987 /* Constants.swift */; };
@@ -36,6 +40,8 @@
 		159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JuggleTechnologies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17387714FA7FC2D262439057 /* Pods-JuggleTechnologies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.release.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.release.xcconfig"; sourceTree = "<group>"; };
 		4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSpecificationsVC.swift; sourceTree = "<group>"; };
+		441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStatisticsCell.swift; sourceTree = "<group>"; };
+		441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelfDescriptionCell.swift; sourceTree = "<group>"; };
 		442698A423D610870095A495 /* PostCompleteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCompleteVC.swift; sourceTree = "<group>"; };
 		442698A623D610D90095A495 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		4446E0DC23D341B1007933AF /* JuggleTechnologies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JuggleTechnologies.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +58,8 @@
 		4446E10023D358E5007933AF /* MyTasksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTasksVC.swift; sourceTree = "<group>"; };
 		4446E10323D3620D007933AF /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		4446E10623D36898007933AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeaderCell.swift; sourceTree = "<group>"; };
+		4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
 		44FB732023D36BEC000B8987 /* LoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		44FB732323D36C13000B8987 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		44FB732523D36CAA000B8987 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -169,6 +177,9 @@
 			isa = PBXGroup;
 			children = (
 				4446E10323D3620D007933AF /* ProfileVC.swift */,
+				4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */,
+				441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */,
+				441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -196,6 +207,7 @@
 			children = (
 				44FB732323D36C13000B8987 /* Extensions.swift */,
 				44FB732523D36CAA000B8987 /* Constants.swift */,
+				4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */,
 				44FB732E23D3748A000B8987 /* terms-and-conditions.txt */,
 			);
 			path = Utilities;
@@ -358,16 +370,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				44FB732D23D37460000B8987 /* TermsAndConditionsVC.swift in Sources */,
+				4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */,
 				4446E0FB23D3533F007933AF /* NotificationsVC.swift in Sources */,
 				44FB732623D36CAA000B8987 /* Constants.swift in Sources */,
+				441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */,
 				4446E0FE23D35678007933AF /* TaskCategoryPickerVC.swift in Sources */,
 				4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */,
 				4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */,
 				4446E10423D3620D007933AF /* ProfileVC.swift in Sources */,
 				442698A523D610870095A495 /* PostCompleteVC.swift in Sources */,
+				441FB4B323D8A39800D8B115 /* UserProfileStatisticsCell.swift in Sources */,
 				44FB732B23D37427000B8987 /* SignupVC.swift in Sources */,
 				4407527323D4AAA00025D8AA /* TaskSpecificationsVC.swift in Sources */,
 				44FB732423D36C13000B8987 /* Extensions.swift in Sources */,
+				4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */,
 				44FB732123D36BEC000B8987 /* LoginVC.swift in Sources */,
 				44FB732923D36D96000B8987 /* User.swift in Sources */,
 				4446E0F823D34FFC007933AF /* ViewTasksVC.swift in Sources */,

@@ -58,6 +58,12 @@ class Constants {
         }
     }
     
+    struct CollectionViewCellIds {
+        static let userProfileHeaderCell = "userProfileHeaderCell"
+        static let userProfileStatisticsCell = "userProfileStatisticsCell"
+        static let userSelfDescriptionCell = "userSelfDescriptionCell"
+    }
+    
     struct BarcalonaCoordinates {
         static let maximumLatitude: Double = 41.5
         static let minimumLatitude: Double = 41.0

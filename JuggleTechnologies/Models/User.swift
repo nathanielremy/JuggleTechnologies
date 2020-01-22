@@ -9,7 +9,7 @@
 import Foundation
 
 struct User {
-    let uid: String
+    let userId: String
     
     let firstName: String
     let lastName: String
@@ -19,8 +19,8 @@ struct User {
     let hasAppliedForJuggler: Bool
     let creationDate: Date
     
-    init(uid: String, dictionary: [String : Any]) {
-        self.uid = uid
+    init(userId: String, dictionary: [String : Any]) {
+        self.userId = userId
         self.firstName = dictionary[Constants.FirebaseDatabase.firstName] as? String ?? "first"
         self.lastName = dictionary[Constants.FirebaseDatabase.lastName] as? String ?? "last"
         self.emailAddress = dictionary[Constants.FirebaseDatabase.emailAddress] as? String ?? "No email"

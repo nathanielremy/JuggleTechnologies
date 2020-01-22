@@ -52,13 +52,22 @@ class TaskSpecificationsVC: UIViewController {
         label.textColor = .darkText
         label.textAlignment = .left
         
+        return label
+    }()
+    
+    let taskTitleCaracterCountLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.text = "0/50"
         
         return label
     }()
     
     lazy var taskTitleTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Entre 10 y 40 caracteres"
+        tf.placeholder = "Entre 10 y 25 caracteres"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = .darkText
@@ -78,10 +87,20 @@ class TaskSpecificationsVC: UIViewController {
         return label
     }()
     
+    let taskDescriptionCaracterCountLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.text = "0/500"
+        
+        return label
+    }()
+    
     lazy var taskDescriptionTextView: UITextView = {
         let tv = UITextView()
         tv.textColor = UIColor.lightGray
-        tv.text = "Entre 25 y 250 caracteres"
+        tv.text = "Entre 25 y 500 caracteres"
         tv.tintColor = .darkText
         tv.layer.borderWidth = 0.5
         tv.layer.borderColor = UIColor.lightGray.cgColor
@@ -435,13 +454,13 @@ class TaskSpecificationsVC: UIViewController {
     }
     
     fileprivate func areTextFieldInputsValid() -> (title: String, description: String, category: String, duration: Double, budget: Double)? {
-        guard let title = taskTitleTextField.text, title.count > 9, title.count < 41 else {
-            let alert = UIView.okayAlert(title: "Error con el Titulo", message: "Tiene que estar entre 10 y 40 caracteres.")
+        guard let title = taskTitleTextField.text, title.count > 9, title.count < 26 else {
+            let alert = UIView.okayAlert(title: "Error con el Titulo", message: "Tiene que estar entre 10 y 25 caracteres.")
             present(alert, animated: true, completion: nil); return nil
         }
         
-        guard let description = taskDescriptionTextView.text, description.count > 24, description.count < 251, description != "Entre 25 y 250 caracteres" else {
-            let alert = UIView.okayAlert(title: "Error con la Descripción", message: "Tiene que estar entre 25 y 250 caracteres.")
+        guard let description = taskDescriptionTextView.text, description.count > 24, description.count < 501, description != "Entre 25 y 500 caracteres" else {
+            let alert = UIView.okayAlert(title: "Error con la Descripción", message: "Tiene que estar entre 25 y 500 caracteres.")
             present(alert, animated: true, completion: nil); return nil
         }
         
@@ -485,6 +504,9 @@ class TaskSpecificationsVC: UIViewController {
         scrollView.addSubview(taskTitleTextField)
         taskTitleTextField.anchor(top: taskTitleLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 4, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
         
+        scrollView.addSubview(taskTitleCaracterCountLabel)
+        taskTitleCaracterCountLabel.anchor(top: nil, left: nil, bottom: taskTitleTextField.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: -20, width: nil, height: nil)
+        
         scrollView.addSubview(taskDescriptionLabel)
         taskDescriptionLabel.anchor(top: taskTitleTextField.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
         taskDescriptionLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor).isActive = true
@@ -492,6 +514,9 @@ class TaskSpecificationsVC: UIViewController {
         scrollView.addSubview(taskDescriptionTextView)
         taskDescriptionTextView.anchor(top: taskDescriptionLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 4, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 100)
         taskDescriptionTextView.layer.cornerRadius = 5
+        
+        scrollView.addSubview(taskDescriptionCaracterCountLabel)
+        taskDescriptionCaracterCountLabel.anchor(top: nil, left: nil, bottom: taskDescriptionTextView.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: -20, width: nil, height: nil)
         
         scrollView.addSubview(durationLabel)
         durationLabel.anchor(top: taskDescriptionTextView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
@@ -663,6 +688,26 @@ class TaskSpecificationsVC: UIViewController {
 
 //MARK: UITextFieldDelegate & UITextViewDelegate Methods
 extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let taskTitle = taskTitleTextField.text, textField == taskTitleTextField {
+            taskTitleCaracterCountLabel.text = taskTitle.count == 1 ? "0/25" : "\(taskTitle.count)/25"
+            if taskTitle.count > 24 {
+                taskTitleTextField.text?.removeLast()
+                taskTitleCaracterCountLabel.text = "\(taskTitle.count)/25"
+            }
+        } else if let postalCode = cpTextField.text, textField == cpTextField {
+            if postalCode.count > 4 {
+                cpTextField.text?.removeLast()
+            }
+        } else if let streetNumber = numberTextField.text, textField == numberTextField {
+            if streetNumber.count > 5 {
+                cpTextField.text?.removeLast()
+            }
+        }
+        
+        return true
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField.isFirstResponder {
             textField.resignFirstResponder()
@@ -682,6 +727,16 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
         view.endEditing(true)
     }
     
+    func textViewDidChange(_ textView: UITextView) {
+        if let taskDescription = taskDescriptionTextView.text, textView == taskDescriptionTextView {
+            taskDescriptionCaracterCountLabel.text = taskDescription.count == 1 ? "0/500" : "\(taskDescription.count)/500"
+            if taskDescription.count > 499 {
+                taskDescriptionTextView.text.removeLast()
+                taskDescriptionCaracterCountLabel.text = "\(taskDescription.count)/500"
+            }
+        }
+    }
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == UIColor.lightGray {
             textView.text = nil
@@ -691,13 +746,13 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
-            textView.text = "Entre 25 y 250 caracteres"
+            textView.text = "Entre 25 y 500 caracteres"
             textView.textColor = UIColor.lightGray
         }
     }
     
     func setupHideKeyBoardOnTapGesture() {
-         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action:    #selector(handleTextFieldDoneButton))
+         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTextFieldDoneButton))
           tap.cancelsTouchesInView = false
         
         view.addGestureRecognizer(tap)
