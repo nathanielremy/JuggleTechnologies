@@ -66,17 +66,6 @@ class UserSelfDescriptionCell: UICollectionViewCell {
         tv.bounces = true
         tv.isEditable = false
         
-        let toolBar = UIToolbar()
-        toolBar.sizeToFit()
-        
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-        
-        let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(handleTextFieldDoneButton))
-        
-        toolBar.setItems([flexibleSpace, doneButton], animated: false)
-        
-        tv.inputAccessoryView = toolBar
-        
         // Remove placeholder text when user enters text methods in delegate
         tv.delegate = self
         

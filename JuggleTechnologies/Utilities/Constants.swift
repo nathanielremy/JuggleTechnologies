@@ -63,6 +63,8 @@ class Constants {
         static let userProfileHeaderCell = "userProfileHeaderCell"
         static let userProfileStatisticsCell = "userProfileStatisticsCell"
         static let userSelfDescriptionCell = "userSelfDescriptionCell"
+        static let viewTaskCollectionViewCell = "viewTaskCollectionViewCell"
+        static let viewTasksHeaderCell = "viewTasksHeaderCell"
     }
     
     struct BarcalonaCoordinates {

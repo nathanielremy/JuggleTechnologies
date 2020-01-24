@@ -17,7 +17,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             guard let _ = self.user else {
                 return
             }
-            
+            collectionView.refreshControl?.endRefreshing()
             collectionView.reloadData()
         }
     }
@@ -43,6 +43,12 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         collectionView.register(UserProfileStatisticsCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.userProfileStatisticsCell)
         collectionView.register(UserSelfDescriptionCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.userSelfDescriptionCell)
         
+        // Manualy refresh the collectionView
+        let refreshController = UIRefreshControl()
+        refreshController.tintColor = UIColor.darkText
+        refreshController.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView?.refreshControl = refreshController
+        
         guard let userId = Auth.auth().currentUser?.uid else {
             return
         }
@@ -52,6 +58,16 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
+        fetchUser(withUserId: userId)
+    }
+    
+    @objc fileprivate func handleRefresh() {
+        guard let userId = user?.userId else {
+            collectionView.refreshControl?.endRefreshing()
+            return
+        }
+        
+        self.hasCalledFetchUser = false
         fetchUser(withUserId: userId)
     }
     
@@ -67,6 +83,10 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             return
         }
         hasCalledFetchUser = true
+        
+        if userId == Auth.auth().currentUser?.uid {
+            userCache.removeValue(forKey: userId)
+        }
         
         Database.fetchUserFromUserID(userID: userId) { (usr) in
             guard let user = usr else {
