@@ -43,14 +43,21 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         collectionView.register(UserProfileStatisticsCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.userProfileStatisticsCell)
         collectionView.register(UserSelfDescriptionCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.userSelfDescriptionCell)
         
-        
-        setupTopNavigationBar()
-        
         guard let userId = Auth.auth().currentUser?.uid else {
             return
         }
         
+        setupTopNavigationBar()
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTextFieldDoneButton))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        
         fetchUser(withUserId: userId)
+    }
+    
+    // When done button is clicked on keyboard input accessory view
+    @objc func handleTextFieldDoneButton() {
+        view.endEditing(true)
     }
     
     //Fetching user only happens once per freshing, either from viewDidLoad or uself.userID's didSet method
@@ -145,10 +152,58 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         }
         
         userSelfDescriptionCell.user = self.user
+        userSelfDescriptionCell.delegate = self
         return userSelfDescriptionCell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return indexPath.item == 0 ? CGSize(width: view.frame.width, height: 75) : CGSize(width: view.frame.width, height: 200)
+    }
+}
+
+//MARK: UserSelfDescriptionCellDelegate methods
+extension ProfileVC: UserSelfDescriptionCellDelegate {
+    func saveUserDescription(description: String?, completion: @escaping (Bool, String) -> Void) {
+        guard let description = description, description != "", description != "No hay Descripción" else {
+            completion(false, "")
+            let alert = UIView.okayAlert(title: "No hay Descripción", message: "Asegúrese de que la descripción se haya completado correctamente")
+            DispatchQueue.main.async {
+                self.present(alert, animated: true, completion: nil)
+            }
+            
+            return
+        }
+        
+        guard let userId = self.user?.userId else {
+            completion(false, "")
+            let alert = UIView.okayAlert(title: "No se Puede Guardar", message: "Asegúrese de que la descripción se haya completado correctamente")
+            DispatchQueue.main.async {
+                self.present(alert, animated: true, completion: nil)
+            }
+            
+            return
+        }
+        
+        if self.user?.description == description {
+            completion(true, description)
+            
+            return
+        }
+        
+        let userDescriptionRef = Database.database().reference().child(Constants.FirebaseDatabase.usersRef).child(userId)
+        userDescriptionRef.updateChildValues([Constants.FirebaseDatabase.description : description]) { (err, _) in
+            if let error = err {
+                print("Error updating user.description in UserSelfDescriptionCellDelegate: \(error)")
+                completion(false, "")
+                let alert = UIView.okayAlert(title: "No se Puede Guardar", message: "Asegúrese de que la descripción se haya completado correctamente")
+                DispatchQueue.main.async {
+                    self.present(alert, animated: true, completion: nil)
+                }
+                
+                return
+            }
+            
+         completion(true, description)
+        }
     }
 }

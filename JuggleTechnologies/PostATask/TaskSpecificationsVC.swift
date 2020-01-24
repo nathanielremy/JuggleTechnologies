@@ -67,7 +67,7 @@ class TaskSpecificationsVC: UIViewController {
     
     lazy var taskTitleTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Entre 10 y 25 caracteres"
+        tf.placeholder = "Entre 10 y 50 caracteres"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = .darkText
@@ -454,7 +454,7 @@ class TaskSpecificationsVC: UIViewController {
     }
     
     fileprivate func areTextFieldInputsValid() -> (title: String, description: String, category: String, duration: Double, budget: Double)? {
-        guard let title = taskTitleTextField.text, title.count > 9, title.count < 26 else {
+        guard let title = taskTitleTextField.text, title.count > 9, title.count < 51 else {
             let alert = UIView.okayAlert(title: "Error con el Titulo", message: "Tiene que estar entre 10 y 25 caracteres.")
             present(alert, animated: true, completion: nil); return nil
         }
@@ -690,10 +690,10 @@ class TaskSpecificationsVC: UIViewController {
 extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let taskTitle = taskTitleTextField.text, textField == taskTitleTextField {
-            taskTitleCaracterCountLabel.text = taskTitle.count == 1 ? "0/25" : "\(taskTitle.count)/25"
-            if taskTitle.count > 24 {
+            taskTitleCaracterCountLabel.text = taskTitle.count == 1 ? "0/50" : "\(taskTitle.count)/50"
+            if taskTitle.count > 49 {
                 taskTitleTextField.text?.removeLast()
-                taskTitleCaracterCountLabel.text = "\(taskTitle.count)/25"
+                taskTitleCaracterCountLabel.text = "\(taskTitle.count)/50"
             }
         } else if let postalCode = cpTextField.text, textField == cpTextField {
             if postalCode.count > 4 {
@@ -701,7 +701,7 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
             }
         } else if let streetNumber = numberTextField.text, textField == numberTextField {
             if streetNumber.count > 5 {
-                cpTextField.text?.removeLast()
+                numberTextField.text?.removeLast()
             }
         }
         
