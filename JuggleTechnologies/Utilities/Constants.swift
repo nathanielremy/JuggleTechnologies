@@ -45,16 +45,16 @@ class Constants {
     }
     
     struct TaskCategories {
-        static let all = "All"
-        static let cleaning = "Cleaning"
-        static let delivery = "Delivery"
-        static let moving = "Moving"
+        static let all = "Todo"
+        static let cleaning = "Limpieza"
+        static let delivery = "Entrega"
+        static let moving = "Mudanza"
         static let computerIT = "Computer/IT"
-        static let photoVideo = "Photo/Video"
-        static let handyMan = "Handyman"
-        static let assembly = "Assembly"
-        static let pets = "Pets"
-        static let anything = "Anything"
+        static let photoVideo = "Foto/Vídeo"
+        static let handyMan = "Mantenimiento"
+        static let assembly = "Montaje"
+        static let pets = "Mascotas"
+        static let anything = "Lo Que Sea"
         
         static func categoryArray() -> [String] {
             return [self.cleaning, self.handyMan, self.computerIT, self.photoVideo, self.assembly, self.delivery, self.moving, self.pets, self.anything]

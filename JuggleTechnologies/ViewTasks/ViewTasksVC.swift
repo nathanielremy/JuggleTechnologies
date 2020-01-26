@@ -182,7 +182,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         
         guard let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.CollectionViewCellIds.viewTasksHeaderCell, for: indexPath) as? ViewTasksHeaderCell else { fatalError("Unable to dequeue ViewTasksHeaderCell")}
         
-//        headerCell.delegate = self
+        headerCell.delegate = self
         
         return headerCell
     }
@@ -190,7 +190,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     // Need to provide a size or the header will not render out
     // Define the size of the section header for the collectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 75)
+        return CGSize(width: view.frame.width, height: 100)
     }
     
     //MARK: CollectionView methods
@@ -223,5 +223,11 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(indexPath.item)
+    }
+}
+
+extension ViewTasksVC: ViewTasksHeaderCellDelegate {
+    func didChangeCategory(to category: String) {
+        print(category)
     }
 }

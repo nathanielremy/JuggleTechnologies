@@ -13,7 +13,7 @@ class MyTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView.backgroundColor = .green
+        collectionView.backgroundColor = .white
         
         setupTopNavigationBar()
     }
