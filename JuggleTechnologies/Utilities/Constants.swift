@@ -40,6 +40,8 @@ class Constants {
         static let isTaskReviewed = "isTaskReviewed"
         static let isJugglerComplete = "isJugglerComplete"
         static let isUserComplete = "isUserComplete"
+        
+        static let userTasksRef = "userTasks"
     }
     
     struct TaskCategories {

@@ -373,30 +373,46 @@ class TaskSpecificationsVC: UIViewController {
     }
     
     fileprivate func postTask(withValues taskValues: [String : Any]) {
-        
         let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef)
         let autoRef = tasksRef.childByAutoId()
 
-        autoRef.updateChildValues(taskValues) { (err, _) in
+        autoRef.updateChildValues(taskValues) { (err, dataRef) in
             if let error = err {
                 print("PostTask(): Error updating to Firebase: ", error)
-                
                 DispatchQueue.main.async {
                     let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
                     self.present(alert, animated: true, completion: nil)
                     self.disableAndAnimate(false)
-                    
-                    return
                 }
+                
+                return
             }
             
-            self.disableAndAnimate(false)
-            let postCompleteVC = PostCompleteVC()
-            let task = Task(id: "PLACEHOLDER STRING", dictionary: taskValues)
-            postCompleteVC.task = task
-            DispatchQueue.main.async {
-                self.navigationController?.pushViewController(postCompleteVC, animated: false)
+            let task = Task(id: dataRef.key ?? "PLACEHOLDER STRING", dictionary: taskValues)
+            
+            self.addUserReference(forTask: task)
+        }
+    }
+    
+    fileprivate func addUserReference(forTask task: Task) {
+        let userTasksRefValues = [Constants.FirebaseDatabase.creationDate : task.creationDate.timeIntervalSince1970]
+        let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(task.userId).child(task.id)
+        userTasksRef.updateChildValues(userTasksRefValues) { (err, _) in
+            if let error = err {
+                print("Error adding user reference to task: \(error)")
+                DispatchQueue.main.async {
+                    let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
+                    self.present(alert, animated: true, completion: nil)
+                    self.disableAndAnimate(false)
+                }
+                
+                return
             }
+            
+            self.disableAndAnimate(true)
+            let postCompleteVC = PostCompleteVC()
+            postCompleteVC.task = task
+            self.navigationController?.pushViewController(postCompleteVC, animated: true)
         }
     }
     
@@ -496,7 +512,7 @@ class TaskSpecificationsVC: UIViewController {
     fileprivate func setupViews() {
         view.addSubview(scrollView)
         scrollView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
-        scrollView.contentSize = CGSize(width: view.frame.width, height: 1100)
+        scrollView.contentSize = CGSize(width: view.frame.width, height: 1110)
         
         scrollView.addSubview(taskTitleLabel)
         taskTitleLabel.anchor(top: scrollView.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)

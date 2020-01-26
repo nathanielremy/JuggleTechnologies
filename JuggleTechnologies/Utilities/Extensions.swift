@@ -124,6 +124,23 @@ extension UIView {
             self.heightAnchor.constraint(equalToConstant: height).isActive = true
         }
     }
+    
+    static func noResultsView(withText text: String) -> UIView {
+        let containerView = UIView()
+        containerView.backgroundColor = .white
+        
+        let label = UILabel()
+        label.text = text
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        containerView.addSubview(label)
+        label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+        label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        
+        return containerView
+    }
 }
 
 //MARK: Date
