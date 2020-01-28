@@ -41,7 +41,7 @@ class PostCompleteVC: UIViewController {
     
     let congratulationsLabel: UILabel = {
         let label = UILabel()
-        label.text = "Felicitaciones!"
+        label.text = "¡Felicidades!"
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textColor = .darkText
         label.textAlignment = .center
@@ -59,7 +59,7 @@ class PostCompleteVC: UIViewController {
     lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor.darkText
-        button.setTitle("Listo!", for: .normal)
+        button.setTitle("¡Listo!", for: .normal)
         button.tintColor = .white
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.addTarget(self, action: #selector(handleDoneButton), for: .touchUpInside)

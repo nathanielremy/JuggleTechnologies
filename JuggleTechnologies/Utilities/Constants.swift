@@ -67,6 +67,7 @@ class Constants {
         static let userSelfDescriptionCell = "userSelfDescriptionCell"
         static let viewTaskCollectionViewCell = "viewTaskCollectionViewCell"
         static let viewTasksHeaderCell = "viewTasksHeaderCell"
+        static let chatMessageCellId = "chatMessageCellId"
     }
     
     struct BarcalonaCoordinates {

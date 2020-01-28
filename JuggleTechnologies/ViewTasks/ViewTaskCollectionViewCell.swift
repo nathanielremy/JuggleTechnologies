@@ -221,18 +221,18 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         taskDetailIconsStackView.spacing = 50
         
         addSubview(taskDetailIconsStackView)
-        taskDetailIconsStackView.anchor(top: nil, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: -25, paddingRight: -50, width: nil, height: 30)
+        taskDetailIconsStackView.anchor(top: nil, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: -28, paddingRight: -50, width: nil, height: 30)
         
         addSubview(taskCategoryLabel)
-        taskCategoryLabel.anchor(top: taskCategoryImageView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
         taskCategoryLabel.centerXAnchor.constraint(equalTo: taskCategoryImageView.centerXAnchor).isActive = true
         
         addSubview(taskDurationLabel)
-        taskDurationLabel.anchor(top: taskDurationImageView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        taskDurationLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
         taskDurationLabel.centerXAnchor.constraint(equalTo: taskDurationImageView.centerXAnchor).isActive = true
         
         addSubview(taskBudgetLabel)
-        taskBudgetLabel.anchor(top: taskBudgetImageView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        taskBudgetLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
         taskBudgetLabel.centerXAnchor.constraint(equalTo: taskBudgetImageView.centerXAnchor).isActive = true
         
         let bottomSeperatorView = UIView()

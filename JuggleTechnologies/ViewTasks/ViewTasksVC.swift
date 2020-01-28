@@ -112,8 +112,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         if self.currentCategory == Constants.TaskCategories.all {
             queryTasksByDate()
         } else {
-            print("Fetch filetered tasks")
-//            self.fetchFilteredTasksFor(category: self.currentCategory)
+            self.fetchFilteredTasksFor(category: self.currentCategory)
         }
     }
     
@@ -172,7 +171,65 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             }
         }) { (error) in
             print("queryAllTasksByDate(): Error fetching tasks: ", error)
+            self.allTasks.removeAll()
+            self.filteredTasks.removeAll()
             self.showNoResultsFoundView()
+            self.animateAndShowActivityIndicator(false)
+        }
+    }
+    
+    fileprivate func fetchFilteredTasksFor(category: String) {
+        if !canFetchTasks {
+            return
+        }
+        
+        self.canFetchTasks = false
+        
+        let query = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).queryOrdered(byChild: Constants.FirebaseDatabase.taskCategory).queryEqual(toValue: category)
+        query.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            guard let tasksJSON = snapshot.value as? [String : [String : Any]] else {
+                self.filteredTasks.removeAll()
+                self.showNoResultsFoundView()
+                self.canFetchTasks = true
+                self.animateAndShowActivityIndicator(false)
+                return
+            }
+            
+            var tasksCreated = 0
+            tasksJSON.forEach { (taskId, taskDictionary) in
+                let task = Task(id: taskId, dictionary: taskDictionary)
+                
+                tasksCreated += 1
+                
+                if task.status == 0 && task.category == category {
+                    self.tempFilteredTask.append(task)
+                }
+                
+                self.tempFilteredTask.sort(by: { (task1, task2) -> Bool in
+                    return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                })
+                
+                if tasksCreated == tasksJSON.count {
+                    self.filteredTasks = self.tempFilteredTask
+                    self.removeNoResultsView()
+                    self.canFetchTasks = true
+                    self.animateAndShowActivityIndicator(false)
+                    
+                    if self.tempFilteredTask.count == 0 {
+                        self.showNoResultsFoundView()
+                        return
+                    }
+                    
+                    return
+                }
+            }
+        }) { (error) in
+            print("fetchFilteredTasksFor(category \(category): Error fetching tasks: ", error)
+            self.allTasks.removeAll()
+            self.filteredTasks.removeAll()
+            self.showNoResultsFoundView()
+            self.animateAndShowActivityIndicator(false)
         }
     }
     
@@ -198,7 +255,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         if self.currentCategory == Constants.TaskCategories.all {
             return self.allTasks.count
         } else {
-            return 0
+            return self.filteredTasks.count
         }
     }
     
@@ -212,7 +269,18 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             return UICollectionViewCell()
         }
         
-        viewTaskCollectionViewCell.task = self.allTasks[indexPath.item]
+        if self.currentCategory == Constants.TaskCategories.all {
+            viewTaskCollectionViewCell.task = self.allTasks[indexPath.item]
+        } else {
+            viewTaskCollectionViewCell.task = self.filteredTasks[indexPath.item]
+        }
+        
+        //Fetch again more tasks if collectionView hits bottom and if there are more tasks to fetch
+        if indexPath.item == self.allTasks.count - 1 && (Double(self.tasksFetched % 20) == 0.0)  {
+            if self.currentCategory == Constants.TaskCategories.all {
+                self.queryTasksByDate()
+            }
+        }
         
         return viewTaskCollectionViewCell
     }
@@ -222,12 +290,28 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath.item)
+        let taskInteractionVC = TaskInteractionVC(collectionViewLayout: UICollectionViewFlowLayout())
+        taskInteractionVC.task = self.currentCategory == Constants.TaskCategories.all ? self.allTasks[indexPath.item] : self.filteredTasks[indexPath.item]
+        self.navigationController?.pushViewController(taskInteractionVC, animated: true)
     }
 }
 
 extension ViewTasksVC: ViewTasksHeaderCellDelegate {
     func didChangeCategory(to category: String) {
-        print(category)
+        if category == self.currentCategory {
+            return
+        }
+        
+        self.animateAndShowActivityIndicator(true)
+        
+        self.currentCategory = category
+        self.tempFilteredTask.removeAll()
+        self.collectionView.reloadData()
+        
+        if category == Constants.TaskCategories.all {
+            self.queryTasksByDate()
+        } else {
+            self.fetchFilteredTasksFor(category: category)
+        }
     }
 }

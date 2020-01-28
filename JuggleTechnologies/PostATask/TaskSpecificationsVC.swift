@@ -355,7 +355,7 @@ class TaskSpecificationsVC: UIViewController {
     lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor.darkText
-        button.setTitle("Listo!", for: .normal)
+        button.setTitle("¡Listo!", for: .normal)
         button.tintColor = .white
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.addTarget(self, action: #selector(handleDoneButton), for: .touchUpInside)
@@ -503,7 +503,7 @@ class TaskSpecificationsVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Listo!", style: .plain, target: self, action: #selector(handleDoneButton))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "¡Listo!", style: .plain, target: self, action: #selector(handleDoneButton))
         
         setupViews()
         setupHideKeyBoardOnTapGesture()
