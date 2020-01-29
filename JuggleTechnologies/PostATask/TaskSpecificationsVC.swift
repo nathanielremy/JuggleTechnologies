@@ -101,7 +101,6 @@ class TaskSpecificationsVC: UIViewController {
         let tv = UITextView()
         tv.textColor = UIColor.lightGray
         tv.text = "Entre 25 y 500 caracteres"
-        tv.tintColor = .darkText
         tv.layer.borderWidth = 0.5
         tv.layer.borderColor = UIColor.lightGray.cgColor
         tv.font = UIFont.systemFont(ofSize: 14)

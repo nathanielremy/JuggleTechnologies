@@ -29,6 +29,7 @@
 		4446E10723D36898007933AF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4446E10623D36898007933AF /* GoogleService-Info.plist */; };
 		4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */; };
 		4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */; };
+		447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447FA35F23E1FF150020247E /* TaskDetailsVC.swift */; };
 		4483FCF823DF28E000178E84 /* TaskInteractionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */; };
 		4483FCFA23DF2E9C00178E84 /* TaskInteractionDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */; };
 		4483FCFD23DF320A00178E84 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */; };
@@ -67,6 +68,7 @@
 		4446E10623D36898007933AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeaderCell.swift; sourceTree = "<group>"; };
 		4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
+		447FA35F23E1FF150020247E /* TaskDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailsVC.swift; sourceTree = "<group>"; };
 		4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInteractionVC.swift; sourceTree = "<group>"; };
 		4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInteractionDetailsView.swift; sourceTree = "<group>"; };
 		4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
@@ -205,12 +207,21 @@
 			path = SupportingFiles;
 			sourceTree = "<group>";
 		};
+		447FA35E23E1FEFA0020247E /* TaskDetails */ = {
+			isa = PBXGroup;
+			children = (
+				447FA35F23E1FF150020247E /* TaskDetailsVC.swift */,
+			);
+			path = TaskDetails;
+			sourceTree = "<group>";
+		};
 		4483FCFB23DF2F5600178E84 /* TaskInteraction */ = {
 			isa = PBXGroup;
 			children = (
 				4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */,
 				4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */,
 				4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */,
+				447FA35E23E1FEFA0020247E /* TaskDetails */,
 			);
 			path = TaskInteraction;
 			sourceTree = "<group>";
@@ -416,6 +427,7 @@
 				4446E0F823D34FFC007933AF /* ViewTasksVC.swift in Sources */,
 				4446E10123D358E5007933AF /* MyTasksVC.swift in Sources */,
 				442698A723D610D90095A495 /* Task.swift in Sources */,
+				447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */,
 				44203CA423DB278A00F6D71A /* ViewTaskCollectionViewCell.swift in Sources */,
 				4446E0F423D3426F007933AF /* MainTabBarController.swift in Sources */,
 			);

@@ -30,13 +30,14 @@ class UserSelfDescriptionCell: UICollectionViewCell {
                 addEditButtonToView()
             } else {
                 userDescriptionLabel.text = "Descripción de \(user.firstName) + \(user.lastName)"
+                self.userDescriptionTextView.isEditable = false
             }
         }
     }
     
     fileprivate func addEditButtonToView() {
         addSubview(editButton)
-        editButton.anchor(top: nil, left: nil, bottom: userDescriptionTextView.topAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: -20, width: nil, height: 15)
+        editButton.anchor(top: nil, left: nil, bottom: userDescriptionTextView.topAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
     }
     
     let activityIndicator: UIActivityIndicatorView = {
@@ -114,10 +115,10 @@ class UserSelfDescriptionCell: UICollectionViewCell {
     fileprivate func setupSaveAndCaracterCountViews(_ bool: Bool) {
         if bool {
             addSubview(cancelEditDescriptionButton)
-            cancelEditDescriptionButton.anchor(top: nil, left: nil, bottom: userDescriptionTextView.topAnchor, right: editButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: -8, width: nil, height: 15)
+            cancelEditDescriptionButton.anchor(top: nil, left: nil, bottom: userDescriptionTextView.topAnchor, right: editButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: -8, width: nil, height: nil)
             
             addSubview(userDescriptionCaracterCountLabel)
-            userDescriptionCaracterCountLabel.anchor(top: nil, left: nil, bottom: editButton.topAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: -20, width: nil, height: 15)
+            userDescriptionCaracterCountLabel.anchor(top: nil, left: nil, bottom: editButton.topAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: nil, height: 12)
             
         } else {
             cancelEditDescriptionButton.removeFromSuperview()
@@ -172,7 +173,7 @@ class UserSelfDescriptionCell: UICollectionViewCell {
         userDescriptionLabel.anchor(top: topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 15)
         
         addSubview(userDescriptionTextView)
-        userDescriptionTextView.anchor(top: userDescriptionLabel.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 4, paddingLeft: 20, paddingBottom: -20, paddingRight: -20, width: nil, height: nil)
+        userDescriptionTextView.anchor(top: userDescriptionLabel.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 4, paddingLeft: 16, paddingBottom: -20, paddingRight: -16, width: nil, height: nil)
         
         let topDescriptionSeperatorView = UIView()
         topDescriptionSeperatorView.backgroundColor = .lightGray

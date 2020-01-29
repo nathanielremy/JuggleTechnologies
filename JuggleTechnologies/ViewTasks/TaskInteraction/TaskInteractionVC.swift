@@ -35,6 +35,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         }
         
         self.taskInteractionView.task = task
+        self.taskInteractionView.delegate = self
         collectionView.addSubview(self.taskInteractionView)
         self.taskInteractionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 295)
     }
@@ -197,6 +198,15 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
 
         return chatMessageCell
     }
+    
+    @objc fileprivate func handleRightBarButtonItem() {
+        guard let task = self.task else {
+            return
+        }
+        
+        self.setupTaskInteractionDetailsView(forTask: task)
+        self.navigationItem.rightBarButtonItems?.remove(at: 0)
+    }
 }
 
 //MARK: Extensions
@@ -207,5 +217,20 @@ extension TaskInteractionVC: UITextFieldDelegate {
         }
         
         return true
+    }
+}
+
+//MARK: TaskInteractionDetailsViewDelegate methods
+extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
+    func showMoreDetailsVC(forUser user: User?) {
+        let taskDetailsVC = TaskDetailsVC()
+        taskDetailsVC.task = self.task
+        taskDetailsVC.user = user
+        navigationController?.pushViewController(taskDetailsVC, animated: true)
+    }
+    
+    func hideTaskInteractionDetailsView() {
+        self.taskInteractionView.removeFromSuperview()
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detalles", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
     }
 }

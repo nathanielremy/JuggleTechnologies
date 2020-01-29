@@ -8,8 +8,15 @@
 
 import UIKit
 
+protocol TaskInteractionDetailsViewDelegate {
+    func showMoreDetailsVC(forUser user: User?)
+    func hideTaskInteractionDetailsView()
+}
+
 class TaskInteractionDetailsView: UIView {
     //MARK: Stored properties
+    var delegate: TaskInteractionDetailsViewDelegate?
+    
     var user: User? {
         didSet {
             guard let user = self.user else {
@@ -156,7 +163,7 @@ class TaskInteractionDetailsView: UIView {
     }()
     
     @objc fileprivate func handleMoreDetailsButton() {
-        print("Handling moreDetailsButton")
+        delegate?.showMoreDetailsVC(forUser: self.user)
     }
     
     override init(frame: CGRect) {
@@ -202,7 +209,7 @@ class TaskInteractionDetailsView: UIView {
         taskCategoryImageView.centerXAnchor.constraint(equalTo: taskCategoryLabel.centerXAnchor).isActive = true
         
         addSubview(moreDetailsButton)
-        moreDetailsButton.anchor(top: nil, left: nil, bottom: sectionSeperatorView.topAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: -20, width: nil, height: 12)
+        moreDetailsButton.anchor(top: nil, left: nil, bottom: sectionSeperatorView.topAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
         setupBottomSectionViews()
     }
@@ -226,7 +233,7 @@ class TaskInteractionDetailsView: UIView {
     lazy var makeOfferButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor.darkText
-        button.setTitle("Haz una Oferta", for: .normal)
+        button.setTitle("Haz Oferta", for: .normal)
         button.tintColor = .white
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.titleLabel?.textAlignment = .center
@@ -257,7 +264,7 @@ class TaskInteractionDetailsView: UIView {
     
     lazy var hideDetailsButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Ocultar los detalles", for: .normal)
+        button.setTitle("Ocultar", for: .normal)
         button.tintColor = UIColor.darkText
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.titleLabel?.textAlignment = .center
@@ -267,7 +274,7 @@ class TaskInteractionDetailsView: UIView {
     }()
     
     @objc fileprivate func handleHideDetailsButton() {
-        print("handling hideDetailsButton")
+        delegate?.hideTaskInteractionDetailsView()
     }
     
     fileprivate func setupBottomSectionViews() {
@@ -292,7 +299,7 @@ class TaskInteractionDetailsView: UIView {
         acceptTaskButton.layer.cornerRadius = 5
         
         addSubview(hideDetailsButton)
-        hideDetailsButton.anchor(top: nil, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: -20, width: nil, height: 12)
+        hideDetailsButton.anchor(top: nil, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
         let sectionEndingSeperatorView = UIView()
         sectionEndingSeperatorView.backgroundColor = .darkText
