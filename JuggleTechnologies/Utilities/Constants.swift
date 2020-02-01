@@ -10,7 +10,7 @@ import Foundation
 
 class Constants {
     struct FirebaseStorage {
-        static let profileImages = "profile_images"
+        static let profileImages = "profileImages"
     }
     
     struct FirebaseDatabase {
@@ -42,6 +42,14 @@ class Constants {
         static let isUserComplete = "isUserComplete"
         
         static let userTasksRef = "userTasks"
+        
+        static let messagesRef = "messages"
+        static let userMessagesRef = "userMessages"
+        static let text = "text"
+        static let fromUserId = "fromUserId"
+        static let toUserId = "toUserId"
+        static let taskId = "taskId"
+        static let taskOwnerUserId = "taskOwnerUserId"
     }
     
     struct TaskCategories {

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MapKit
 
 class TaskDetailsVC: UIViewController {
     //MARK: Stored properties
@@ -28,6 +29,14 @@ class TaskDetailsVC: UIViewController {
             self.timePostedLabel.attributedText = setupAttributedText(withTitle: "Publicado Hace", value: "\(task.creationDate.timeAgoDisplay()) el \(dateFormatterPrint.string(from: task.creationDate))")
             
             taskDurationLabel.attributedText = setupAttributedText(withTitle: "Duración Estimada", value: "\(task.duration)\(task.duration > 1 ? " hrs" : " hr")")
+            taskBudgetLabel.attributedText = setupAttributedText(withTitle: "Presupuesto", value: "€\(task.budget)")
+            taskLocationLabel.attributedText = setupAttributedText(withTitle: "Ubicación de la Tarea", value: task.isOnline ? "Por internet o teléfono" : "\(task.stringLocation ?? "")")
+            
+            if !task.isOnline {
+                setupMapView()
+                let taskCoordinate = CLLocationCoordinate2D(latitude: task.latitude ?? 0.0, longitude: task.longitude ?? 0.0)
+                self.placePinAt(coordinate: taskCoordinate)
+            }
         }
     }
     
@@ -127,6 +136,34 @@ class TaskDetailsVC: UIViewController {
         return label
     }()
     
+    let taskBudgetLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        
+        return label
+    }()
+    
+    let taskLocationLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        
+        return label
+    }()
+    
+    // MKMapView's previous annotation
+    var previousAnnotation: MKAnnotation?
+    lazy var mapView: MKMapView = {
+        let map = MKMapView()
+        map.delegate = self
+        map.layer.masksToBounds = true
+        map.layer.borderWidth = 1
+        map.layer.borderColor = UIColor.darkText.cgColor
+        
+        return map
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -136,7 +173,7 @@ class TaskDetailsVC: UIViewController {
     fileprivate func setupViews() {
         view.addSubview(scrollView)
         scrollView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
-        scrollView.contentSize = CGSize(width: view.frame.width, height: 1110)
+        scrollView.contentSize = CGSize(width: view.frame.width, height: 930)
         
         scrollView.addSubview(profileImageView)
         profileImageView.anchor(top: scrollView.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
@@ -167,5 +204,48 @@ class TaskDetailsVC: UIViewController {
         scrollView.addSubview(taskDurationLabel)
         taskDurationLabel.anchor(top: timePostedLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
+        scrollView.addSubview(taskBudgetLabel)
+        taskBudgetLabel.anchor(top: taskDurationLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+        
+        scrollView.addSubview(taskLocationLabel)
+        taskLocationLabel.anchor(top: taskBudgetLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+    }
+    
+    fileprivate func setupMapView() {
+        scrollView.addSubview(mapView)
+        mapView.anchor(top: taskLocationLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 300)
+        mapView.layer.cornerRadius = 5
+    }
+}
+
+//MARK: MapView extension
+extension TaskDetailsVC: MKMapViewDelegate {
+    func placePinAt(coordinate: CLLocationCoordinate2D) {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        self.mapView.addAnnotation(annotation)
+        self.mapView.centerCoordinate = coordinate
+        
+        if let oldAnnotation = self.previousAnnotation {
+            self.mapView.removeAnnotation(oldAnnotation)
+            self.previousAnnotation = annotation
+        } else {
+            self.previousAnnotation = annotation
+        }
+    }
+    
+    //Delegate methods
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let reuseIdentifier = "pin"
+        
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier) as? MKPinAnnotationView
+        
+        if let pinView = pinView {
+            pinView.annotation = annotation
+        } else {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
+            pinView!.pinTintColor = UIColor.darkText
+        }
+        return pinView
     }
 }

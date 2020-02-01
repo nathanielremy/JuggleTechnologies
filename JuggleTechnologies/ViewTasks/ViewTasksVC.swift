@@ -292,6 +292,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let taskInteractionVC = TaskInteractionVC(collectionViewLayout: UICollectionViewFlowLayout())
         taskInteractionVC.task = self.currentCategory == Constants.TaskCategories.all ? self.allTasks[indexPath.item] : self.filteredTasks[indexPath.item]
+        taskInteractionVC.chatPartnerId = taskInteractionVC.task?.userId
         self.navigationController?.pushViewController(taskInteractionVC, animated: true)
     }
 }

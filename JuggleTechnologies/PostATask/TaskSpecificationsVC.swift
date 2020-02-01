@@ -774,6 +774,7 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
     }
 }
 
+//MARK: MapView extension
 extension TaskSpecificationsVC: MKMapViewDelegate {
     
     func placePinAt(coordinate: CLLocationCoordinate2D) {

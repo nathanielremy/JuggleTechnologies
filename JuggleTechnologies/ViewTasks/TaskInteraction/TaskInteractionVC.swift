@@ -14,6 +14,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     //MARK: Stored properties
     let taskInteractionView = TaskInteractionDetailsView()
     var containerViewBottomAnchor: NSLayoutConstraint?
+    var chatPartnerId: String? //Set before pushing controller, used as toId when sending messages
     
     var task: Task? {
         didSet {
@@ -41,15 +42,6 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     }
     
     //MARK: Views
-    let activityIndicator: UIActivityIndicatorView = {
-        let ai = UIActivityIndicatorView()
-        ai.hidesWhenStopped = true
-        ai.color = UIColor.darkText
-        ai.translatesAutoresizingMaskIntoConstraints = false
-        
-        return ai
-    }()
-    
     lazy var sendButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Send", for: .normal)
@@ -62,10 +54,17 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     }()
     
     @objc fileprivate func handleSendButton() {
-        print(inputTextField.text)
+        guard let text = self.messageTextField.text, text != "", text != " " else {
+            self.messageTextField.text = ""
+            self.sendButton.isEnabled = false
+            return
+        }
+        
+        //Below function is right above viewDidLoad
+        self.sendMessage(withText: text)
     }
     
-    lazy var inputTextField: UITextField = {
+    lazy var messageTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Escribe un mensaje..."
         tf.delegate = self
@@ -75,7 +74,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     }()
     
     @objc fileprivate func handleTextFieldChanges() {
-        if let text = inputTextField.text, text != "" {
+        if let text = messageTextField.text, text != "" {
             sendButton.isEnabled = true
         } else {
             sendButton.isEnabled = false
@@ -108,6 +107,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             //Animate the containerView going up
             UIView.animate(withDuration: keyBoardDuration) {
                 self.view.layoutIfNeeded()
+                self.hideTaskInteractionDetailsView()
             }
         }
     }
@@ -122,11 +122,107 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         }
     }
     
+    fileprivate func sendMessage(withText text: String) {
+        self.disableViews(true)
+        
+        guard let task = self.task else {
+            self.disableViews(false)
+            let alert = UIAlertController(title: "La Tarea ha Sido Eliminada", message: "Ir atrás", preferredStyle: .alert)
+            let action = UIAlertAction(title: "Okay", style: .default) { (_) in
+                self.navigationController?.popViewController(animated: true)
+            }
+            alert.addAction(action)
+            self.present(alert, animated: true, completion: nil)
+
+            return
+        }
+        
+        guard let fromUserId = Auth.auth().currentUser?.uid, let toUserId = self.chatPartnerId else {
+            self.disableViews(false)
+            let alert = UIView.okayAlert(title: "Error de Envío", message: "Se produjo un error al intentar enviar su mensaje. Salga e intente nuevamente.")
+            self.present(alert, animated: true) {
+                // Dismiss or pop view?
+                if let navController = self.navigationController {
+                    navController.popViewController(animated: true)
+                } else {
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
+            return
+        }
+        
+        let messageValues: [String : Any] = [
+            Constants.FirebaseDatabase.text : text,
+            Constants.FirebaseDatabase.fromUserId : fromUserId,
+            Constants.FirebaseDatabase.toUserId : toUserId,
+            Constants.FirebaseDatabase.creationDate : Date().timeIntervalSince1970,
+            Constants.FirebaseDatabase.taskId : task.id,
+            Constants.FirebaseDatabase.taskOwnerUserId : task.userId
+        ]
+        
+        // Store message under /messages/randomId
+        let messsagesRef = Database.database().reference().child(Constants.FirebaseDatabase.messagesRef)
+        let messageIdRef = messsagesRef.childByAutoId()
+        messageIdRef.updateChildValues(messageValues) { (err, _) in
+            if let error = err {
+                print("Error pushing message/randomId to database: ", error)
+                DispatchQueue.main.async {
+                    self.disableViews(false)
+                    let alert = UIView.okayAlert(title: "No se Puede Enviar este Mensaje", message: "Sal e intenta nuevamente.")
+                    self.present(alert, animated: true) {
+                        // Dismiss or pop view?
+                        if let navController = self.navigationController {
+                            navController.popViewController(animated: true)
+                        } else {
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                }
+                return
+            }
+        }
+        
+        // Store a reference to message in database for the sender
+        let messageId = messageIdRef.key
+        let senderRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(fromUserId).child(task.id).child(toUserId)
+        senderRef.updateChildValues([messageId : 1]) { (err, ref) in
+            if let error = err {
+                print("Error storing reference to message for sender: ", error)
+                DispatchQueue.main.async {
+                    self.disableViews(false)
+                    let alert = UIView.okayAlert(title: "No se Puede Enviar este Mensaje", message: "Sal e intenta nuevamente.")
+                    self.present(alert, animated: true) {
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                }
+                return
+            }
+        }
+        
+        // Store a reference to message in database for the receiver
+        let recipientRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(toUserId).child(task.id).child(fromUserId)
+        recipientRef.updateChildValues([messageId: 1]) { (err, ref) in
+            if let error = err {
+                print("Error storing reference to message for receiver: ", error)
+                DispatchQueue.main.async {
+                    self.disableViews(false)
+                    let alert = UIView.okayAlert(title: "No se Puede Enviar este Mensaje", message: "Sal e intenta nuevamente.")
+                    self.present(alert, animated: true) {
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                }
+                return
+            }
+        }
+        
+        self.disableViews(false)
+        self.messageTextField.text = nil
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.backgroundColor = .white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
         
         collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .interactive
@@ -151,8 +247,8 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         containerView.addSubview(sendButton)
         sendButton.anchor(top: containerView.topAnchor, left: nil, bottom: containerView.bottomAnchor, right: containerView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 80, height: nil)
         
-        containerView.addSubview(inputTextField)
-        inputTextField.anchor(top: containerView.topAnchor, left: containerView.leftAnchor, bottom: containerView.bottomAnchor, right: sendButton.leftAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        containerView.addSubview(messageTextField)
+        messageTextField.anchor(top: containerView.topAnchor, left: containerView.leftAnchor, bottom: containerView.bottomAnchor, right: sendButton.leftAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
         
         let seperatorView = UIView()
         seperatorView.backgroundColor = .black
@@ -163,7 +259,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     
     //MARK: CollectionView Delegate Methods
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -206,6 +302,20 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         
         self.setupTaskInteractionDetailsView(forTask: task)
         self.navigationItem.rightBarButtonItems?.remove(at: 0)
+    }
+    
+    func disableViews(_ bool: Bool) {
+        DispatchQueue.main.async {
+            self.navigationItem.leftBarButtonItem?.isEnabled = !bool
+            self.messageTextField.isEnabled = !bool
+            self.collectionView?.isUserInteractionEnabled = !bool
+            
+//            if let text = self.messageTextField.text, text == "" {
+//                self.sendButton.isEnabled = false
+//            } else {
+                self.sendButton.isEnabled = !bool
+//            }
+        }
     }
 }
 
