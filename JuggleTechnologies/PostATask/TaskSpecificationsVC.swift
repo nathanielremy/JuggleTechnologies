@@ -394,7 +394,10 @@ class TaskSpecificationsVC: UIViewController {
     }
     
     fileprivate func addUserReference(forTask task: Task) {
-        let userTasksRefValues = [Constants.FirebaseDatabase.creationDate : task.creationDate.timeIntervalSince1970]
+        let userTasksRefValues = [
+            Constants.FirebaseDatabase.creationDate : task.creationDate.timeIntervalSince1970,
+            Constants.FirebaseDatabase.taskStatus : 0
+        ]
         let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(task.userId).child(task.id)
         userTasksRef.updateChildValues(userTasksRefValues) { (err, _) in
             if let error = err {

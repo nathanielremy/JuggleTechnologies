@@ -60,6 +60,11 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             return
         }
         
+        // Cant send messages to yourself
+        if self.task?.userId == Auth.auth().currentUser?.uid {
+            return
+        }
+        
         //Below function is right above viewDidLoad
         self.sendMessage(withText: text)
     }
@@ -185,7 +190,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         // Store a reference to message in database for the sender
         let messageId = messageIdRef.key
         let senderRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(fromUserId).child(task.id).child(toUserId)
-        senderRef.updateChildValues([messageId : 1]) { (err, ref) in
+        senderRef.updateChildValues([messageId : 1]) { (err, _) in
             if let error = err {
                 print("Error storing reference to message for sender: ", error)
                 DispatchQueue.main.async {
@@ -201,7 +206,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         
         // Store a reference to message in database for the receiver
         let recipientRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(toUserId).child(task.id).child(fromUserId)
-        recipientRef.updateChildValues([messageId: 1]) { (err, ref) in
+        recipientRef.updateChildValues([messageId: 1]) { (err, _) in
             if let error = err {
                 print("Error storing reference to message for receiver: ", error)
                 DispatchQueue.main.async {
@@ -342,5 +347,31 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
     func hideTaskInteractionDetailsView() {
         self.taskInteractionView.removeFromSuperview()
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detalles", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
+    }
+    
+    func makeOffer() {
+        guard let task = self.task else {
+            return
+        }
+        
+        if task.userId == Auth.auth().currentUser?.uid {
+            let alert = UIView.okayAlert(title: "No se Puede Enviar esta Oferta", message: "No se puede hacer ofertas en tareas que son tuyos.")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+    }
+    
+    func acceptTask() {
+        guard let task = self.task else {
+            return
+        }
+        
+        if task.userId == Auth.auth().currentUser?.uid {
+            let alert = UIView.okayAlert(title: "No se Puede Enviar la Aceptación", message: "No se puede aceptar tareas que son tuyos.")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
     }
 }

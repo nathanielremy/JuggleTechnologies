@@ -42,6 +42,7 @@ class Constants {
         static let isUserComplete = "isUserComplete"
         
         static let userTasksRef = "userTasks"
+        static let jugglerTasksRef = "jugglerTasksRef"
         
         static let messagesRef = "messages"
         static let userMessagesRef = "userMessages"
@@ -76,6 +77,11 @@ class Constants {
         static let viewTaskCollectionViewCell = "viewTaskCollectionViewCell"
         static let viewTasksHeaderCell = "viewTasksHeaderCell"
         static let chatMessageCellId = "chatMessageCellId"
+        static let dashboardHeaderCell = "dashboardHeaderCell"
+        static let onGoingTaskCell = "onGoingTaskCell"
+        static let acceptedTaskCell = "acceptedTaskCell"
+        static let completedTaskCell = "completedTaskCell"
+        static let savedTaskCell = "savedTaskCell"
     }
     
     struct BarcalonaCoordinates {

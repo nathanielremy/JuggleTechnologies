@@ -11,6 +11,8 @@ import UIKit
 protocol TaskInteractionDetailsViewDelegate {
     func showMoreDetailsVC(forUser user: User?)
     func hideTaskInteractionDetailsView()
+    func makeOffer()
+    func acceptTask()
 }
 
 class TaskInteractionDetailsView: UIView {
@@ -243,7 +245,7 @@ class TaskInteractionDetailsView: UIView {
     }()
     
     @objc fileprivate func handleMakeOfferButton() {
-        print("Handling makeOfferButton")
+        delegate?.makeOffer()
     }
     
     lazy var acceptTaskButton: UIButton = {
@@ -259,7 +261,7 @@ class TaskInteractionDetailsView: UIView {
     }()
     
     @objc fileprivate func handleAcceptTaskButton() {
-        print("Handling acceptTaskButton")
+        delegate?.acceptTask()
     }
     
     lazy var hideDetailsButton: UIButton = {

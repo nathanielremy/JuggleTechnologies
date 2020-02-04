@@ -106,3 +106,17 @@ struct Task {
 //        })
 //    }
 }
+
+struct FilteredTask {
+    let id: String
+    let status: Int
+    let creationDate: Date
+    
+    init(id: String, dictionary: [String : Any]) {
+        self.id = id
+        
+        self.status = dictionary[Constants.FirebaseDatabase.taskStatus] as? Int ?? 0
+        let secondsFrom1970 = dictionary[Constants.FirebaseDatabase.creationDate] as? Double ?? 0
+        self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)
+    }
+}

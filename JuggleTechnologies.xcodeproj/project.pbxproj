@@ -15,6 +15,7 @@
 		44203CA623DB290B00F6D71A /* ViewTasksHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44203CA523DB290B00F6D71A /* ViewTasksHeaderCell.swift */; };
 		442698A523D610870095A495 /* PostCompleteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442698A423D610870095A495 /* PostCompleteVC.swift */; };
 		442698A723D610D90095A495 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442698A623D610D90095A495 /* Task.swift */; };
+		4438EBA923E71F6D000CF489 /* DashboardHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4438EBA823E71F6D000CF489 /* DashboardHeaderCell.swift */; };
 		4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0DF23D341B1007933AF /* AppDelegate.swift */; };
 		4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0E123D341B1007933AF /* SceneDelegate.swift */; };
 		4446E0E623D341B2007933AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4446E0E523D341B2007933AF /* Assets.xcassets */; };
@@ -24,7 +25,7 @@
 		4446E0F823D34FFC007933AF /* ViewTasksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0F723D34FFC007933AF /* ViewTasksVC.swift */; };
 		4446E0FB23D3533F007933AF /* NotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0FA23D3533F007933AF /* NotificationsVC.swift */; };
 		4446E0FE23D35678007933AF /* TaskCategoryPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0FD23D35678007933AF /* TaskCategoryPickerVC.swift */; };
-		4446E10123D358E5007933AF /* MyTasksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10023D358E5007933AF /* MyTasksVC.swift */; };
+		4446E10123D358E5007933AF /* DashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10023D358E5007933AF /* DashboardVC.swift */; };
 		4446E10423D3620D007933AF /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10323D3620D007933AF /* ProfileVC.swift */; };
 		4446E10723D36898007933AF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4446E10623D36898007933AF /* GoogleService-Info.plist */; };
 		4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */; };
@@ -33,6 +34,10 @@
 		4483FCF823DF28E000178E84 /* TaskInteractionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */; };
 		4483FCFA23DF2E9C00178E84 /* TaskInteractionDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */; };
 		4483FCFD23DF320A00178E84 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */; };
+		44972CCB23E9E34900798745 /* OnGoingTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */; };
+		44972CCD23E9E38900798745 /* AcceptedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCC23E9E38900798745 /* AcceptedTaskCell.swift */; };
+		44972CCF23E9E3B400798745 /* CompletedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCE23E9E3B400798745 /* CompletedTaskCell.swift */; };
+		44972CD123E9E8EF00798745 /* SavedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CD023E9E8EF00798745 /* SavedTaskCell.swift */; };
 		44FB732123D36BEC000B8987 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732023D36BEC000B8987 /* LoginVC.swift */; };
 		44FB732423D36C13000B8987 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732323D36C13000B8987 /* Extensions.swift */; };
 		44FB732623D36CAA000B8987 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732523D36CAA000B8987 /* Constants.swift */; };
@@ -52,6 +57,7 @@
 		44203CA523DB290B00F6D71A /* ViewTasksHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTasksHeaderCell.swift; sourceTree = "<group>"; };
 		442698A423D610870095A495 /* PostCompleteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCompleteVC.swift; sourceTree = "<group>"; };
 		442698A623D610D90095A495 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		4438EBA823E71F6D000CF489 /* DashboardHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardHeaderCell.swift; sourceTree = "<group>"; };
 		4446E0DC23D341B1007933AF /* JuggleTechnologies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JuggleTechnologies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4446E0DF23D341B1007933AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4446E0E123D341B1007933AF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -63,7 +69,7 @@
 		4446E0F723D34FFC007933AF /* ViewTasksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTasksVC.swift; sourceTree = "<group>"; };
 		4446E0FA23D3533F007933AF /* NotificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsVC.swift; sourceTree = "<group>"; };
 		4446E0FD23D35678007933AF /* TaskCategoryPickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategoryPickerVC.swift; sourceTree = "<group>"; };
-		4446E10023D358E5007933AF /* MyTasksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTasksVC.swift; sourceTree = "<group>"; };
+		4446E10023D358E5007933AF /* DashboardVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardVC.swift; sourceTree = "<group>"; };
 		4446E10323D3620D007933AF /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		4446E10623D36898007933AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeaderCell.swift; sourceTree = "<group>"; };
@@ -72,6 +78,10 @@
 		4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInteractionVC.swift; sourceTree = "<group>"; };
 		4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInteractionDetailsView.swift; sourceTree = "<group>"; };
 		4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
+		44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnGoingTaskCell.swift; sourceTree = "<group>"; };
+		44972CCC23E9E38900798745 /* AcceptedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcceptedTaskCell.swift; sourceTree = "<group>"; };
+		44972CCE23E9E3B400798745 /* CompletedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTaskCell.swift; sourceTree = "<group>"; };
+		44972CD023E9E8EF00798745 /* SavedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedTaskCell.swift; sourceTree = "<group>"; };
 		44FB732023D36BEC000B8987 /* LoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		44FB732323D36C13000B8987 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		44FB732523D36CAA000B8987 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -94,6 +104,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4438EBAA23E888EA000CF489 /* DashboardCollectionViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				4438EBA823E71F6D000CF489 /* DashboardHeaderCell.swift */,
+				44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */,
+				44972CCC23E9E38900798745 /* AcceptedTaskCell.swift */,
+				44972CCE23E9E3B400798745 /* CompletedTaskCell.swift */,
+				44972CD023E9E8EF00798745 /* SavedTaskCell.swift */,
+			);
+			path = DashboardCollectionViewCells;
+			sourceTree = "<group>";
+		};
 		4446E0D323D341B1007933AF = {
 			isa = PBXGroup;
 			children = (
@@ -124,7 +146,7 @@
 				4446E0F623D34FD5007933AF /* ViewTasks */,
 				4446E0F923D35325007933AF /* Notifications */,
 				4446E0FC23D3546A007933AF /* PostATask */,
-				4446E0FF23D358CA007933AF /* MyTasks */,
+				4446E0FF23D358CA007933AF /* Dashboard */,
 				4446E10223D361C4007933AF /* Profile */,
 				4446E0F523D34366007933AF /* Views */,
 				4446E0ED23D341B2007933AF /* Info.plist */,
@@ -180,12 +202,13 @@
 			path = PostATask;
 			sourceTree = "<group>";
 		};
-		4446E0FF23D358CA007933AF /* MyTasks */ = {
+		4446E0FF23D358CA007933AF /* Dashboard */ = {
 			isa = PBXGroup;
 			children = (
-				4446E10023D358E5007933AF /* MyTasksVC.swift */,
+				4446E10023D358E5007933AF /* DashboardVC.swift */,
+				4438EBAA23E888EA000CF489 /* DashboardCollectionViewCells */,
 			);
-			path = MyTasks;
+			path = Dashboard;
 			sourceTree = "<group>";
 		};
 		4446E10223D361C4007933AF /* Profile */ = {
@@ -409,9 +432,13 @@
 				44FB732623D36CAA000B8987 /* Constants.swift in Sources */,
 				441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */,
 				4446E0FE23D35678007933AF /* TaskCategoryPickerVC.swift in Sources */,
+				44972CCF23E9E3B400798745 /* CompletedTaskCell.swift in Sources */,
 				4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */,
 				4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */,
 				4446E10423D3620D007933AF /* ProfileVC.swift in Sources */,
+				44972CCD23E9E38900798745 /* AcceptedTaskCell.swift in Sources */,
+				4438EBA923E71F6D000CF489 /* DashboardHeaderCell.swift in Sources */,
+				44972CCB23E9E34900798745 /* OnGoingTaskCell.swift in Sources */,
 				442698A523D610870095A495 /* PostCompleteVC.swift in Sources */,
 				441FB4B323D8A39800D8B115 /* UserProfileStatisticsCell.swift in Sources */,
 				44FB732B23D37427000B8987 /* SignupVC.swift in Sources */,
@@ -419,13 +446,14 @@
 				4483FCFD23DF320A00178E84 /* ChatMessageCell.swift in Sources */,
 				44FB732423D36C13000B8987 /* Extensions.swift in Sources */,
 				4483FCFA23DF2E9C00178E84 /* TaskInteractionDetailsView.swift in Sources */,
+				44972CD123E9E8EF00798745 /* SavedTaskCell.swift in Sources */,
 				4483FCF823DF28E000178E84 /* TaskInteractionVC.swift in Sources */,
 				4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */,
 				44203CA623DB290B00F6D71A /* ViewTasksHeaderCell.swift in Sources */,
 				44FB732123D36BEC000B8987 /* LoginVC.swift in Sources */,
 				44FB732923D36D96000B8987 /* User.swift in Sources */,
 				4446E0F823D34FFC007933AF /* ViewTasksVC.swift in Sources */,
-				4446E10123D358E5007933AF /* MyTasksVC.swift in Sources */,
+				4446E10123D358E5007933AF /* DashboardVC.swift in Sources */,
 				442698A723D610D90095A495 /* Task.swift in Sources */,
 				447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */,
 				44203CA423DB278A00F6D71A /* ViewTaskCollectionViewCell.swift in Sources */,

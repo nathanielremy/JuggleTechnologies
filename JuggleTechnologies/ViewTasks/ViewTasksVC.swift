@@ -304,6 +304,7 @@ extension ViewTasksVC: ViewTasksHeaderCellDelegate {
         }
         
         self.animateAndShowActivityIndicator(true)
+        self.removeNoResultsView()
         
         self.currentCategory = category
         self.tempFilteredTask.removeAll()

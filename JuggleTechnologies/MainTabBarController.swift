@@ -59,8 +59,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         //Post a Task
         let postATaskVC = templateNavController(unselectedImage: #imageLiteral(resourceName: "PostATaskPH"), selectedImage: #imageLiteral(resourceName: "PostATaskPH"))
         
-        //My Tasks
-        let myTasksNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "MyTasksPH"), selectedImage: #imageLiteral(resourceName: "MyTasksPH"), rootViewController: MyTasksVC(collectionViewLayout: UICollectionViewFlowLayout()))
+        //Dashboard
+        let dashboardNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "MyTasksPH"), selectedImage: #imageLiteral(resourceName: "MyTasksPH"), rootViewController: DashboardVC(collectionViewLayout: UICollectionViewFlowLayout()))
         
         //Profile
         let profileNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "ProfilePH"), selectedImage: #imageLiteral(resourceName: "ProfilePH"), rootViewController: ProfileVC(collectionViewLayout: UICollectionViewFlowLayout()))
@@ -71,7 +71,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
             viewTasksNavController,
             notificationsNavController,
             postATaskVC,
-            myTasksNavController,
+            dashboardNavController,
             profileNavController
         ]
     }
