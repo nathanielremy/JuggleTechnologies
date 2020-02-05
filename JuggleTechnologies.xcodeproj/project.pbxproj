@@ -28,6 +28,7 @@
 		4446E10123D358E5007933AF /* DashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10023D358E5007933AF /* DashboardVC.swift */; };
 		4446E10423D3620D007933AF /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E10323D3620D007933AF /* ProfileVC.swift */; };
 		4446E10723D36898007933AF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4446E10623D36898007933AF /* GoogleService-Info.plist */; };
+		444AA33123EB4DA100872EB9 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444AA33023EB4DA100872EB9 /* Message.swift */; };
 		4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */; };
 		4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */; };
 		447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447FA35F23E1FF150020247E /* TaskDetailsVC.swift */; };
@@ -72,6 +73,7 @@
 		4446E10023D358E5007933AF /* DashboardVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardVC.swift; sourceTree = "<group>"; };
 		4446E10323D3620D007933AF /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		4446E10623D36898007933AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		444AA33023EB4DA100872EB9 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeaderCell.swift; sourceTree = "<group>"; };
 		4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
 		447FA35F23E1FF150020247E /* TaskDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailsVC.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 			children = (
 				44FB732823D36D96000B8987 /* User.swift */,
 				442698A623D610D90095A495 /* Task.swift */,
+				444AA33023EB4DA100872EB9 /* Message.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -432,6 +435,7 @@
 				44FB732623D36CAA000B8987 /* Constants.swift in Sources */,
 				441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */,
 				4446E0FE23D35678007933AF /* TaskCategoryPickerVC.swift in Sources */,
+				444AA33123EB4DA100872EB9 /* Message.swift in Sources */,
 				44972CCF23E9E3B400798745 /* CompletedTaskCell.swift in Sources */,
 				4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */,
 				4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */,

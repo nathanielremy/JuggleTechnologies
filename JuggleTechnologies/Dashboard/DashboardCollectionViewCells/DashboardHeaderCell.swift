@@ -50,14 +50,14 @@ class DashboardHeaderCell: UICollectionViewCell {
             jugglerSwitchButton.isEnabled = true
             userSwitchButton.backgroundColor = UIColor.darkText.withAlphaComponent(1)
             jugglerSwitchButton.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
-            delegate?.changeFilterOptions(forFilterValue: 1, isUserMode: true) // Fetch userTasks and filter for onGoing
+//            delegate?.changeFilterOptions(forFilterValue: 1, isUserMode: true) // Fetch userTasks and filter for onGoing
         } else if button.tag == 1 { //Juggler button
             isUserMode = false
             userSwitchButton.isEnabled = true
             jugglerSwitchButton.isEnabled = false
             userSwitchButton.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
             jugglerSwitchButton.backgroundColor = UIColor.darkText.withAlphaComponent(1)
-            delegate?.changeFilterOptions(forFilterValue: 2, isUserMode: false) // Fetch jugglerTasks and filter for accepted
+//            delegate?.changeFilterOptions(forFilterValue: 2, isUserMode: false) // Fetch jugglerTasks and filter for accepted
         }
         
         setupFilterOptionsStackView(forMode: button.tag)
@@ -77,12 +77,7 @@ class DashboardHeaderCell: UICollectionViewCell {
             addSubview(filterOptionsStackView)
             filterOptionsStackView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
             
-            addSubview(filterOptionButtonSeperatorView)
-            filterOptionButtonSeperatorView.anchor(top: nil, left: onGoingFilterOptionButton.leftAnchor, bottom: bottomAnchor, right: onGoingFilterOptionButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)
-            
-            self.filterOptionButtonSeperatorView.removeFromSuperview()
-            addSubview(filterOptionButtonSeperatorView)
-            filterOptionButtonSeperatorView.anchor(top: nil, left: onGoingFilterOptionButton.leftAnchor, bottom: bottomAnchor, right: onGoingFilterOptionButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)
+            self.handleUserFilterOptionButton(forButton: onGoingFilterOptionButton)
         } else if mode == 1 {
             filterOptionsStackView.removeArrangedSubview(onGoingFilterOptionButton)
             onGoingFilterOptionButton.isHidden = true
@@ -95,12 +90,7 @@ class DashboardHeaderCell: UICollectionViewCell {
             addSubview(filterOptionsStackView)
             filterOptionsStackView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
             
-            addSubview(filterOptionButtonSeperatorView)
-            filterOptionButtonSeperatorView.anchor(top: nil, left: onGoingFilterOptionButton.leftAnchor, bottom: bottomAnchor, right: onGoingFilterOptionButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)
-            
-            self.filterOptionButtonSeperatorView.removeFromSuperview()
-            addSubview(filterOptionButtonSeperatorView)
-            filterOptionButtonSeperatorView.anchor(top: nil, left: acceptedFilterOptionButton.leftAnchor, bottom: bottomAnchor, right: acceptedFilterOptionButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)
+            self.handleUserFilterOptionButton(forButton: acceptedFilterOptionButton)
         }
     }
     
@@ -122,7 +112,7 @@ class DashboardHeaderCell: UICollectionViewCell {
         button.setTitle("Aceptada", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
-        button.tintColor = .darkText
+        button.tintColor = .lightGray
         button.addTarget(self, action: #selector(handleUserFilterOptionButton), for: .touchUpInside)
         button.tag = 2 //Used later in action call to identify selected filter option
         
@@ -134,7 +124,7 @@ class DashboardHeaderCell: UICollectionViewCell {
         button.setTitle("Completada", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
-        button.tintColor = .darkText
+        button.tintColor = .lightGray
         button.addTarget(self, action: #selector(handleUserFilterOptionButton), for: .touchUpInside)
         button.tag = 3 //Used later in action call to identify selected filter option
         
@@ -146,7 +136,7 @@ class DashboardHeaderCell: UICollectionViewCell {
         button.setTitle("Guardada", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
-        button.tintColor = .darkText
+        button.tintColor = .lightGray
         button.addTarget(self, action: #selector(handleUserFilterOptionButton), for: .touchUpInside)
         button.tag = 4 //Used later in action call to identify selected filter option
         
@@ -169,6 +159,13 @@ class DashboardHeaderCell: UICollectionViewCell {
     }()
 
     @objc fileprivate func handleUserFilterOptionButton(forButton button: UIButton) {
+        onGoingFilterOptionButton.tintColor = .lightGray
+        acceptedFilterOptionButton.tintColor = .lightGray
+        completedFilterOptionButton.tintColor = .lightGray
+        savedFilterOptionButton.tintColor = .lightGray
+        
+        button.tintColor = .darkText
+        
         self.filterOptionButtonSeperatorView.removeFromSuperview()
         addSubview(filterOptionButtonSeperatorView)
         filterOptionButtonSeperatorView.anchor(top: nil, left: button.leftAnchor, bottom: bottomAnchor, right: button.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)

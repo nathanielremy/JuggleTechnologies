@@ -12,14 +12,24 @@ import Firebase
 class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     //MARK: Stored properties
+    var messages = [Message]()
     let taskInteractionView = TaskInteractionDetailsView()
     var containerViewBottomAnchor: NSLayoutConstraint?
-    var chatPartnerId: String? //Set before pushing controller, used as toId when sending messages
+    
+    var chatPartnerId: String? { //Set before pushing controller, used as toId when sending messages
+        didSet {
+            guard let chatPartnerId = self.chatPartnerId else {
+                return
+            }
+            
+            self.observeMessages(forChatPartnerId: chatPartnerId)
+        }
+    }
     
     var task: Task? {
         didSet {
             guard let task = task else {
-                self.navigationController?.popViewController(animated: false)
+                navigationItem.title = "Tarea Eliminada"
                 return
             }
             
@@ -38,6 +48,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         self.taskInteractionView.task = task
         self.taskInteractionView.delegate = self
         collectionView.addSubview(self.taskInteractionView)
+        self.taskInteractionView.alpha = 0.7
         self.taskInteractionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 295)
     }
     
@@ -188,7 +199,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         }
         
         // Store a reference to message in database for the sender
-        let messageId = messageIdRef.key
+        let messageId = messageIdRef.key ?? "Failed to unwrap messageIdRef.key"
         let senderRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(fromUserId).child(task.id).child(toUserId)
         senderRef.updateChildValues([messageId : 1]) { (err, _) in
             if let error = err {
@@ -240,6 +251,52 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         setupInputComponents()
     }
     
+    fileprivate func observeMessages(forChatPartnerId chatPartnerId: String) {
+        self.disableViews(true)
+        // Fetch messages for currentUserId and from chatPartnerId
+        guard let currentUserId = Auth.auth().currentUser?.uid, let task = self.task else {
+            print("No current user id")
+            self.disableViews(false)
+            
+            return
+        }
+        
+        let userMessagesRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(currentUserId).child(task.id).child(chatPartnerId)
+        userMessagesRef.observe(.childAdded, with: { (messagesSnapshot) in
+            
+            let messageId = messagesSnapshot.key
+            let messagesRef = Database.database().reference().child(Constants.FirebaseDatabase.messagesRef).child(messageId)
+            messagesRef.observeSingleEvent(of: .value, with: { (messageSnapshot) in
+                
+                guard let messageDictionary = messageSnapshot.value as? [String : Any] else {
+                    print("Currently there are no messages")
+                    self.disableViews(false)
+                    return
+                }
+                
+                let message = Message(key: messageSnapshot.key, dictionary: messageDictionary)
+                
+                if message.chatPartnerId() == self.chatPartnerId {
+                    self.messages.append(message)
+                    DispatchQueue.main.async {
+                        self.disableViews(false)
+                        self.collectionView?.reloadData()
+                        //Make collectionView scroll to bottom when message is sent and/or recieved
+                        self.collectionView?.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: true)
+                    }
+                }
+            }) { (error) in
+                print("Error fetching userMessages for user: \(currentUserId): ", error)
+                self.disableViews(true)
+                return
+            }
+        }) { (error) in
+            print("Error fetching userMessages for user: \(currentUserId): ", error)
+            self.disableViews(true)
+            return
+        }
+    }
+    
     fileprivate func setupInputComponents() {
         let containerView = UIView()
         containerView.backgroundColor = .white
@@ -264,7 +321,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     
     //MARK: CollectionView Delegate Methods
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 0
+        return self.messages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -315,11 +372,11 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             self.messageTextField.isEnabled = !bool
             self.collectionView?.isUserInteractionEnabled = !bool
             
-//            if let text = self.messageTextField.text, text == "" {
-//                self.sendButton.isEnabled = false
-//            } else {
+            if let text = self.messageTextField.text, text == "" {
+                self.sendButton.isEnabled = false
+            } else {
                 self.sendButton.isEnabled = !bool
-//            }
+            }
         }
     }
 }
@@ -350,11 +407,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
     }
     
     func makeOffer() {
-        guard let task = self.task else {
-            return
-        }
-        
-        if task.userId == Auth.auth().currentUser?.uid {
+        guard let task = self.task, task.userId != Auth.auth().currentUser?.uid else {
             let alert = UIView.okayAlert(title: "No se Puede Enviar esta Oferta", message: "No se puede hacer ofertas en tareas que son tuyos.")
             self.present(alert, animated: true, completion: nil)
             return
@@ -363,11 +416,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
     }
     
     func acceptTask() {
-        guard let task = self.task else {
-            return
-        }
-        
-        if task.userId == Auth.auth().currentUser?.uid {
+        guard let task = self.task, task.userId != Auth.auth().currentUser?.uid else {
             let alert = UIView.okayAlert(title: "No se Puede Enviar la Aceptación", message: "No se puede aceptar tareas que son tuyos.")
             self.present(alert, animated: true, completion: nil)
             return

@@ -166,7 +166,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                 if isUserMode {
                     self.userOnGoingTasks.removeAll()
                     self.userAcceptedTasks.removeAll()
-                    self.userTempCompletedTasks.removeAll()
+                    self.userCompletedTasks.removeAll()
                 } else {
                     self.jugglerAcceptedTasks.removeAll()
                     self.jugglerCompletedTasks.removeAll()
@@ -187,16 +187,33 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                 if self.isUserMode {
                     if filteredTask.status == 0 {
                         self.userTempOnGoingTasks.append(filteredTask)
+                        self.userTempOnGoingTasks.sort(by: { (task1, task2) -> Bool in
+                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                        })
                     } else if filteredTask.status == 1 {
                         self.userTempAcceptedTasks.append(filteredTask)
+                        self.userTempAcceptedTasks.sort(by: { (task1, task2) -> Bool in
+                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                        })
                     } else if filteredTask.status == 2 {
                         self.userTempCompletedTasks.append(filteredTask)
+                        //FIXME: Sort by completionDate not creationDate
+                        self.userTempCompletedTasks.sort(by: { (task1, task2) -> Bool in
+                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                        })
                     }
                 } else { // else if task.mutuallyAcceptedBy == userId
                     if filteredTask.status == 1 {
                         self.jugglerAcceptedTasks.append(filteredTask)
+                        self.jugglerTempAcceptedTasks.sort(by: { (task1, task2) -> Bool in
+                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                        })
                     } else if filteredTask.status == 2 {
                         self.jugglerTempCompletedTasks.append(filteredTask)
+                        //FIXME: Sort by completionDate not creationDate
+                        self.jugglerTempCompletedTasks.sort(by: { (task1, task2) -> Bool in
+                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                        })
                     }
                 }
                 
@@ -227,8 +244,6 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                             self.showNoResultsFoundView()
                         } else if self.filterOptionsValue == 3 && self.jugglerTempCompletedTasks.count == 0 {
                             self.showNoResultsFoundView()
-                        } else if self.filterOptionsValue == 3 && self.userTempCompletedTasks.count == 0 {
-                            self.showNoResultsFoundView()
                         } else if self.filterOptionsValue == 4 {
                             //FIXME: Does this need to be here?
                             self.showNoResultsFoundView()
@@ -243,7 +258,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             if isUserMode {
                 self.userOnGoingTasks.removeAll()
                 self.userAcceptedTasks.removeAll()
-                self.userTempCompletedTasks.removeAll()
+                self.userCompletedTasks.removeAll()
             } else {
                 self.jugglerAcceptedTasks.removeAll()
                 self.jugglerCompletedTasks.removeAll()
@@ -265,7 +280,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         } else if self.filterOptionsValue == 3 {
             return self.isUserMode ? self.userCompletedTasks.count : self.jugglerCompletedTasks.count
         } else if self.filterOptionsValue == 4 {
-            return self.jugglerSavedTasks.count
+            return self.isUserMode ? 0 : self.jugglerSavedTasks.count
         } else {
             return 0
         }
