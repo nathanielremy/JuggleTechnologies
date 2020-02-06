@@ -16,13 +16,16 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     let taskInteractionView = TaskInteractionDetailsView()
     var containerViewBottomAnchor: NSLayoutConstraint?
     
-    var chatPartnerId: String? { //Set before pushing controller, used as toId when sending messages
+    var chatPartner: User? { //Set before pushing controller, used as toId when sending messages
         didSet {
-            guard let chatPartnerId = self.chatPartnerId else {
+            guard let chatPartner = self.chatPartner else {
+                //FIXME: Show no results view
                 return
             }
             
-            self.observeMessages(forChatPartnerId: chatPartnerId)
+            if let _ = self.task {
+                self.observeMessages(forChatPartnerId: chatPartner.userId)
+            }
         }
     }
     
@@ -35,6 +38,10 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             
             navigationItem.title = task.title
             setupTaskInteractionDetailsView(forTask: task)
+            
+            if let chatPartner = self.chatPartner {
+                self.observeMessages(forChatPartnerId: chatPartner.userId)
+            }
         }
     }
     
@@ -42,6 +49,9 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         Database.fetchUserFromUserID(userID: task.userId) { (usr) in
             if let user = usr {
                 self.taskInteractionView.user = user
+                if self.chatPartner == nil && user.userId != Auth.auth().currentUser?.uid {
+                    self.chatPartner = user
+                }
             }
         }
         
@@ -153,7 +163,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             return
         }
         
-        guard let fromUserId = Auth.auth().currentUser?.uid, let toUserId = self.chatPartnerId else {
+        guard let fromUserId = Auth.auth().currentUser?.uid, let toUserId = self.chatPartner?.userId else {
             self.disableViews(false)
             let alert = UIView.okayAlert(title: "Error de Envío", message: "Se produjo un error al intentar enviar su mensaje. Salga e intente nuevamente.")
             self.present(alert, animated: true) {
@@ -262,8 +272,10 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         }
         
         let userMessagesRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(currentUserId).child(task.id).child(chatPartnerId)
+        
+        self.disableViews(false)
+        
         userMessagesRef.observe(.childAdded, with: { (messagesSnapshot) in
-            
             let messageId = messagesSnapshot.key
             let messagesRef = Database.database().reference().child(Constants.FirebaseDatabase.messagesRef).child(messageId)
             messagesRef.observeSingleEvent(of: .value, with: { (messageSnapshot) in
@@ -276,7 +288,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
                 
                 let message = Message(key: messageSnapshot.key, dictionary: messageDictionary)
                 
-                if message.chatPartnerId() == self.chatPartnerId {
+                if message.chatPartnerId() == self.chatPartner?.userId {
                     self.messages.append(message)
                     DispatchQueue.main.async {
                         self.disableViews(false)
@@ -287,12 +299,12 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
                 }
             }) { (error) in
                 print("Error fetching userMessages for user: \(currentUserId): ", error)
-                self.disableViews(true)
+                self.disableViews(false)
                 return
             }
         }) { (error) in
             print("Error fetching userMessages for user: \(currentUserId): ", error)
-            self.disableViews(true)
+            self.disableViews(false)
             return
         }
     }
