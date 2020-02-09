@@ -29,7 +29,7 @@ class UserSelfDescriptionCell: UICollectionViewCell {
                 userDescriptionLabel.text = "Descripción de mi mismo"
                 addEditButtonToView()
             } else {
-                userDescriptionLabel.text = "Descripción de \(user.firstName) + \(user.lastName)"
+                userDescriptionLabel.text = "Descripción de \(user.firstName) \(user.lastName)"
                 self.userDescriptionTextView.isEditable = false
             }
         }

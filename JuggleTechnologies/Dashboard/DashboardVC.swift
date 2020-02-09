@@ -353,7 +353,6 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     // Need to provide a size or the header will not render out
     // Define the size of the section header for the collectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        
         return CGSize(width: view.frame.width, height: 100)
     }
 }
@@ -388,6 +387,5 @@ extension DashboardVC: DashboardHeaderCellDelegate {
         }
         
         self.removeNoResultsView()
-        collectionView.reloadData()
     }
 }

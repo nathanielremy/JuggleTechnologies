@@ -16,10 +16,12 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     let taskInteractionView = TaskInteractionDetailsView()
     var containerViewBottomAnchor: NSLayoutConstraint?
     
-    var chatPartner: User? { //Set before pushing controller, used as toId when sending messages
+    var currentUser: User?
+    
+    var chatPartner: User? { //Set before pushing controller, used as toUserId when sending messages
         didSet {
             guard let chatPartner = self.chatPartner else {
-                //FIXME: Show no results view
+                self.showNoResultsFoundView()
                 return
             }
             
@@ -57,17 +59,19 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         
         self.taskInteractionView.task = task
         self.taskInteractionView.delegate = self
-        collectionView.addSubview(self.taskInteractionView)
-        self.taskInteractionView.alpha = 0.7
+        view.addSubview(self.taskInteractionView)
         self.taskInteractionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 295)
+        
+        self.anchorCollectionViewToTaskInteractionDetailsView(andScroll: true)
+        var _ = self.textFieldShouldReturn(messageTextField)
     }
     
     //MARK: Views
     lazy var sendButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Send", for: .normal)
+        button.setTitle("Enviar", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        button.tintColor = UIColor.darkText
+        button.tintColor = UIColor.mainBlue()
         button.isEnabled = false
         button.addTarget(self, action: #selector(handleSendButton), for: .touchUpInside)
         
@@ -83,6 +87,10 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         
         // Cant send messages to yourself
         if self.task?.userId == Auth.auth().currentUser?.uid {
+            let alert = UIView.okayAlert(title: "No se Puede Enviar Mensaje", message: "No se puede enviar mensajes por tareas que son tuyos.")
+            self.present(alert, animated: true, completion: nil)
+            self.messageTextField.text = ""
+            
             return
         }
         
@@ -133,7 +141,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             //Animate the containerView going up
             UIView.animate(withDuration: keyBoardDuration) {
                 self.view.layoutIfNeeded()
-                self.hideTaskInteractionDetailsView()
+                self.hideTaskInteractionDetailsView(andScroll: true, keyBoardHeight: height)
             }
         }
     }
@@ -145,6 +153,36 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         //Animate the containerView going down
         UIView.animate(withDuration: keyBoardDuration) {
             self.view.layoutIfNeeded()
+            if !self.view.subviews.contains(self.taskInteractionView) {
+                self.anchorCollectionViewToTop(andScroll: false, keyBoardHeight: 0)
+            }
+            
+        }
+    }
+    
+    let noResultsView: UIView = {
+        let view = UIView.noResultsView(withText: "No hay mensajes en este momento.")
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    fileprivate func showNoResultsFoundView() {
+        self.collectionView?.refreshControl?.endRefreshing()
+        DispatchQueue.main.async {
+            self.collectionView?.reloadData()
+            self.collectionView?.addSubview(self.noResultsView)
+            self.noResultsView.centerYAnchor.constraint(equalTo: (self.collectionView?.centerYAnchor)!).isActive = true
+            self.noResultsView.centerXAnchor.constraint(equalTo: (self.collectionView?.centerXAnchor)!).isActive = true
+        }
+    }
+    
+    fileprivate func removeNoResultsView() {
+        self.collectionView?.refreshControl?.endRefreshing()
+        DispatchQueue.main.async {
+            self.noResultsView.removeFromSuperview()
+            self.collectionView?.reloadData()
+            self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: self.collectionView.numberOfSections - 1), at: .top, animated: true)
         }
     }
     
@@ -242,23 +280,32 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         }
         
         self.disableViews(false)
-        self.messageTextField.text = nil
+        self.messageTextField.text = ""
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .white
         collectionView.backgroundColor = .white
         
         collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .interactive
-        collectionView?.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 58, right: 0)
-        collectionView?.scrollIndicatorInsets = UIEdgeInsets.init(top: 0, left: 0, bottom: 58, right: 0)
         
         //Register collectionViewCells
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.chatMessageCellId)
+        collectionView?.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 58, right: 0)
+        collectionView?.scrollIndicatorInsets = UIEdgeInsets.init(top: 0, left: 0, bottom: 58, right: 0)
         
         setupInputComponents()
+        self.fetchCurrentUser()
+    }
+    
+    fileprivate func fetchCurrentUser() {
+        let currentUserId = Auth.auth().currentUser?.uid ?? "No currentUserId"
+        Database.fetchUserFromUserID(userID: currentUserId) { (usr) in
+            self.currentUser = usr
+        }
     }
     
     fileprivate func observeMessages(forChatPartnerId chatPartnerId: String) {
@@ -267,6 +314,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         guard let currentUserId = Auth.auth().currentUser?.uid, let task = self.task else {
             print("No current user id")
             self.disableViews(false)
+            self.showNoResultsFoundView()
             
             return
         }
@@ -274,6 +322,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         let userMessagesRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(currentUserId).child(task.id).child(chatPartnerId)
         
         self.disableViews(false)
+        self.showNoResultsFoundView()
         
         userMessagesRef.observe(.childAdded, with: { (messagesSnapshot) in
             let messageId = messagesSnapshot.key
@@ -281,8 +330,8 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             messagesRef.observeSingleEvent(of: .value, with: { (messageSnapshot) in
                 
                 guard let messageDictionary = messageSnapshot.value as? [String : Any] else {
-                    print("Currently there are no messages")
                     self.disableViews(false)
+                    self.showNoResultsFoundView()
                     return
                 }
                 
@@ -292,18 +341,18 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
                     self.messages.append(message)
                     DispatchQueue.main.async {
                         self.disableViews(false)
-                        self.collectionView?.reloadData()
-                        //Make collectionView scroll to bottom when message is sent and/or recieved
-                        self.collectionView?.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: true)
+                        self.removeNoResultsView()
                     }
                 }
             }) { (error) in
                 print("Error fetching userMessages for user: \(currentUserId): ", error)
                 self.disableViews(false)
+                self.showNoResultsFoundView()
                 return
             }
         }) { (error) in
             print("Error fetching userMessages for user: \(currentUserId): ", error)
+            self.showNoResultsFoundView()
             self.disableViews(false)
             return
         }
@@ -336,37 +385,99 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         return self.messages.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-//        var height: CGFloat = 80
-//
-//        //Modifying the chat bubble's height
-//        let text = self.messages[indexPath.item].text
-//        height = self.estimatedFrameForChatBubble(fromText: text).height + 20
-//
-//        return CGSize(width: view.frame.width, height: height)
-        
-        return CGSize(width: view.frame.width, height: 100)
-    }
-    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let chatMessageCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.chatMessageCellId, for: indexPath) as? ChatMessageCell else {
             return UICollectionViewCell()
         }
 
-//        let message = self.messages[indexPath.item]
-//
-//        cell.textView.text = message.text
-//
-//        setupChatMessageCell(cell: cell, message: message)
-//
-//        //Modifyig the chat bubble's width
-//        let text = self.messages[indexPath.item].text
-//        cell.chatBubbleWidth?.constant = estimatedFrameForChatBubble(fromText: text).width + 32
-//
-//        cell.delegate = self
-
+        let message = self.messages[indexPath.item]
+        
+        chatMessageCell.textView.text = message.text
+        
+        setupChatMessageCell(cell: chatMessageCell, message: message)
+        
+        //Modifyig the chat bubble's width
+        let text = self.messages[indexPath.item].text
+        chatMessageCell.chatBubbleWidth?.constant = estimatedFrameForChatBubble(fromText: text).width + 32
+        
+        chatMessageCell.delegate = self
+        
         return chatMessageCell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        var height: CGFloat = 80
+
+        //Modifying the chat bubble's height
+        let text = self.messages[indexPath.item].text
+        height = self.estimatedFrameForChatBubble(fromText: text).height + 20
+
+        return CGSize(width: view.frame.width, height: height)
+    }
+    
+    fileprivate func anchorCollectionViewToTop(andScroll scroll: Bool, keyBoardHeight: CGFloat) {
+        var height: CGFloat = view.safeAreaInsets.top != 0 ? view.safeAreaInsets.top : 88
+        var navBarHeight: CGFloat = 88
+        
+        if let navBar = self.navigationController {
+            navBarHeight = navBar.navigationBar.frame.size.height
+        }
+        
+        height -= navBarHeight
+        
+        self.collectionView.frame = CGRect(x: 0.0, y: height, width: view.frame.width, height: view.frame.height - height - keyBoardHeight)
+        
+        if scroll {
+            self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: true)
+        }
+    }
+    
+    fileprivate func anchorCollectionViewToTaskInteractionDetailsView(andScroll scroll: Bool) {
+        var height: CGFloat = view.safeAreaInsets.top != 0 ? view.safeAreaInsets.top : 88
+        var navBarHeight: CGFloat = 88
+        
+        if let navBar = self.navigationController {
+            navBarHeight = navBar.navigationBar.frame.size.height
+        }
+        
+        height = (height + navBarHeight) + 295
+        
+        self.collectionView.frame = CGRect(x: 0.0, y: height - navBarHeight, width: view.frame.width, height: view.frame.height - height)
+        
+        if scroll {
+            self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: true)
+        }
+    }
+    
+    fileprivate func setupChatMessageCell(cell: ChatMessageCell, message: Message) {
+        if let profileImageURLString = self.chatPartner?.profileImageURLString {
+            cell.profileImageView.loadImage(from: profileImageURLString)
+        }
+        
+        if message.fromUserId == Auth.auth().currentUser?.uid {
+            //Display blue chatBubble
+            cell.chatBubble.backgroundColor = UIColor.mainBlue()
+            cell.textView.textColor = .white
+            cell.profileImageView.isHidden = true
+            cell.chatBubbleLeftAnchor?.isActive = false
+            cell.chatBubbleRightAnchor?.isActive = true
+        } else {
+            //Display gray chatBubble
+            cell.chatBubble.backgroundColor = UIColor.chatBubbleGray()
+            cell.textView.textColor = .black
+            cell.profileImageView.isHidden = false
+            cell.chatBubbleLeftAnchor?.isActive = true
+            cell.chatBubbleRightAnchor?.isActive = false
+        }
+    }
+    
+    fileprivate func estimatedFrameForChatBubble(fromText text: String) -> CGRect {
+        // height must be something really tall and width is the same as chatBubble in ChatMessageCell
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [.font : UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
     @objc fileprivate func handleRightBarButtonItem() {
@@ -380,7 +491,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     
     func disableViews(_ bool: Bool) {
         DispatchQueue.main.async {
-            self.navigationItem.leftBarButtonItem?.isEnabled = !bool
+            self.taskInteractionView.isUserInteractionEnabled = !bool
             self.messageTextField.isEnabled = !bool
             self.collectionView?.isUserInteractionEnabled = !bool
             
@@ -406,33 +517,130 @@ extension TaskInteractionVC: UITextFieldDelegate {
 
 //MARK: TaskInteractionDetailsViewDelegate methods
 extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
-    func showMoreDetailsVC(forUser user: User?) {
+    func showTaskDetailsVC(forUser user: User?) {
         let taskDetailsVC = TaskDetailsVC()
         taskDetailsVC.task = self.task
         taskDetailsVC.user = user
         navigationController?.pushViewController(taskDetailsVC, animated: true)
     }
     
-    func hideTaskInteractionDetailsView() {
+    func hideTaskInteractionDetailsView(andScroll scroll: Bool, keyBoardHeight: CGFloat) {
         self.taskInteractionView.removeFromSuperview()
+        
+        self.anchorCollectionViewToTop(andScroll: true, keyBoardHeight: keyBoardHeight)
+        
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detalles", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
     }
     
     func makeOffer() {
-        guard let task = self.task, task.userId != Auth.auth().currentUser?.uid else {
-            let alert = UIView.okayAlert(title: "No se Puede Enviar esta Oferta", message: "No se puede hacer ofertas en tareas que son tuyos.")
+        guard let task = self.task else {
+            let alert = UIAlertController(title: "La Tarea ha Sido Eliminada", message: "Ir atrás", preferredStyle: .alert)
+            let backAction = UIAlertAction(title: "Okay", style: .default) { (_) in
+                self.navigationController?.popViewController(animated: true)
+            }
+            alert.addAction(backAction)
             self.present(alert, animated: true, completion: nil)
             return
         }
         
+        guard task.status == 0 else {
+            let alert = UIView.okayAlert(title: "La Tarea ya esta Aceptada", message: "")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        guard task.userId != Auth.auth().currentUser?.uid else {
+            let alert = UIView.okayAlert(title: "No se Puede Enviar Oferta", message: "No se puede hacer ofertas en tareas que son tuyos.")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        //Present become a Juggler action
+        guard let currentUser = self.currentUser, currentUser.isJuggler else {
+            let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieras, cuando quieras con Juggle", preferredStyle: .alert)
+            
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+            let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
+                let becomeAJugglerVC = BecomeAJugglerVC()
+                let becomeAJugglerNavVC = UINavigationController(rootViewController: becomeAJugglerVC)
+                self.present(becomeAJugglerNavVC, animated: true, completion: nil)
+            }
+            
+            alert.addAction(cancelAction)
+            alert.addAction(becomeAJuggleAction)
+            
+            self.present(alert, animated: true, completion: nil)
+            
+            return
+        }
+        
+        let taskOfferVC = TaskOfferVC()
+        taskOfferVC.task = task
+        let taskOfferNavVC = UINavigationController(rootViewController: taskOfferVC)
+        self.present(taskOfferNavVC, animated: true, completion: nil)
     }
     
     func acceptTask() {
-        guard let task = self.task, task.userId != Auth.auth().currentUser?.uid else {
-            let alert = UIView.okayAlert(title: "No se Puede Enviar la Aceptación", message: "No se puede aceptar tareas que son tuyos.")
+        guard let task = self.task else {
+            let alert = UIAlertController(title: "La Tarea ha Sido Eliminada", message: "Ir atrás", preferredStyle: .alert)
+            let backAction = UIAlertAction(title: "Okay", style: .default) { (_) in
+                self.navigationController?.popViewController(animated: true)
+            }
+            alert.addAction(backAction)
             self.present(alert, animated: true, completion: nil)
             return
         }
         
+        guard task.userId != Auth.auth().currentUser?.uid else {
+            let alert = UIView.okayAlert(title: "No se Puede Aceptar esta Tarea", message: "No se puede aceptar tareas que son tuyos.")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        //Present become a Juggler action
+        guard let currentUser = self.currentUser, currentUser.isJuggler else {
+            let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieras, cuando quieras con Juggle", preferredStyle: .alert)
+            
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+            let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
+                let becomeAJugglerVC = BecomeAJugglerVC()
+                let becomeAJugglerNavVC = UINavigationController(rootViewController: becomeAJugglerVC)
+                self.present(becomeAJugglerNavVC, animated: true, completion: nil)
+            }
+            
+            alert.addAction(cancelAction)
+            alert.addAction(becomeAJuggleAction)
+            
+            self.present(alert, animated: true, completion: nil)
+            
+            return
+        }
+    }
+    
+    func handleProfileImageView(forUser user: User) {
+        guard user.userId != Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        profileVC.user = user
+        navigationController?.pushViewController(profileVC, animated: true)
+    }
+}
+
+//MARK: ChatMessageCell Delegate methods
+extension TaskInteractionVC: ChatMessageCellDelegate {
+    func handleProfileImageView() {
+        print("Handlding profileImageView")
+//        if let juggler = self.data.0 {
+//            let jugglerProfileVC = JugglerProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+//            jugglerProfileVC.juggler = juggler
+//
+//            navigationController?.pushViewController(jugglerProfileVC, animated: true)
+//
+//        } else {
+//            let alert = UIView.okayAlert(title: "Can Not Load Juggler", message: "We are currently unable to load this Juggler's profile. Please try again.")
+//            self.present(alert, animated: true, completion: nil)
+//        }
     }
 }

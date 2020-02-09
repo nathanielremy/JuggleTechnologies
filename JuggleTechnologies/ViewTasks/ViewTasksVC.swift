@@ -89,8 +89,8 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     }
     
     fileprivate func setupTopNavigationBar() {
+        navigationItem.title = "Juggle"
         navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "Ofertas de Trabajo"
     }
     
     fileprivate func setupActivityIndicator() {

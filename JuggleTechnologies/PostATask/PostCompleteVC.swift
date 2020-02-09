@@ -19,7 +19,7 @@ class PostCompleteVC: UIViewController {
             
             let attributedText = NSMutableAttributedString(string: "Su tarea\n\n", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray])
             attributedText.append(NSAttributedString(string: "\"" + task.title + "\"", attributes: [.font : UIFont.boldSystemFont(ofSize: 18), .foregroundColor : UIColor.darkText]))
-            attributedText.append(NSAttributedString(string: "\n\nSe publicó", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
+            attributedText.append(NSAttributedString(string: "\n\nEsta Publicada.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
             
             detailsLabel.attributedText = attributedText
         }

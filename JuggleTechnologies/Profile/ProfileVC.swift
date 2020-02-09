@@ -22,16 +22,6 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         }
     }
     
-    var userId: String? {
-        didSet {
-            guard let userId = userId else {
-                return
-            }
-            
-            fetchUser(withUserId: userId)
-        }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -49,9 +39,11 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         refreshController.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView?.refreshControl = refreshController
         
-        guard let userId = Auth.auth().currentUser?.uid else {
-            return
-        }
+//        guard let userId = Auth.auth().currentUser?.uid else {
+//            return
+//        }
+        
+        let userId = self.user?.userId ?? (Auth.auth().currentUser?.uid ?? "")
         
         setupTopNavigationBar()
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTextFieldDoneButton))
@@ -103,7 +95,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         let settingsBarButton = UIBarButtonItem(title: "···", style: .done
             , target: self, action: #selector(handleSettingsBarButton))
         settingsBarButton.setTitleTextAttributes([.font : UIFont.boldSystemFont(ofSize: 24)], for: .normal)
-        settingsBarButton.tintColor = UIColor.darkText
+        settingsBarButton.tintColor = UIColor.mainBlue()
         navigationItem.rightBarButtonItem = settingsBarButton
     }
     

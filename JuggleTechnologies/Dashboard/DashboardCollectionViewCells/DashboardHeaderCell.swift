@@ -20,10 +20,11 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     lazy var userSwitchButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Como Usador", for: .normal)
+        button.setTitle("Modo Usador", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor.darkText
+        button.setTitleColor(UIColor.mainBlue(), for: .normal)
+        button.layer.borderColor = UIColor.mainBlue().cgColor
+        button.layer.borderWidth = 1
         button.isEnabled = false
         button.tag = 0
         button.addTarget(self, action: #selector(handleSwitchButtons(_:)), for: .touchUpInside)
@@ -33,10 +34,11 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     lazy var jugglerSwitchButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Como Juggler", for: .normal)
+        button.setTitle("Modo Juggler", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
+        button.setTitleColor(.lightGray, for: .normal)
+        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.layer.borderWidth = 1
         button.tag = 1
         button.addTarget(self, action: #selector(handleSwitchButtons(_:)), for: .touchUpInside)
         
@@ -46,18 +48,21 @@ class DashboardHeaderCell: UICollectionViewCell {
     @objc fileprivate func handleSwitchButtons(_ button: UIButton) {
         if button.tag == 0 { //User button
             isUserMode = true
-            userSwitchButton.isEnabled = false
+            userSwitchButton.setTitleColor(UIColor.mainBlue(), for: .normal)
+            userSwitchButton.layer.borderColor = UIColor.mainBlue().cgColor
+            
             jugglerSwitchButton.isEnabled = true
-            userSwitchButton.backgroundColor = UIColor.darkText.withAlphaComponent(1)
-            jugglerSwitchButton.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
-//            delegate?.changeFilterOptions(forFilterValue: 1, isUserMode: true) // Fetch userTasks and filter for onGoing
+            jugglerSwitchButton.setTitleColor(.lightGray, for: .normal)
+            jugglerSwitchButton.layer.borderColor = UIColor.lightGray.cgColor
         } else if button.tag == 1 { //Juggler button
             isUserMode = false
             userSwitchButton.isEnabled = true
+            userSwitchButton.setTitleColor(.lightGray, for: .normal)
+            userSwitchButton.layer.borderColor = UIColor.lightGray.cgColor
+            
             jugglerSwitchButton.isEnabled = false
-            userSwitchButton.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
-            jugglerSwitchButton.backgroundColor = UIColor.darkText.withAlphaComponent(1)
-//            delegate?.changeFilterOptions(forFilterValue: 2, isUserMode: false) // Fetch jugglerTasks and filter for accepted
+            jugglerSwitchButton.setTitleColor(UIColor.mainBlue(), for: .normal)
+            jugglerSwitchButton.layer.borderColor = UIColor.mainBlue().cgColor
         }
         
         setupFilterOptionsStackView(forMode: button.tag)
@@ -66,6 +71,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     fileprivate func setupFilterOptionsStackView(forMode mode: Int) {
         if mode == 0 {
+            //Rearrange UIStackView with the correct filter options
             filterOptionsStackView.removeArrangedSubview(savedFilterOptionButton)
             savedFilterOptionButton.isHidden = true
             onGoingFilterOptionButton.isHidden = false
@@ -79,6 +85,7 @@ class DashboardHeaderCell: UICollectionViewCell {
             
             self.handleUserFilterOptionButton(forButton: onGoingFilterOptionButton)
         } else if mode == 1 {
+            //Rearrange UIStackView with the correct filter options
             filterOptionsStackView.removeArrangedSubview(onGoingFilterOptionButton)
             onGoingFilterOptionButton.isHidden = true
             savedFilterOptionButton.isHidden = false
@@ -151,7 +158,7 @@ class DashboardHeaderCell: UICollectionViewCell {
         return stackView
     }()
     
-    let filterOptionButtonSeperatorView: UIView = {
+    let filterOptionButtonBottomSeperatorView: UIView = {
         let view = UIView()
         view.backgroundColor = .darkText
         
@@ -166,9 +173,9 @@ class DashboardHeaderCell: UICollectionViewCell {
         
         button.tintColor = .darkText
         
-        self.filterOptionButtonSeperatorView.removeFromSuperview()
-        addSubview(filterOptionButtonSeperatorView)
-        filterOptionButtonSeperatorView.anchor(top: nil, left: button.leftAnchor, bottom: bottomAnchor, right: button.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)
+        self.filterOptionButtonBottomSeperatorView.removeFromSuperview()
+        addSubview(filterOptionButtonBottomSeperatorView)
+        filterOptionButtonBottomSeperatorView.anchor(top: nil, left: button.leftAnchor, bottom: bottomAnchor, right: button.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)
         
         delegate?.changeFilterOptions(forFilterValue: button.tag, isUserMode: self.isUserMode)
     }
@@ -188,20 +195,13 @@ class DashboardHeaderCell: UICollectionViewCell {
         let switchButtonsStackView = UIStackView(arrangedSubviews: [userSwitchButton, jugglerSwitchButton])
         switchButtonsStackView.axis = .horizontal
         switchButtonsStackView.distribution = .fillEqually
-        switchButtonsStackView.spacing = -5
+        switchButtonsStackView.spacing = 8
         
         addSubview(switchButtonsStackView)
         switchButtonsStackView.anchor(top: nil, left: leftAnchor, bottom: topAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 55, paddingRight: -20, width: nil, height: 35)
         
         userSwitchButton.layer.cornerRadius = 5
         jugglerSwitchButton.layer.cornerRadius = 5
-        
-        let switchButtonSeperatorView = UIView()
-        switchButtonSeperatorView.backgroundColor = .white
-        
-        addSubview(switchButtonSeperatorView)
-        switchButtonSeperatorView.anchor(top: switchButtonsStackView.topAnchor, left: nil, bottom: switchButtonsStackView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 5, height: nil)
-        switchButtonSeperatorView.centerXAnchor.constraint(equalTo: switchButtonsStackView.centerXAnchor).isActive = true
         
         self.setupFilterOptionsStackView(forMode: 0)
     }
