@@ -24,8 +24,8 @@ class JugglerSignupRequirementsVC: UIViewController {
         label.numberOfLines = 0
         
         let attributedText = NSMutableAttributedString(string: "• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "Must be atleast ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
-        attributedText.append(NSAttributedString(string: "18 years of age", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
+        attributedText.append(NSAttributedString(string: "Tener al menos ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSAttributedString(string: "18 años", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
         attributedText.append(NSAttributedString(string: ".", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
         
         label.attributedText = attributedText
@@ -39,10 +39,10 @@ class JugglerSignupRequirementsVC: UIViewController {
         label.numberOfLines = 0
         
         let attributedText = NSMutableAttributedString(string: "• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "Must live ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
-        attributedText.append(NSAttributedString(string: "in Barcelona ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
-        attributedText.append(NSAttributedString(string: "or ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
-        attributedText.append(NSAttributedString(string: "surrounding areas", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
+        attributedText.append(NSAttributedString(string: "Vivir o trabajar ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSAttributedString(string: "en Barcelona ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
+        attributedText.append(NSAttributedString(string: "o ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSAttributedString(string: "en su alrededor", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
         attributedText.append(NSAttributedString(string: ".", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
         
         label.attributedText = attributedText
@@ -56,8 +56,8 @@ class JugglerSignupRequirementsVC: UIViewController {
         label.numberOfLines = 0
         
         let attributedText = NSMutableAttributedString(string: "• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "Must have a ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
-        attributedText.append(NSAttributedString(string: "spanish bank account", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
+        attributedText.append(NSAttributedString(string: "Tener ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSAttributedString(string: "cuenta bancaria", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
         attributedText.append(NSAttributedString(string: ".", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
         
         label.attributedText = attributedText
@@ -71,8 +71,8 @@ class JugglerSignupRequirementsVC: UIViewController {
         label.numberOfLines = 0
         
         let attributedText = NSMutableAttributedString(string: "• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "Must have ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
-        attributedText.append(NSAttributedString(string: "an iPhone", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
+        attributedText.append(NSAttributedString(string: "Tener ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSAttributedString(string: "DNI", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
         attributedText.append(NSAttributedString(string: ".", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
         
         label.attributedText = attributedText
@@ -80,27 +80,27 @@ class JugglerSignupRequirementsVC: UIViewController {
         return label
     }()
     
-    let fifthRequirementLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .left
-        label.numberOfLines = 0
+    lazy var doneButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("¡Listo!", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor.mainBlue()
+        button.addTarget(self, action: #selector(handleDoneButton), for: .touchUpInside)
         
-        let attributedText = NSMutableAttributedString(string: "• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "Must have ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
-        attributedText.append(NSAttributedString(string: "a Valid Government Issued ID", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.mainBlue()]))
-        attributedText.append(NSAttributedString(string: ".", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
-        
-        label.attributedText = attributedText
-        
-        return label
+        return button
     }()
+    
+    @objc fileprivate func handleDoneButton() {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
         
-        navigationItem.title = "Requirements"
+        navigationItem.title = "Credenciales"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancelar", style: .plain, target: self, action: #selector(handleCancel))
         navigationController?.navigationBar.tintColor = .darkText
         
@@ -128,8 +128,9 @@ class JugglerSignupRequirementsVC: UIViewController {
         scrollView.addSubview(fourthRequirementLabel)
         anchorHelper(forView: fourthRequirementLabel, topAnchor: thirdRequirementLabel.bottomAnchor, topPadding: 0, height: 50)
         
-        scrollView.addSubview(fifthRequirementLabel)
-        anchorHelper(forView: fifthRequirementLabel, topAnchor: fourthRequirementLabel.bottomAnchor, topPadding: 0, height: 50)
+        scrollView.addSubview(doneButton)
+        anchorHelper(forView: doneButton, topAnchor: fourthRequirementLabel.bottomAnchor, topPadding: 50, height: 50)
+        doneButton.layer.cornerRadius = 5
     }
     
     fileprivate func anchorHelper(forView anchorView: UIView, topAnchor: NSLayoutYAxisAnchor, topPadding: CGFloat, height: CGFloat) {

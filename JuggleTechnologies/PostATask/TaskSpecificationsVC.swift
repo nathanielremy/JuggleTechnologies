@@ -23,7 +23,7 @@ class TaskSpecificationsVC: UIViewController {
                 return
             }
             
-            navigationItem.title = category + " Task"
+            navigationItem.title = "Tarea de " + category
         }
     }
     
@@ -184,8 +184,8 @@ class TaskSpecificationsVC: UIViewController {
     lazy var onlineSwitch: UISwitch = {
         let toggle = UISwitch()
         toggle.isOn = false
-        toggle.tintColor = UIColor.darkText
-        toggle.onTintColor = UIColor.darkText
+        toggle.tintColor = UIColor.mainBlue()
+        toggle.onTintColor = UIColor.mainBlue()
         toggle.addTarget(self, action: #selector(handleOnlineSwitch), for: .valueChanged)
         
         return toggle
@@ -337,7 +337,7 @@ class TaskSpecificationsVC: UIViewController {
         map.delegate = self
         map.layer.masksToBounds = true
         map.layer.borderWidth = 1
-        map.layer.borderColor = UIColor.darkText.cgColor
+        map.layer.borderColor = UIColor.mainBlue().cgColor
         
         return map
     }()
@@ -353,10 +353,10 @@ class TaskSpecificationsVC: UIViewController {
     
     lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.darkText
         button.setTitle("¡Listo!", for: .normal)
-        button.tintColor = .white
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor.mainBlue()
         button.addTarget(self, action: #selector(handleDoneButton), for: .touchUpInside)
         
         return button
@@ -506,6 +506,7 @@ class TaskSpecificationsVC: UIViewController {
         view.backgroundColor = .white
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "¡Listo!", style: .plain, target: self, action: #selector(handleDoneButton))
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
         
         setupViews()
         setupHideKeyBoardOnTapGesture()
@@ -805,7 +806,7 @@ extension TaskSpecificationsVC: MKMapViewDelegate {
             pinView.annotation = annotation
         } else {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
-            pinView!.pinTintColor = UIColor.darkText
+            pinView!.pinTintColor = UIColor.mainBlue()
         }
         return pinView
     }

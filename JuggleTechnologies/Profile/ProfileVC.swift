@@ -14,8 +14,12 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     //MARK: Stores properties
     var user: User? {
         didSet {
-            guard let _ = self.user else {
+            guard let user = self.user else {
                 return
+            }
+            
+            if user.userId == Auth.auth().currentUser?.uid {
+                self.setupTopNavigationBarSettingsButton()
             }
             
             collectionView.refreshControl?.endRefreshing()
@@ -23,11 +27,20 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         }
     }
     
+    fileprivate func setupTopNavigationBarSettingsButton() {
+        let settingsBarButton = UIBarButtonItem(title: "···", style: .done
+            , target: self, action: #selector(handleSettingsBarButton))
+        settingsBarButton.setTitleTextAttributes([.font : UIFont.boldSystemFont(ofSize: 24)], for: .normal)
+        settingsBarButton.tintColor = UIColor.mainBlue()
+        navigationItem.rightBarButtonItem = settingsBarButton
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.backgroundColor = .white
         collectionView?.alwaysBounceVertical = true
+        navigationController?.navigationBar.tintColor = .black
         
         //Register the CollectionViewCells
         collectionView.register(UserProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.userProfileHeaderCell)
@@ -40,12 +53,11 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         refreshController.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView?.refreshControl = refreshController
         
-        let userId = self.user?.userId ?? (Auth.auth().currentUser?.uid ?? "")
-        
-        setupTopNavigationBar()
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTextFieldDoneButton))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
+        
+        let userId = self.user?.userId ?? (Auth.auth().currentUser?.uid ?? "")
         
         fetchUser(withUserId: userId)
     }
@@ -85,15 +97,6 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             self.user = user
             self.navigationItem.title = user.firstName
         }
-    }
-    
-    fileprivate func setupTopNavigationBar() {
-        navigationController?.navigationBar.tintColor = .black
-        let settingsBarButton = UIBarButtonItem(title: "···", style: .done
-            , target: self, action: #selector(handleSettingsBarButton))
-        settingsBarButton.setTitleTextAttributes([.font : UIFont.boldSystemFont(ofSize: 24)], for: .normal)
-        settingsBarButton.tintColor = UIColor.mainBlue()
-        navigationItem.rightBarButtonItem = settingsBarButton
     }
     
     @objc fileprivate func handleSettingsBarButton() {

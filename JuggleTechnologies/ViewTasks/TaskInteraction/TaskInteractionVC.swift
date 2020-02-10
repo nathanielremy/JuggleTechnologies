@@ -168,6 +168,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     }()
     
     fileprivate func showNoResultsFoundView() {
+        self.collectionView.bounces = false
         self.collectionView?.refreshControl?.endRefreshing()
         DispatchQueue.main.async {
             self.collectionView?.reloadData()
@@ -178,6 +179,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     }
     
     fileprivate func removeNoResultsView() {
+        self.collectionView.bounces = true
         self.collectionView?.refreshControl?.endRefreshing()
         DispatchQueue.main.async {
             self.noResultsView.removeFromSuperview()
@@ -436,15 +438,9 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     
     fileprivate func anchorCollectionViewToTaskInteractionDetailsView(andScroll scroll: Bool) {
         var height = UIDevice().getDeviceSafeAreaInsetsHeightEstimation()
-        var navBarHeight = UIDevice().getDeviceSafeAreaInsetsHeightEstimation()
+        height += 295 // 295 pixels is the heightAnchor of self.taskInteractionView
         
-        if let navBar = self.navigationController {
-            navBarHeight = navBar.navigationBar.frame.size.height
-        }
-        
-        height = (height + navBarHeight) + 295
-        
-        self.collectionView.frame = CGRect(x: 0.0, y: height - navBarHeight, width: view.frame.width, height: view.frame.height - height)
+        self.collectionView.frame = CGRect(x: 0.0, y: height, width: view.frame.width, height: view.frame.height - height)
         
         if scroll {
             self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: false)

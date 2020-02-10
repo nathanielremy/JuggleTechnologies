@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3CC1A7BF326195C4B1026B1F /* Pods_JuggleTechnologies.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */; };
 		4407527323D4AAA00025D8AA /* TaskSpecificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */; };
 		441FB4B323D8A39800D8B115 /* UserProfileStatisticsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */; };
 		441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */; };
@@ -50,11 +49,12 @@
 		44FB732B23D37427000B8987 /* SignupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732A23D37427000B8987 /* SignupVC.swift */; };
 		44FB732D23D37460000B8987 /* TermsAndConditionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732C23D37460000B8987 /* TermsAndConditionsVC.swift */; };
 		44FB732F23D3748A000B8987 /* terms-and-conditions.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44FB732E23D3748A000B8987 /* terms-and-conditions.txt */; };
+		DA76599AA6DF5A664B5429C4 /* Pods_JuggleTechnologies.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04890BF0E14186AEA33503B3 /* Pods_JuggleTechnologies.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JuggleTechnologies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		17387714FA7FC2D262439057 /* Pods-JuggleTechnologies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.release.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.release.xcconfig"; sourceTree = "<group>"; };
+		04890BF0E14186AEA33503B3 /* Pods_JuggleTechnologies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JuggleTechnologies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2496946D5B215D5F762AE27C /* Pods-JuggleTechnologies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.release.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.release.xcconfig"; sourceTree = "<group>"; };
 		4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSpecificationsVC.swift; sourceTree = "<group>"; };
 		441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStatisticsCell.swift; sourceTree = "<group>"; };
 		441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelfDescriptionCell.swift; sourceTree = "<group>"; };
@@ -99,7 +99,7 @@
 		44FB732A23D37427000B8987 /* SignupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupVC.swift; sourceTree = "<group>"; };
 		44FB732C23D37460000B8987 /* TermsAndConditionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsVC.swift; sourceTree = "<group>"; };
 		44FB732E23D3748A000B8987 /* terms-and-conditions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "terms-and-conditions.txt"; sourceTree = "<group>"; };
-		81CAA12A52D96C73A9544D1C /* Pods-JuggleTechnologies.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.debug.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.debug.xcconfig"; sourceTree = "<group>"; };
+		58442DE2FB88AD1C75D8ACD4 /* Pods-JuggleTechnologies.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.debug.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,13 +107,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CC1A7BF326195C4B1026B1F /* Pods_JuggleTechnologies.framework in Frameworks */,
+				DA76599AA6DF5A664B5429C4 /* Pods_JuggleTechnologies.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		15395912B97ACF7DC58C2E70 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				04890BF0E14186AEA33503B3 /* Pods_JuggleTechnologies.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		442871A423F05304000B1AC4 /* Juggler */ = {
 			isa = PBXGroup;
 			children = (
@@ -142,7 +150,7 @@
 				4446E0DE23D341B1007933AF /* JuggleTechnologies */,
 				4446E0DD23D341B1007933AF /* Products */,
 				F39666D87C158762EC46E878 /* Pods */,
-				911AB0CACF07F3DF91F5F3B7 /* Frameworks */,
+				15395912B97ACF7DC58C2E70 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -302,19 +310,11 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		911AB0CACF07F3DF91F5F3B7 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				159D730D061A26AE63CD4569 /* Pods_JuggleTechnologies.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		F39666D87C158762EC46E878 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				81CAA12A52D96C73A9544D1C /* Pods-JuggleTechnologies.debug.xcconfig */,
-				17387714FA7FC2D262439057 /* Pods-JuggleTechnologies.release.xcconfig */,
+				58442DE2FB88AD1C75D8ACD4 /* Pods-JuggleTechnologies.debug.xcconfig */,
+				2496946D5B215D5F762AE27C /* Pods-JuggleTechnologies.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -326,11 +326,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4446E0F023D341B2007933AF /* Build configuration list for PBXNativeTarget "JuggleTechnologies" */;
 			buildPhases = (
-				42691BDB4CA44166F4E72F98 /* [CP] Check Pods Manifest.lock */,
+				2F6BECFAC24593C2AD0A33A7 /* [CP] Check Pods Manifest.lock */,
 				4446E0D823D341B1007933AF /* Sources */,
 				4446E0D923D341B1007933AF /* Frameworks */,
 				4446E0DA23D341B1007933AF /* Resources */,
-				4F2A9FD1A50CDA2FCA706BAE /* [CP] Embed Pods Frameworks */,
+				84B676FDD246DBA47FF262B0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -390,7 +390,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		42691BDB4CA44166F4E72F98 /* [CP] Check Pods Manifest.lock */ = {
+		2F6BECFAC24593C2AD0A33A7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -412,7 +412,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4F2A9FD1A50CDA2FCA706BAE /* [CP] Embed Pods Frameworks */ = {
+		84B676FDD246DBA47FF262B0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -619,7 +619,7 @@
 		};
 		4446E0F123D341B2007933AF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 81CAA12A52D96C73A9544D1C /* Pods-JuggleTechnologies.debug.xcconfig */;
+			baseConfigurationReference = 58442DE2FB88AD1C75D8ACD4 /* Pods-JuggleTechnologies.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -641,7 +641,7 @@
 		};
 		4446E0F223D341B2007933AF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 17387714FA7FC2D262439057 /* Pods-JuggleTechnologies.release.xcconfig */;
+			baseConfigurationReference = 2496946D5B215D5F762AE27C /* Pods-JuggleTechnologies.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

@@ -36,7 +36,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.cleaning
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
@@ -57,7 +57,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.computerIT
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
@@ -78,7 +78,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.assembly
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
@@ -99,7 +99,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.moving
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
@@ -120,7 +120,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.handyMan
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
@@ -141,7 +141,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.photoVideo
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
@@ -162,7 +162,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.delivery
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
@@ -183,7 +183,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.pets
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
@@ -204,7 +204,7 @@ class TaskCategoryPickerVC: UIViewController {
         let label = UILabel()
         label.text = Constants.TaskCategories.anything
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.gray
         
         return label
     }()
