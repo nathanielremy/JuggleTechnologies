@@ -13,6 +13,7 @@ class BecomeAJugglerVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.mainBlue()
+        navigationItem.title = "¡Se un Juggler!"
     }
 }
 

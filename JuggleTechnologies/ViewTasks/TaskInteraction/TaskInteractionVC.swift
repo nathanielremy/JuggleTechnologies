@@ -303,6 +303,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     
     fileprivate func fetchCurrentUser() {
         let currentUserId = Auth.auth().currentUser?.uid ?? "No currentUserId"
+        userCache.removeValue(forKey: currentUserId)
         Database.fetchUserFromUserID(userID: currentUserId) { (usr) in
             self.currentUser = usr
         }
@@ -417,8 +418,8 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     }
     
     fileprivate func anchorCollectionViewToTop(andScroll scroll: Bool, keyBoardHeight: CGFloat) {
-        var height: CGFloat = view.safeAreaInsets.top != 0 ? view.safeAreaInsets.top : 88
-        var navBarHeight: CGFloat = 88
+        var height = UIDevice().getDeviceSafeAreaInsetsHeightEstimation()
+        var navBarHeight = UIDevice().getDeviceSafeAreaInsetsHeightEstimation()
         
         if let navBar = self.navigationController {
             navBarHeight = navBar.navigationBar.frame.size.height
@@ -429,13 +430,13 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         self.collectionView.frame = CGRect(x: 0.0, y: height, width: view.frame.width, height: view.frame.height - height - keyBoardHeight)
         
         if scroll {
-            self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: true)
+            self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: false)
         }
     }
     
     fileprivate func anchorCollectionViewToTaskInteractionDetailsView(andScroll scroll: Bool) {
-        var height: CGFloat = view.safeAreaInsets.top != 0 ? view.safeAreaInsets.top : 88
-        var navBarHeight: CGFloat = 88
+        var height = UIDevice().getDeviceSafeAreaInsetsHeightEstimation()
+        var navBarHeight = UIDevice().getDeviceSafeAreaInsetsHeightEstimation()
         
         if let navBar = self.navigationController {
             navBarHeight = navBar.navigationBar.frame.size.height
@@ -446,7 +447,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         self.collectionView.frame = CGRect(x: 0.0, y: height - navBarHeight, width: view.frame.width, height: view.frame.height - height)
         
         if scroll {
-            self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: true)
+            self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: false)
         }
     }
     
@@ -561,9 +562,10 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
             
             let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
             let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
-                let becomeAJugglerVC = BecomeAJugglerVC()
-                let becomeAJugglerNavVC = UINavigationController(rootViewController: becomeAJugglerVC)
-                self.present(becomeAJugglerNavVC, animated: true, completion: nil)
+                let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
+                let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
+                jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
+                self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
             }
             
             alert.addAction(cancelAction)
@@ -603,9 +605,10 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
             
             let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
             let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
-                let becomeAJugglerVC = BecomeAJugglerVC()
-                let becomeAJugglerNavVC = UINavigationController(rootViewController: becomeAJugglerVC)
-                self.present(becomeAJugglerNavVC, animated: true, completion: nil)
+                let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
+                let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
+                jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
+                self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
             }
             
             alert.addAction(cancelAction)

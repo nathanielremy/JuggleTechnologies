@@ -269,11 +269,8 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             return UICollectionViewCell()
         }
         
-        if self.currentCategory == Constants.TaskCategories.all {
-            viewTaskCollectionViewCell.task = self.allTasks[indexPath.item]
-        } else {
-            viewTaskCollectionViewCell.task = self.filteredTasks[indexPath.item]
-        }
+        let task = self.currentCategory == Constants.TaskCategories.all ? self.allTasks[indexPath.item] : self.filteredTasks[indexPath.item]
+        viewTaskCollectionViewCell.task = task
         
         //Fetch again more tasks if collectionView hits bottom and if there are more tasks to fetch
         if indexPath.item == self.allTasks.count - 1 && (Double(self.tasksFetched % 20) == 0.0)  {

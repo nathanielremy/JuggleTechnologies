@@ -59,7 +59,7 @@ class UserProfileHeaderCell: UICollectionViewCell {
     
     lazy var userSwitchButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Modo Usador", for: .normal)
+        button.setTitle("Modo Usuario", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.setTitleColor(UIColor.mainBlue(), for: .normal)
         button.layer.borderColor = UIColor.mainBlue().cgColor

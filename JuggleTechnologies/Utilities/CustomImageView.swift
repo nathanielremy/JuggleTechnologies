@@ -31,7 +31,7 @@ class CustomImageView: UIImageView {
         }
         
         URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if let error = error { print("Error downloading photo from CustomImageView: ", error); return }
+            if let error = error { print("Error downloading photo for userProfleGridCell: ", error); return }
             guard let httpStatusCode = (response as? HTTPURLResponse)?.statusCode, (httpStatusCode >= 200) && (httpStatusCode <= 299) else {
                 print("HTTP status code other than 2xx"); return
             }
@@ -45,7 +45,7 @@ class CustomImageView: UIImageView {
             guard let image = UIImage(data: data) else { print("Unable to create UIImage from data"); return }
             
             // Cache the image to avoid dataTask later on
-            imageCache[url.absoluteString] = image
+            imageCache[urlString] = image
             
             // Get back on main thread to update UI
             DispatchQueue.main.async {

@@ -11,14 +11,17 @@ import Firebase
 
 class ViewTaskCollectionViewCell: UICollectionViewCell {
     
-    //MARK: Stores properties
+    //MARK: Stored properties
     func fetchUser(withUserId userId: String) {
         Database.fetchUserFromUserID(userID: userId) { (usr) in
             guard let user = usr else {
                 return
             }
-            self.profileImageView.loadImage(from: user.profileImageURLString)
+            
             self.firstNameLabel.text = user.firstName
+            DispatchQueue.main.async {
+                self.profileImageView.loadImage(from: user.profileImageURLString)
+            }
         }
     }
     
@@ -27,12 +30,13 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
             guard let task = task else {
                 return
             }
+            fetchUser(withUserId: task.userId)
+            
             let dateFormatterPrint = DateFormatter()
             dateFormatterPrint.locale = Locale(identifier: "es_ES")
             dateFormatterPrint.dateFormat = "dd, MMM, yyyy"
             postedDateLabel.text = dateFormatterPrint.string(from: task.creationDate)
             
-            fetchUser(withUserId: task.userId)
             taskTitleLabel.text = task.title
             taskLocationLabel.text = task.isOnline ? "Internet/Teléfono" : task.stringLocation
             taskCategoryImageView.image = setTaskCategory(forCategory: task.category)

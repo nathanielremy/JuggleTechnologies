@@ -17,6 +17,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             guard let _ = self.user else {
                 return
             }
+            
             collectionView.refreshControl?.endRefreshing()
             collectionView.reloadData()
         }
@@ -38,10 +39,6 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         refreshController.tintColor = UIColor.darkText
         refreshController.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView?.refreshControl = refreshController
-        
-//        guard let userId = Auth.auth().currentUser?.uid else {
-//            return
-//        }
         
         let userId = self.user?.userId ?? (Auth.auth().currentUser?.uid ?? "")
         
