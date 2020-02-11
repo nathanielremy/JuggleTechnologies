@@ -43,6 +43,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         navigationController?.navigationBar.tintColor = .black
         
         //Register the CollectionViewCells
+//        collectionView.register(UserProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.userProfileHeaderCell)
         collectionView.register(UserProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.userProfileHeaderCell)
         collectionView.register(UserProfileStatisticsCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.userProfileStatisticsCell)
         collectionView.register(UserSelfDescriptionCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.userSelfDescriptionCell)
@@ -127,7 +128,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         
         guard let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.CollectionViewCellIds.userProfileHeaderCell, for: indexPath) as? UserProfileHeaderCell else { fatalError("Unable to dequeue UserProfileHeaderCell")}
         
-//        headerCell.delegate = self
+        headerCell.delegate = self
         headerCell.user = self.user
         
         return headerCell
@@ -217,5 +218,26 @@ extension ProfileVC: UserSelfDescriptionCellDelegate {
             
          completion(true, description)
         }
+    }
+}
+
+extension ProfileVC: UserProfileHeaderCellDelegate {
+    func dispalayBecomeAJugglerAlert() {
+        let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieres, cuando quieras con Juggle", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+        let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
+            let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
+            let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
+            jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
+            self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
+        }
+        
+        alert.addAction(cancelAction)
+        alert.addAction(becomeAJuggleAction)
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        return
     }
 }

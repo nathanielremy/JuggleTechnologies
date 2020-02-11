@@ -12,7 +12,7 @@ class TaskCategoryPickerVC: UIViewController {
     
     let mainLabel: UILabel = {
         let label = UILabel()
-        label.text = "¿Con qué tipo de tarea necesitas ayuda?"
+        label.text = "¿Con qué podemos ayudarle hoy?"
         label.font = UIFont.boldSystemFont(ofSize: 17)
         label.textColor = .darkText
         label.textAlignment = .center

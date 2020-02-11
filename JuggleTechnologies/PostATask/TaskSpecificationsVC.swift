@@ -122,7 +122,7 @@ class TaskSpecificationsVC: UIViewController {
         label.textAlignment = .left
         
         let attributedText = NSMutableAttributedString(string: "Duración Estimada ", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "¿Cuántas horas requiere esta tarea?", attributes: [.font : UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.darkText]))
+        attributedText.append(NSAttributedString(string: "¿Cuántas horas requiere esta tarea?", attributes: [.font : UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.gray]))
         
         label.attributedText = attributedText
         
@@ -149,7 +149,7 @@ class TaskSpecificationsVC: UIViewController {
         label.textAlignment = .left
         
         let attributedText = NSMutableAttributedString(string: "Presupuesto € ", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "¿Cuánto le gustaría pagar por esta tarea?", attributes: [.font : UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.darkText]))
+        attributedText.append(NSAttributedString(string: "¿Cuánto le gustaría pagar por esta tarea?", attributes: [.font : UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.gray]))
         
         label.attributedText = attributedText
         
@@ -505,7 +505,7 @@ class TaskSpecificationsVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "¡Listo!", style: .plain, target: self, action: #selector(handleDoneButton))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "¡Listo!", style: .done, target: self, action: #selector(handleDoneButton))
         navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
         
         setupViews()
@@ -725,6 +725,17 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
         }
         
         return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField == taskTitleTextField || textField == durationTextField {
+            return
+        }
+        
+        let frame: CGRect = textField == budgetTextField ? cpTextField.frame : doneButton.frame
+        DispatchQueue.main.async {
+            self.scrollView.scrollRectToVisible(frame, animated: true)
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

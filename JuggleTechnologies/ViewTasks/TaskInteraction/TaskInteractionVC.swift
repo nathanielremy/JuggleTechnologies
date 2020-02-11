@@ -86,11 +86,17 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         }
         
         // Cant send messages to yourself
-        if self.task?.userId == Auth.auth().currentUser?.uid {
+        if self.task?.userId == currentUser?.userId {
             let alert = UIView.okayAlert(title: "No se Puede Enviar Mensaje", message: "No se puede enviar mensajes por tareas que son tuyos.")
             self.present(alert, animated: true, completion: nil)
             self.messageTextField.text = ""
             
+            return
+        }
+        
+        if let currentUser = self.currentUser, !currentUser.isJuggler {
+            self.dispalayBecomeAJugglerAlert()
+            self.messageTextField.text = ""
             return
         }
         
@@ -499,6 +505,25 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             }
         }
     }
+    
+    fileprivate func dispalayBecomeAJugglerAlert() {
+        let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieres, cuando quieras con Juggle", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+        let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
+            let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
+            let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
+            jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
+            self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
+        }
+        
+        alert.addAction(cancelAction)
+        alert.addAction(becomeAJuggleAction)
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        return
+    }
 }
 
 //MARK: Extensions
@@ -554,21 +579,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         
         //Present become a Juggler action
         guard let currentUser = self.currentUser, currentUser.isJuggler else {
-            let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieras, cuando quieras con Juggle", preferredStyle: .alert)
-            
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
-            let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
-                let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
-                let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
-                jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
-                self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
-            }
-            
-            alert.addAction(cancelAction)
-            alert.addAction(becomeAJuggleAction)
-            
-            self.present(alert, animated: true, completion: nil)
-            
+            self.dispalayBecomeAJugglerAlert()
             return
         }
         
@@ -597,21 +608,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         
         //Present become a Juggler action
         guard let currentUser = self.currentUser, currentUser.isJuggler else {
-            let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieras, cuando quieras con Juggle", preferredStyle: .alert)
-            
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
-            let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
-                let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
-                let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
-                jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
-                self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
-            }
-            
-            alert.addAction(cancelAction)
-            alert.addAction(becomeAJuggleAction)
-            
-            self.present(alert, animated: true, completion: nil)
-            
+            self.dispalayBecomeAJugglerAlert()
             return
         }
     }

@@ -7,10 +7,17 @@
 //
 
 import UIKit
+import Firebase
+
+protocol UserProfileHeaderCellDelegate {
+    func dispalayBecomeAJugglerAlert()
+}
 
 class UserProfileHeaderCell: UICollectionViewCell {
     
     //MARK: Stored properties
+    var delegate: UserProfileHeaderCellDelegate?
+    
     var user: User? {
         didSet {
             guard let user = self.user else {
@@ -51,7 +58,7 @@ class UserProfileHeaderCell: UICollectionViewCell {
     let memberSinceLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .lightGray
+        label.textColor = .gray
         label.textAlignment = .center
         
         return label
@@ -93,7 +100,11 @@ class UserProfileHeaderCell: UICollectionViewCell {
             jugglerSwitchButton.isEnabled = true
             jugglerSwitchButton.setTitleColor(.lightGray, for: .normal)
             jugglerSwitchButton.layer.borderColor = UIColor.lightGray.cgColor
-        } else { //Juggler button
+        } else if button.tag == 1 { //Juggler button
+            if let user = self.user, user.userId == Auth.auth().currentUser?.uid, !user.isJuggler {
+                self.delegate?.dispalayBecomeAJugglerAlert()
+                return
+            }
             userSwitchButton.isEnabled = true
             userSwitchButton.setTitleColor(.lightGray, for: .normal)
             userSwitchButton.layer.borderColor = UIColor.lightGray.cgColor

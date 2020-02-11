@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import  Firebase
 
 protocol DashboardHeaderCellDelegate {
     func changeFilterOptions(forFilterValue filterValue: Int, isUserMode: Bool)
+    func dispalayBecomeAJugglerAlert()
 }
 
 class DashboardHeaderCell: UICollectionViewCell {
@@ -17,6 +19,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     //MARK: Stored properties
     var isUserMode: Bool = true
     var delegate: DashboardHeaderCellDelegate?
+    var currentUser: User?
     
     lazy var userSwitchButton: UIButton = {
         let button = UIButton(type: .system)
@@ -55,6 +58,10 @@ class DashboardHeaderCell: UICollectionViewCell {
             jugglerSwitchButton.setTitleColor(.lightGray, for: .normal)
             jugglerSwitchButton.layer.borderColor = UIColor.lightGray.cgColor
         } else if button.tag == 1 { //Juggler button
+            guard let user = self.currentUser, user.isJuggler else {
+                self.delegate?.dispalayBecomeAJugglerAlert()
+                return
+            }
             isUserMode = false
             userSwitchButton.isEnabled = true
             userSwitchButton.setTitleColor(.lightGray, for: .normal)
@@ -104,7 +111,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     //MARK: User filrer option buttons below until initializer method
     lazy var onGoingFilterOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("On Going", for: .normal)
+        button.setTitle("Pendientes", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
         button.tintColor = .darkText
@@ -116,7 +123,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     lazy var acceptedFilterOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Aceptada", for: .normal)
+        button.setTitle("Aceptadas", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
         button.tintColor = .lightGray
@@ -128,7 +135,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     lazy var completedFilterOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Completada", for: .normal)
+        button.setTitle("Completadas", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
         button.tintColor = .lightGray
@@ -140,7 +147,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     lazy var savedFilterOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Guardada", for: .normal)
+        button.setTitle("Guardadas", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
         button.tintColor = .lightGray
@@ -184,11 +191,24 @@ class DashboardHeaderCell: UICollectionViewCell {
         super.init(frame: frame)
         
         backgroundColor = .white
+        fetchCurrentUser()
         setupViews()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    fileprivate func fetchCurrentUser() {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        Database.fetchUserFromUserID(userID: currentUserId) { (user) in
+            if let currentUser = user {
+                self.currentUser = currentUser
+            }
+        }
     }
     
     fileprivate func setupViews() {

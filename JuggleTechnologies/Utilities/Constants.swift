@@ -11,6 +11,7 @@ import Foundation
 class Constants {
     struct FirebaseStorage {
         static let profileImages = "profileImages"
+        static let jugglerApplicationPictures = "jugglerApplicationPictures"
     }
     
     struct FirebaseDatabase {
@@ -51,6 +52,9 @@ class Constants {
         static let toUserId = "toUserId"
         static let taskId = "taskId"
         static let taskOwnerUserId = "taskOwnerUserId"
+        
+        static let jugglerApplicationsRef = "jugglerApplications"
+        static let applicationPictureURLString = "applicationPictureURLString"
     }
     
     struct TaskCategories {

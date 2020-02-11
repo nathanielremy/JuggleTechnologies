@@ -388,4 +388,23 @@ extension DashboardVC: DashboardHeaderCellDelegate {
         
         self.removeNoResultsView()
     }
+    
+    func dispalayBecomeAJugglerAlert() {
+        let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieres, cuando quieras con Juggle", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+        let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
+            let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
+            let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
+            jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
+            self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
+        }
+        
+        alert.addAction(cancelAction)
+        alert.addAction(becomeAJuggleAction)
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        return
+    }
 }

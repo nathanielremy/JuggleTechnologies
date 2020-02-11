@@ -68,6 +68,7 @@ class JugglerApplicationStepsVC: UIViewController {
         let attributedText = NSMutableAttributedString(string: "3. ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText])
         attributedText.append(NSAttributedString(string: "Una vez que hemos recibido su applicatcion, le enviaremos mas informaciones sobre los trabajos con ", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
         attributedText.append(NSAttributedString(string: "Juggle", attributes: [.foregroundColor : UIColor.mainBlue(), .font : UIFont.systemFont(ofSize: 16)]))
+        attributedText.append(NSAttributedString(string: ".", attributes: [.font : UIFont.systemFont(ofSize: 16), .foregroundColor : UIColor.gray]))
         
         label.attributedText = attributedText
         
