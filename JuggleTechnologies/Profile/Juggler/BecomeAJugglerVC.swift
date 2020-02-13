@@ -11,7 +11,24 @@ import Firebase
 
 class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     //MARK: Stored properties
-    var currentUser: User?
+    var currentUser: User? {
+        didSet {
+            guard let user = self.currentUser else {
+                return
+            }
+            
+            if user.hasAppliedForJuggler {
+                let alert = UIAlertController(title: "Ya has Solicitado Convertirte en Juggler", message: "Verificamos su solicitud. Mira tu correo electrónico con frecuencia", preferredStyle: .alert)
+                
+                let okayAction = UIAlertAction(title: "Okay", style: .default) { (_) in
+                    self.navigationController?.dismiss(animated: true, completion: nil)
+                }
+                
+                alert.addAction(okayAction)
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
+    }
     
     let activityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
@@ -38,6 +55,7 @@ class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINav
     let faceAndIdPictureButton: UIButton = {
         let button = UIButton(type: .system)
         button.layer.borderColor = UIColor.mainBlue().cgColor
+        button.layer.masksToBounds = true
         button.layer.borderWidth = 1
         button.setTitle("Agrega una selfie con su DNI al lado de su figura.", for: .normal)
         button.setTitleColor(UIColor.gray, for: .normal)
@@ -89,7 +107,7 @@ class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINav
             faceAndIdPictureButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
         }
         
-        // Make button perfectly round
+        //Adjust content
         faceAndIdPictureButton.layer.masksToBounds = true
         faceAndIdPictureButton.layer.cornerRadius = 5
         faceAndIdPictureButton.layer.borderColor = UIColor.mainBlue().cgColor
@@ -126,7 +144,6 @@ class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINav
             return
         }
         
-        print(image.description)
         self.animateAndDisableViews(true)
         
         //Compress image
@@ -176,11 +193,9 @@ class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINav
                     Constants.FirebaseDatabase.creationDate : Date().timeIntervalSince1970,
                     Constants.FirebaseDatabase.applicationPictureURLString : applicationPictureURLString
                 ]
-                
-                let values = [currentUser.userId : applicationValues]
-                
+                let jugglerApplicationValues = [currentUser.userId : applicationValues]
                 let ref = Database.database().reference().child(Constants.FirebaseDatabase.jugglerApplicationsRef)
-                ref.updateChildValues(values) { (err, _) in
+                ref.updateChildValues(jugglerApplicationValues) { (err, _) in
                     if let error = err {
                         print("Error saving jugglerApplication to database: ", error)
                         DispatchQueue.main.async {
@@ -190,11 +205,28 @@ class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINav
                         return
                     }
                     
-                    DispatchQueue.main.async {
-                        self.animateAndDisableViews(false)
-                        let jugglerApplicationCompleteVC = JugglerApplicationCompleteVC()
-                        jugglerApplicationCompleteVC.user = currentUser
-                        self.navigationController?.pushViewController(jugglerApplicationCompleteVC, animated: true)
+                    let userValues: [String: Any] = [Constants.FirebaseDatabase.hasAppliedForJuggler : 1]
+                    let userHasAppliedForJugglerRef = Database.database().reference().child(Constants.FirebaseDatabase.usersRef).child(currentUser.userId)
+                    userHasAppliedForJugglerRef.updateChildValues(userValues) { (err, _) in
+                        if let error = err {
+                            print("Error updating \(userValues) to database: ", error)
+                            DispatchQueue.main.async {
+                                self.present(self.errorSendingApplicationAlert(), animated: true, completion: nil)
+                                self.animateAndDisableViews(false)
+                            }
+                            return
+                        }
+                        
+                        if userCache[currentUser.userId] != nil {
+                            userCache[currentUser.userId]!.hasAppliedForJuggler = true
+                        }
+                        
+                        DispatchQueue.main.async {
+                            self.animateAndDisableViews(false)
+                            let jugglerApplicationCompleteVC = JugglerApplicationCompleteVC()
+                            jugglerApplicationCompleteVC.user = currentUser
+                            self.navigationController?.pushViewController(jugglerApplicationCompleteVC, animated: true)
+                        }
                     }
                 }
             }
@@ -233,6 +265,7 @@ class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINav
         let faceAndIdPictureButtonWidth = view.frame.width * 0.33
         faceAndIdPictureButton.anchor(top: CTATitleLabel.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: faceAndIdPictureButtonWidth, height: faceAndIdPictureButtonWidth * 1.2)
         faceAndIdPictureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        faceAndIdPictureButton.layer.cornerRadius = 5
         
         view.addSubview(testVersionLabel)
         testVersionLabel.anchor(top: faceAndIdPictureButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)

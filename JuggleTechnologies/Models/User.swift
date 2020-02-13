@@ -16,7 +16,7 @@ struct User {
     let emailAddress: String
     let profileImageURLString: String
     let isJuggler: Bool
-    let hasAppliedForJuggler: Bool
+    var hasAppliedForJuggler: Bool
     let creationDate: Date
     var description: String
     
