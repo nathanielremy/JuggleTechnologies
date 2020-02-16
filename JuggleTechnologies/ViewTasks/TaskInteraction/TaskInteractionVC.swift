@@ -586,6 +586,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         
         let taskOfferVC = TaskOfferVC()
         taskOfferVC.task = task
+        taskOfferVC.user = self.taskInteractionView.user
         let taskOfferNavVC = UINavigationController(rootViewController: taskOfferVC)
         self.present(taskOfferNavVC, animated: true, completion: nil)
     }

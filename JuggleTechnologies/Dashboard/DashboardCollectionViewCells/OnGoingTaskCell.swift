@@ -10,8 +10,10 @@ import UIKit
 import Firebase
 
 class OnGoingTaskCell: UICollectionViewCell {
-    
     //MARK: Stores properties
+    var messages = [Message]()
+    var offers = [Offer]()
+    
     func fetchUser(withUserId userId: String) {
         Database.fetchUserFromUserID(userID: userId) { (usr) in
             guard let user = usr else {
@@ -28,11 +30,14 @@ class OnGoingTaskCell: UICollectionViewCell {
                 return
             }
             
+            self.notificationsLabel.removeFromSuperview()
+            self.messages.removeAll()
+            self.offers.removeAll()
+            
             let taskRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(taskId)
             taskRef.observeSingleEvent(of: .value, with: { (snapshot) in
                 
                 guard let dictionary = snapshot.value as? [String : Any] else {
-                    print("NO")
                     return
                 }
                 
@@ -51,6 +56,10 @@ class OnGoingTaskCell: UICollectionViewCell {
             guard let task = task else {
                 return
             }
+            
+            //fetchOffer function definition under init
+            self.fetchOffers(forTask: task)
+            
             let dateFormatterPrint = DateFormatter()
             dateFormatterPrint.locale = Locale(identifier: "es_ES")
             dateFormatterPrint.dateFormat = "dd, MMM, yyyy"
@@ -94,18 +103,6 @@ class OnGoingTaskCell: UICollectionViewCell {
             taskCategoryLabel.text = Constants.TaskCategories.anything
             return #imageLiteral(resourceName: "AnythingPH")
         }
-    }
-    
-    lazy var saveTaskButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = .red
-        button.addTarget(self, action: #selector(handleSaveTaskButton), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    @objc fileprivate func handleSaveTaskButton() {
-        print("Handeling saveTaskButton")
     }
     
     let profileImageView: CustomImageView = {
@@ -204,6 +201,22 @@ class OnGoingTaskCell: UICollectionViewCell {
         return label
     }()
     
+    let notificationsLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.textColor = UIColor.mainBlue()
+        
+        return label
+    }()
+    
+    fileprivate func setupNotificationsLabel() {
+        addSubview(notificationsLabel)
+        notificationsLabel.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 15)
+        notificationsLabel.backgroundColor = UIColor.darkText
+        notificationsLabel.text = "\(self.offers.count) oferta\(self.offers.count > 1 ? "s" : "") y \(self.messages.count) mensaje\(self.messages.count == 1 ? "" : "s")"
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
@@ -214,14 +227,37 @@ class OnGoingTaskCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    fileprivate func fetchOffers(forTask task: Task) {
+        let taskOffersRef = Database.database().reference().child(Constants.FirebaseDatabase.taskOffersRef).child(task.id)
+        taskOffersRef.observeSingleEvent(of: .value, with: { (offersSnapshot) in
+            guard let offers = offersSnapshot.value as? [String : [String : Any]] else {
+                return
+            }
+            
+            var offersCreated = 0
+            offers.forEach { (key, value) in
+                let offer = Offer(offerDictionary: value)
+                offersCreated += 1
+                self.offers.append(offer)
+                
+                self.offers.sort(by: { (offer1, offer2) -> Bool in
+                    return offer1.creationDate.compare(offer2.creationDate) == .orderedDescending
+                })
+                
+                if offersCreated == offers.count {
+                    self.setupNotificationsLabel()
+                }
+            }
+        }) { (error) in
+            print("Error fetching offers for \(task.id): \(error)")
+        }
+    }
+    
     fileprivate func setupViews() {
         addSubview(profileImageView)
         profileImageView.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 60, height: 60)
         profileImageView.layer.cornerRadius = 60 / 2
         profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        
-        addSubview(saveTaskButton)
-        saveTaskButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: -8, width: 20, height: 20)
         
         addSubview(firstNameLabel)
         firstNameLabel.anchor(top: profileImageView.bottomAnchor, left: leftAnchor, bottom: nil, right: profileImageView.rightAnchor, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 12, width: nil, height: nil)
@@ -235,28 +271,24 @@ class OnGoingTaskCell: UICollectionViewCell {
         addSubview(taskLocationLabel)
         taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
-        addSubview(saveTaskButton)
-        saveTaskButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: -8, width: 35, height: 35)
-        saveTaskButton.layer.cornerRadius = 10
-        
         let taskDetailIconsStackView = UIStackView(arrangedSubviews: [taskCategoryImageView, taskDurationImageView, taskBudgetImageView])
         taskDetailIconsStackView.axis = .horizontal
         taskDetailIconsStackView.distribution = .fillEqually
         taskDetailIconsStackView.spacing = 50
         
         addSubview(taskDetailIconsStackView)
-        taskDetailIconsStackView.anchor(top: nil, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: -28, paddingRight: -50, width: nil, height: 30)
+        taskDetailIconsStackView.anchor(top: nil, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: -43, paddingRight: -50, width: nil, height: 30)
         
         addSubview(taskCategoryLabel)
-        taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
+        taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 12)
         taskCategoryLabel.centerXAnchor.constraint(equalTo: taskCategoryImageView.centerXAnchor).isActive = true
         
         addSubview(taskDurationLabel)
-        taskDurationLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
+        taskDurationLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 12)
         taskDurationLabel.centerXAnchor.constraint(equalTo: taskDurationImageView.centerXAnchor).isActive = true
         
         addSubview(taskBudgetLabel)
-        taskBudgetLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
+        taskBudgetLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 12)
         taskBudgetLabel.centerXAnchor.constraint(equalTo: taskBudgetImageView.centerXAnchor).isActive = true
         
         let bottomSeperatorView = UIView()

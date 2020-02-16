@@ -30,7 +30,7 @@ class TaskSpecificationsVC: UIViewController {
     let postTaskActivityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
         ai.hidesWhenStopped = true
-        ai.color = UIColor.darkText
+        ai.color = UIColor.mainBlue()
         ai.translatesAutoresizingMaskIntoConstraints = false
         
         return ai

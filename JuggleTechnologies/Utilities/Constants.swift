@@ -42,6 +42,13 @@ class Constants {
         static let isJugglerComplete = "isJugglerComplete"
         static let isUserComplete = "isUserComplete"
         
+        static let taskOffersRef = "taskOffers"
+        static let offerPrice = "offerPrice"
+        static let isOfferAccepted = "isOfferAccepted"
+        static let isOfferRejected = "isOfferRejected"
+        static let offerOwnerId = "offerOwnerId"
+        
+        
         static let userTasksRef = "userTasks"
         static let jugglerTasksRef = "jugglerTasksRef"
         

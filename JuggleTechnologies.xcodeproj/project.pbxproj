@@ -17,6 +17,8 @@
 		442871A623F05317000B1AC4 /* BecomeAJugglerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442871A523F05317000B1AC4 /* BecomeAJugglerVC.swift */; };
 		44294A9123F3503F002F5732 /* JugglerApplicationCompleteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44294A9023F3503F002F5732 /* JugglerApplicationCompleteVC.swift */; };
 		4438EBA923E71F6D000CF489 /* DashboardHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4438EBA823E71F6D000CF489 /* DashboardHeaderCell.swift */; };
+		443C4FB323F9D1B20070309E /* OfferCompleteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C4FB223F9D1B20070309E /* OfferCompleteVC.swift */; };
+		443C4FB523F9DD050070309E /* Offer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C4FB423F9DD050070309E /* Offer.swift */; };
 		4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0DF23D341B1007933AF /* AppDelegate.swift */; };
 		4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446E0E123D341B1007933AF /* SceneDelegate.swift */; };
 		4446E0E623D341B2007933AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4446E0E523D341B2007933AF /* Assets.xcassets */; };
@@ -67,6 +69,8 @@
 		442871A523F05317000B1AC4 /* BecomeAJugglerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BecomeAJugglerVC.swift; sourceTree = "<group>"; };
 		44294A9023F3503F002F5732 /* JugglerApplicationCompleteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JugglerApplicationCompleteVC.swift; sourceTree = "<group>"; };
 		4438EBA823E71F6D000CF489 /* DashboardHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardHeaderCell.swift; sourceTree = "<group>"; };
+		443C4FB223F9D1B20070309E /* OfferCompleteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferCompleteVC.swift; sourceTree = "<group>"; };
+		443C4FB423F9DD050070309E /* Offer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Offer.swift; sourceTree = "<group>"; };
 		4446E0DC23D341B1007933AF /* JuggleTechnologies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JuggleTechnologies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4446E0DF23D341B1007933AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4446E0E123D341B1007933AF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -269,6 +273,7 @@
 			children = (
 				447FA35F23E1FF150020247E /* TaskDetailsVC.swift */,
 				447C128723EF24DA00947FE8 /* TaskOfferVC.swift */,
+				443C4FB223F9D1B20070309E /* OfferCompleteVC.swift */,
 				44E53D4623F8333700102397 /* EditTaskVC.swift */,
 			);
 			path = TaskInteractions;
@@ -312,6 +317,7 @@
 				44FB732823D36D96000B8987 /* User.swift */,
 				442698A623D610D90095A495 /* Task.swift */,
 				444AA33023EB4DA100872EB9 /* Message.swift */,
+				443C4FB423F9DD050070309E /* Offer.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -467,6 +473,7 @@
 				444AA33123EB4DA100872EB9 /* Message.swift in Sources */,
 				44972CCF23E9E3B400798745 /* CompletedTaskCell.swift in Sources */,
 				4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */,
+				443C4FB323F9D1B20070309E /* OfferCompleteVC.swift in Sources */,
 				4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */,
 				4446E10423D3620D007933AF /* ProfileVC.swift in Sources */,
 				44972CCD23E9E38900798745 /* AcceptedTaskCell.swift in Sources */,
@@ -479,6 +486,7 @@
 				4483FCFD23DF320A00178E84 /* ChatMessageCell.swift in Sources */,
 				44FB732423D36C13000B8987 /* Extensions.swift in Sources */,
 				44294A9123F3503F002F5732 /* JugglerApplicationCompleteVC.swift in Sources */,
+				443C4FB523F9DD050070309E /* Offer.swift in Sources */,
 				4483FCFA23DF2E9C00178E84 /* TaskInteractionDetailsView.swift in Sources */,
 				44972CD123E9E8EF00798745 /* SavedTaskCell.swift in Sources */,
 				4483FCF823DF28E000178E84 /* TaskInteractionVC.swift in Sources */,

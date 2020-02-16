@@ -332,7 +332,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 175)
+        return self.filterOptionsValue == 1 ? CGSize(width: view.frame.width, height: 190) : CGSize(width: view.frame.width, height: 175)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
