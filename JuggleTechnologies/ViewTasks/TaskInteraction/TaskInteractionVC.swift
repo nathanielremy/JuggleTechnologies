@@ -543,6 +543,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         let taskDetailsVC = TaskDetailsVC()
         taskDetailsVC.task = self.task
         taskDetailsVC.user = user
+        taskDetailsVC.previousViewController = self
         navigationController?.pushViewController(taskDetailsVC, animated: true)
     }
     

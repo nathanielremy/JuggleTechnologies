@@ -8,14 +8,29 @@
 
 import UIKit
 import MapKit
+import Firebase
 
 class TaskDetailsVC: UIViewController {
     //MARK: Stored properties
+    var previousViewController: TaskInteractionVC?
+    var didEditTask: Bool? {
+        didSet {
+            if self.didEditTask ?? false {
+                previousViewController?.task = self.task
+            }
+        }
+    }
+    
     var task: Task? {
         didSet {
             guard let task = self.task else {
                 self.navigationController?.popViewController(animated: true)
                 return
+            }
+            
+            if task.userId == Auth.auth().currentUser?.uid {
+                let editTaskBarButton = UIBarButtonItem(title: "Editar", style: .plain, target: self, action: #selector(handleEditNavBarButton))
+                self.navigationItem.rightBarButtonItem = editTaskBarButton
             }
             
             self.navigationItem.title = task.title
@@ -36,6 +51,8 @@ class TaskDetailsVC: UIViewController {
                 setupMapView()
                 let taskCoordinate = CLLocationCoordinate2D(latitude: task.latitude ?? 0.0, longitude: task.longitude ?? 0.0)
                 self.placePinAt(coordinate: taskCoordinate)
+            } else {
+                self.mapView.removeFromSuperview()
             }
         }
     }
@@ -72,7 +89,7 @@ class TaskDetailsVC: UIViewController {
         image.backgroundColor = .lightGray
         image.clipsToBounds = true
         image.contentMode = .scaleAspectFill
-        image.layer.borderColor = UIColor.darkText.cgColor
+        image.layer.borderColor = UIColor.mainBlue().cgColor
         image.layer.borderWidth = 1.5
         
         return image
@@ -159,10 +176,24 @@ class TaskDetailsVC: UIViewController {
         map.delegate = self
         map.layer.masksToBounds = true
         map.layer.borderWidth = 1
-        map.layer.borderColor = UIColor.darkText.cgColor
+        map.layer.borderColor = UIColor.mainBlue().cgColor
         
         return map
     }()
+    
+    @objc fileprivate func handleEditNavBarButton() {
+        guard let task = self.task, task.status == 0 else {
+            let statusString = self.task?.status == 1 ? "aceptada" : "completada"
+            let alert = UIView.okayAlert(title: "No se Puede Editar su Tarea", message: "Su tarea ya esta \(statusString).")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        let editTaskVC = EditTaskVC()
+        editTaskVC.task = task
+        editTaskVC.previousViewController = self
+        self.navigationController?.pushViewController(editTaskVC, animated: true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -244,7 +275,7 @@ extension TaskDetailsVC: MKMapViewDelegate {
             pinView.annotation = annotation
         } else {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
-            pinView!.pinTintColor = UIColor.darkText
+            pinView!.pinTintColor = UIColor.mainBlue()
         }
         return pinView
     }

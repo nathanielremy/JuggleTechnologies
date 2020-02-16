@@ -22,7 +22,7 @@ class JugglerApplicationStepsVC: UIViewController {
         return label
     }()
     
-    // Must be lazy var to add tapGestureRecognizer.
+    // Must be lazy var to add tapGestureRecognizer to UILabel.
     lazy var stepOneLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
@@ -78,7 +78,7 @@ class JugglerApplicationStepsVC: UIViewController {
     lazy var continueButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Continuar", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.mainBlue()
         button.addTarget(self, action: #selector(handleContinueButton), for: .touchUpInside)

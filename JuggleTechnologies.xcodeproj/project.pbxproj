@@ -43,6 +43,7 @@
 		44972CD123E9E8EF00798745 /* SavedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CD023E9E8EF00798745 /* SavedTaskCell.swift */; };
 		44BECA8C23F15F8500014A59 /* JugglerApplicationStepsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BECA8B23F15F8500014A59 /* JugglerApplicationStepsVC.swift */; };
 		44BECA8E23F1608700014A59 /* JugglerSignupRequirementsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BECA8D23F1608700014A59 /* JugglerSignupRequirementsVC.swift */; };
+		44E53D4723F8333700102397 /* EditTaskVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E53D4623F8333700102397 /* EditTaskVC.swift */; };
 		44FB732123D36BEC000B8987 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732023D36BEC000B8987 /* LoginVC.swift */; };
 		44FB732423D36C13000B8987 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732323D36C13000B8987 /* Extensions.swift */; };
 		44FB732623D36CAA000B8987 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732523D36CAA000B8987 /* Constants.swift */; };
@@ -94,6 +95,7 @@
 		44972CD023E9E8EF00798745 /* SavedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedTaskCell.swift; sourceTree = "<group>"; };
 		44BECA8B23F15F8500014A59 /* JugglerApplicationStepsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JugglerApplicationStepsVC.swift; sourceTree = "<group>"; };
 		44BECA8D23F1608700014A59 /* JugglerSignupRequirementsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JugglerSignupRequirementsVC.swift; sourceTree = "<group>"; };
+		44E53D4623F8333700102397 /* EditTaskVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskVC.swift; sourceTree = "<group>"; };
 		44FB732023D36BEC000B8987 /* LoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		44FB732323D36C13000B8987 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		44FB732523D36CAA000B8987 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 			children = (
 				447FA35F23E1FF150020247E /* TaskDetailsVC.swift */,
 				447C128723EF24DA00947FE8 /* TaskOfferVC.swift */,
+				44E53D4623F8333700102397 /* EditTaskVC.swift */,
 			);
 			path = TaskInteractions;
 			sourceTree = "<group>";
@@ -486,6 +489,7 @@
 				4446E0F823D34FFC007933AF /* ViewTasksVC.swift in Sources */,
 				4446E10123D358E5007933AF /* DashboardVC.swift in Sources */,
 				442698A723D610D90095A495 /* Task.swift in Sources */,
+				44E53D4723F8333700102397 /* EditTaskVC.swift in Sources */,
 				447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */,
 				442871A623F05317000B1AC4 /* BecomeAJugglerVC.swift in Sources */,
 				44203CA423DB278A00F6D71A /* ViewTaskCollectionViewCell.swift in Sources */,

@@ -130,7 +130,7 @@ class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINav
     lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("¡Listo!", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.mainBlue()
         button.addTarget(self, action: #selector(handleDoneButton), for: .touchUpInside)

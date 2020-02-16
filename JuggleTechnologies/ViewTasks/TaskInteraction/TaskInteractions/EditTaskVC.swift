@@ -1,8 +1,8 @@
 //
-//  TaskSpecificationsVC.swift
+//  EditTaskVC.swift
 //  JuggleTechnologies
 //
-//  Created by Nathaniel Remy on 2020-01-19.
+//  Created by Nathaniel Remy on 2020-02-15.
 //  Copyright © 2020 Nathaniel Remy. All rights reserved.
 //
 
@@ -10,27 +10,51 @@ import UIKit
 import MapKit
 import Firebase
 
-class TaskSpecificationsVC: UIViewController {
-    
-    //MARK: Stored prperties
+class EditTaskVC: UIViewController {
+    //MARK: Stored properties
     var isTaskOnline = false
     var addressString: String?
     
-    var taskCategory: String? {
+    var didEditTitle = false
+    var didEditDescription = false
+    var didEditDuration = false
+    var didEditBudget = false
+    
+    var previousViewController: TaskDetailsVC?
+    
+    var task: Task? {
         didSet {
-            guard let category = taskCategory else {
-                self.navigationController?.popViewController(animated: false)
+            guard let task = self.task else {
+                navigationController?.popViewController(animated: true)
                 return
             }
             
-            navigationItem.title = "Tarea de " + category
+            taskTitleTextField.placeholder = task.title
+            taskTitleCaracterCountLabel.text = "\(task.title.count)/50"
+            taskDescriptionTextView.text = task.description
+            taskDescriptionCaracterCountLabel.text = "\(task.description.count)/500"
+            durationTextField.placeholder = "\(task.duration)"
+            budgetTextField.placeholder = "\(task.budget)"
+            self.isTaskOnline = task.isOnline
+            
+            if task.isOnline {
+                onlineSwitch.setOn(true, animated: true)
+                handleOnlineSwitch()
+            } else {
+                guard let lat = task.latitude, let long = task.longitude else {
+                    return
+                }
+                
+                let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                self.placePinAt(coordinate: coordinate)
+            }
         }
     }
     
     let postTaskActivityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
         ai.hidesWhenStopped = true
-        ai.color = UIColor.darkText
+        ai.color = UIColor.mainBlue()
         ai.translatesAutoresizingMaskIntoConstraints = false
         
         return ai
@@ -67,12 +91,12 @@ class TaskSpecificationsVC: UIViewController {
     
     lazy var taskTitleTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Entre 10 y 50 caracteres"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = .darkText
         tf.layer.borderColor = UIColor.black.cgColor
         tf.delegate = self
+        tf.addTarget(self, action: #selector(handleTextFieldChange(forTextField:)), for: .editingChanged)
         
         return tf
     }()
@@ -100,7 +124,6 @@ class TaskSpecificationsVC: UIViewController {
     lazy var taskDescriptionTextView: UITextView = {
         let tv = UITextView()
         tv.textColor = UIColor.lightGray
-        tv.text = "Entre 25 y 500 caracteres"
         tv.layer.borderWidth = 0.5
         tv.layer.borderColor = UIColor.lightGray.cgColor
         tv.font = UIFont.systemFont(ofSize: 14)
@@ -131,7 +154,6 @@ class TaskSpecificationsVC: UIViewController {
     
     lazy var durationTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "2,5"
         tf.keyboardType = .decimalPad
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
@@ -139,6 +161,7 @@ class TaskSpecificationsVC: UIViewController {
         tf.layer.borderColor = UIColor.black.cgColor
         tf.delegate = self
         tf.inputAccessoryView = makeTextFieldToolBar()
+        tf.addTarget(self, action: #selector(handleTextFieldChange(forTextField:)), for: .editingChanged)
         
         return tf
     }()
@@ -158,7 +181,6 @@ class TaskSpecificationsVC: UIViewController {
     
     lazy var budgetTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "€€€"
         tf.keyboardType = .numberPad
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
@@ -166,6 +188,7 @@ class TaskSpecificationsVC: UIViewController {
         tf.layer.borderColor = UIColor.black.cgColor
         tf.delegate = self
         tf.inputAccessoryView = makeTextFieldToolBar()
+        tf.addTarget(self, action: #selector(handleTextFieldChange(forTextField:)), for: .editingChanged)
         
         return tf
     }()
@@ -362,59 +385,112 @@ class TaskSpecificationsVC: UIViewController {
         return button
     }()
     
-    @objc fileprivate func handleDoneButton() {
-        guard let taskValues: [String : Any] = verifyTaskValues() else {
-            // Simply return since alert message gets display from within verifyTaskValues()
+    lazy var deleteTaskButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Eliminar Tarea", for: .normal)
+        button.titleLabel?.textAlignment = .center
+        button.setTitleColor(.red, for: .normal)
+        button.addTarget(self, action: #selector(handleDeleteButton), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    @objc fileprivate func handleDeleteButton() {
+        guard let task = self.task else {
+            self.navigationController?.popViewController(animated: true)
             return
+            
         }
-
-        postTask(withValues: taskValues)
+        
+        let deleteAlert = UIAlertController(title: "Eliminar esta tarea?", message: "Su tarea se eliminará indefinidamente.", preferredStyle: .alert)
+        let deleteAction = UIAlertAction(title: "Eliminar", style: .destructive) { (_) in
+            self.delete(task)
+        }
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel) { (_) in
+           self.disableAndAnimate(false)
+           return
+        }
+       
+       deleteAlert.addAction(deleteAction)
+       deleteAlert.addAction(cancelAction)
+       
+       self.present(deleteAlert, animated: true, completion: nil)
     }
     
-    fileprivate func postTask(withValues taskValues: [String : Any]) {
-        let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef)
-        let autoRef = tasksRef.childByAutoId()
-
-        autoRef.updateChildValues(taskValues) { (err, dataRef) in
+    fileprivate func delete(_ task: Task) {
+        self.disableAndAnimate(true)
+        let taskRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(task.id)
+        taskRef.removeValue { (err, _) in
+            if let error = err {
+                print("Error deleting task: \(error)")
+                self.disableAndAnimate(false)
+                let alert = UIView.okayAlert(title: "No se Puede Eliminar Esta Tarea", message: "No podemos Editar en este momento. Por favor intente nuevamente más tarde.")
+                DispatchQueue.main.async {
+                    self.present(alert, animated: true, completion: nil)
+                }
+            }
+            
+            self.disableAndAnimate(false)
+            self.navigationController?.popToRootViewController(animated: true)
+        }
+    }
+    
+    @objc fileprivate func handleDoneButton() {
+        guard let taskValues = verifyTaskValues(), let task = self.task else {
+            // Simply return since alert message gets display from within verifyTaskValues()
+            self.disableAndAnimate(false)
+            return
+        }
+        
+        update(task: task, withValues: taskValues)
+    }
+    
+    fileprivate func update(task: Task, withValues taskValues: [String : Any]) {
+        let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(task.id)
+        tasksRef.updateChildValues(taskValues) { (err, data) in
             if let error = err {
                 print("PostTask(): Error updating to Firebase: ", error)
                 DispatchQueue.main.async {
-                    let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
+                    let alert = UIView.okayAlert(title: "No se Puede Editar Esta Tarea", message: "No podemos Editar en este momento. Por favor intente nuevamente más tarde.")
                     self.present(alert, animated: true, completion: nil)
                     self.disableAndAnimate(false)
                 }
-                
                 return
             }
             
-            let task = Task(id: dataRef.key ?? "PLACEHOLDER STRING", dictionary: taskValues)
-            
-            self.addUserReference(forTask: task)
+            self.fetchEditedTask(forTask: task)
         }
     }
     
-    fileprivate func addUserReference(forTask task: Task) {
-        let userTasksRefValues = [
-            Constants.FirebaseDatabase.creationDate : task.creationDate.timeIntervalSince1970,
-            Constants.FirebaseDatabase.taskStatus : 0
-        ]
-        let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(task.userId).child(task.id)
-        userTasksRef.updateChildValues(userTasksRefValues) { (err, _) in
-            if let error = err {
-                print("Error adding user reference to task: \(error)")
+    fileprivate func fetchEditedTask(forTask task: Task) {
+        let taskRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(task.id)
+        taskRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            guard let dictionary = snapshot.value as? [String : Any], let prevViewController = self.previousViewController else {
+                
+                self.disableAndAnimate(false)
+                let alert = UIView.okayAlert(title: "No se Puede Editar Esta Tarea", message: "No podemos Editar en este momento. Por favor intente nuevamente más tarde.")
                 DispatchQueue.main.async {
-                    let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
                     self.present(alert, animated: true, completion: nil)
-                    self.disableAndAnimate(false)
                 }
                 
                 return
             }
             
-            self.disableAndAnimate(true)
-            let postCompleteVC = PostCompleteVC()
-            postCompleteVC.task = task
-            self.navigationController?.pushViewController(postCompleteVC, animated: true)
+            self.disableAndAnimate(false)
+            
+            let task = Task(id: snapshot.key, dictionary: dictionary)
+            
+            prevViewController.task = task
+            prevViewController.didEditTask = true
+            self.navigationController?.popToViewController(prevViewController, animated: true)
+        }) { (error) in
+            self.disableAndAnimate(false)
+            print("Error editing task: \(error)")
+            let alert = UIView.okayAlert(title: "No se Puede Editar Esta Tarea", message: "No podemos Editar en este momento. Por favor intente nuevamente más tarde.")
+            DispatchQueue.main.async {
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
     
@@ -423,99 +499,126 @@ class TaskSpecificationsVC: UIViewController {
         
         var taskValues = [String : Any]()
         
-        guard let inputs = areTextFieldInputsValid() else {
+        guard let inputs = areTextFieldInputsValid(), let task = self.task else {
              // Simply return since alert message gets display from within areTextFieldInputsValid()
             disableAndAnimate(false)
             
             return nil
         }
         
+        if (inputs.title == nil) && (inputs.description == nil) && (inputs.duration == nil) && (inputs.budget == nil) && (self.addressString == nil) {
+            if isTaskOnline == task.isOnline {
+                //Nothing to edit
+                self.navigationController?.popViewController(animated: true)
+                return nil
+            }
+        }
+        
+        if let title = inputs.title {
+            taskValues[Constants.FirebaseDatabase.taskTitle] = title
+        }
+        if let description = inputs.description {
+            taskValues[Constants.FirebaseDatabase.taskDescription] = description
+        }
+        if let duration = inputs.duration {
+            taskValues[Constants.FirebaseDatabase.taskDuration] = duration
+        }
+        if let budget = inputs.budget {
+            taskValues[Constants.FirebaseDatabase.taskBudget] = budget
+        }
+        
         if !isTaskOnline {
-            guard let locationString = self.addressString, !mapView.annotations.isEmpty else {
+            if let locationString = self.addressString, !mapView.annotations.isEmpty {
+                let latitude = mapView.annotations[0].coordinate.latitude as Double
+                let longitude = mapView.annotations[0].coordinate.longitude as Double
+
+                taskValues[Constants.FirebaseDatabase.latitude] = latitude
+                taskValues[Constants.FirebaseDatabase.longitude] = longitude
+                taskValues[Constants.FirebaseDatabase.stringLocation] = locationString
+                taskValues[Constants.FirebaseDatabase.isTaskOnline] = false
+            } else if task.isOnline {
                 let alert = UIView.okayAlert(title: "Ubicación Invalida", message: "Por favor, introduzca una ubicación válida.")
-                present(alert, animated: true, completion: nil)
-                disableAndAnimate(false)
+                self.present(alert, animated: true, completion: nil)
+                
+                self.addressString = nil
                 
                 return nil
             }
-            
-            let latitude = mapView.annotations[0].coordinate.latitude as Double
-            let longitude = mapView.annotations[0].coordinate.longitude as Double
-            
-            taskValues[Constants.FirebaseDatabase.latitude] = latitude
-            taskValues[Constants.FirebaseDatabase.longitude] = longitude
-            taskValues[Constants.FirebaseDatabase.stringLocation] = locationString
+        } else {
+            if task.isOnline {
+                taskValues.removeValue(forKey: Constants.FirebaseDatabase.isTaskOnline)
+            } else {
+                taskValues[Constants.FirebaseDatabase.isTaskOnline] = true
+            }
         }
-        
-        guard let userId = Auth.auth().currentUser?.uid else {
-            let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
-            present(alert, animated: true, completion: nil)
-            disableAndAnimate(false)
-            
-            return nil
-        }
-        
-        taskValues[Constants.FirebaseDatabase.taskTitle] = inputs.title
-        taskValues[Constants.FirebaseDatabase.taskDescription] = inputs.description
-        taskValues[Constants.FirebaseDatabase.taskCategory] = inputs.category
-        taskValues[Constants.FirebaseDatabase.taskDuration] = inputs.duration
-        taskValues[Constants.FirebaseDatabase.taskBudget] = inputs.budget
-        taskValues[Constants.FirebaseDatabase.taskStatus] = 0
-        taskValues[Constants.FirebaseDatabase.isTaskReviewed] = 0
-        taskValues[Constants.FirebaseDatabase.isTaskOnline] = isTaskOnline ? 1 : 0
-        taskValues[Constants.FirebaseDatabase.userId] = userId
-        taskValues[Constants.FirebaseDatabase.creationDate] = Date().timeIntervalSince1970
-        taskValues[Constants.FirebaseDatabase.isJugglerComplete] = 0
-        taskValues[Constants.FirebaseDatabase.isUserComplete] = 0
         
         return taskValues
     }
     
-    fileprivate func areTextFieldInputsValid() -> (title: String, description: String, category: String, duration: Double, budget: Double)? {
-        guard let title = taskTitleTextField.text, title.count > 9, title.count < 51 else {
-            let alert = UIView.okayAlert(title: "Error con el Titulo", message: "Tiene que estar entre 10 y 25 caracteres.")
-            present(alert, animated: true, completion: nil); return nil
+    fileprivate func areTextFieldInputsValid() -> (title: String?, description: String?, duration: Double?, budget: Double?)? {
+        var _title: String? = nil
+        var _description: String? = nil
+        var _duration: Double? = nil
+        var _budget: Double? = nil
+        
+        if self.didEditTitle {
+            if let title = taskTitleTextField.text, title.count > 9, title.count < 51 {
+                _title = title
+            } else {
+                let alert = UIView.okayAlert(title: "Error con el Titulo", message: "Tiene que estar entre 10 y 25 caracteres.")
+                present(alert, animated: true, completion: nil)
+                return nil
+            }
         }
         
-        guard let description = taskDescriptionTextView.text, description.count > 24, description.count < 501, description != "Entre 25 y 500 caracteres" else {
-            let alert = UIView.okayAlert(title: "Error con la Descripción", message: "Tiene que estar entre 25 y 500 caracteres.")
-            present(alert, animated: true, completion: nil); return nil
+        if self.didEditDescription {
+            if let description = taskDescriptionTextView.text, description.count > 24, description.count < 501, description != "Entre 25 y 500 caracteres" {
+                _description = description
+            } else {
+                let alert = UIView.okayAlert(title: "Error con la Descripción", message: "Tiene que estar entre 25 y 500 caracteres.")
+                present(alert, animated: true, completion: nil)
+                return nil
+            }
         }
         
-        guard let category = self.taskCategory else {
-            self.navigationController?.popViewController(animated: true)
-            return nil
+        if self.didEditDuration {
+            let doubleDurationString = durationTextField.text?.replacingOccurrences(of: ",", with: ".") ?? ""
+            if let duration = Double(doubleDurationString) {
+                _duration = duration
+            } else {
+                let alert = UIView.okayAlert(title: "Error con la Duración", message: "Indique cuántas horas requiere esta tarea.")
+                present(alert, animated: true, completion: nil)
+                return nil
+            }
         }
         
-        let doubleDurationString = durationTextField.text?.replacingOccurrences(of: ",", with: ".") ?? ""
-        guard let duration = Double(doubleDurationString) else {
-            let alert = UIView.okayAlert(title: "Error con la Duración", message: "Indique cuántas horas requiere esta tarea.")
-            present(alert, animated: true, completion: nil); return nil
+        if self.didEditBudget {
+            if let budgetString = budgetTextField.text, let budget = Double(budgetString) {
+                _budget = budget
+            } else {
+                let alert = UIView.okayAlert(title: "Error con el Presupuesto", message: "Indique cuánto le gustaría pagar por esta tarea.")
+                present(alert, animated: true, completion: nil)
+                return nil
+            }
         }
         
-        guard let budgetString = budgetTextField.text, let budget = Double(budgetString) else {
-            let alert = UIView.okayAlert(title: "Error con el Presupuesto", message: "Indique cuánto le gustaría pagar por esta tarea.")
-            present(alert, animated: true, completion: nil); return nil
-        }
-        
-        return (title, description, category, duration, budget)
+        return (_title, _description, _duration, _budget)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
+        view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "¡Listo!", style: .done, target: self, action: #selector(handleDoneButton))
         navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
         
         setupViews()
-        setupHideKeyBoardOnTapGesture()
     }
     
     fileprivate func setupViews() {
         view.addSubview(scrollView)
         scrollView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
-        scrollView.contentSize = CGSize(width: view.frame.width, height: 1110)
+        scrollView.contentSize = CGSize(width: view.frame.width, height: 1180)
         
         scrollView.addSubview(taskTitleLabel)
         taskTitleLabel.anchor(top: scrollView.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
@@ -598,6 +701,10 @@ class TaskSpecificationsVC: UIViewController {
         scrollView.addSubview(doneButton)
         doneButton.anchor(top: mapView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
         doneButton.layer.cornerRadius = 5
+        
+        scrollView.addSubview(deleteTaskButton)
+        deleteTaskButton.anchor(top: doneButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
+        
     }
     
     fileprivate func verifyCoordinates() {
@@ -661,19 +768,6 @@ class TaskSpecificationsVC: UIViewController {
         }
     }
     
-    fileprivate func makeTextFieldToolBar() -> UIToolbar {
-        let toolBar = UIToolbar()
-        toolBar.sizeToFit()
-        
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-        
-        let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(handleTextFieldDoneButton))
-        
-        toolBar.setItems([flexibleSpace, doneButton], animated: false)
-        
-        return toolBar
-    }
-    
     func disableAndAnimate(_ bool: Bool) {
         DispatchQueue.main.async {
             if bool {
@@ -703,27 +797,72 @@ class TaskSpecificationsVC: UIViewController {
         navigationItem.leftBarButtonItem?.isEnabled = !bool
         doneButton.isUserInteractionEnabled = !bool
     }
+    
+    fileprivate func makeTextFieldToolBar() -> UIToolbar {
+        let toolBar = UIToolbar()
+        toolBar.sizeToFit()
+        
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+        
+        let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(handleTextFieldDoneButton))
+        
+        toolBar.setItems([flexibleSpace, doneButton], animated: false)
+        
+        return toolBar
+    }
 }
 
 //MARK: UITextFieldDelegate & UITextViewDelegate Methods
-extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let taskTitle = taskTitleTextField.text, textField == taskTitleTextField {
-            taskTitleCaracterCountLabel.text = taskTitle.count == 1 ? "0/50" : "\(taskTitle.count)/50"
+extension EditTaskVC: UITextFieldDelegate, UITextViewDelegate {
+    @objc fileprivate func handleTextFieldChange(forTextField textField: UITextField) {
+        if textField == taskTitleTextField, let taskTitle = taskTitleTextField.text {
+            self.didEditTitle = true
+            
+            if taskTitle.count == 0 {
+                taskTitleCaracterCountLabel.text = "0/50"
+                self.didEditTitle = false
+            } else {
+                taskTitleCaracterCountLabel.text = "\(taskTitle.count)/50"
+            }
+            
             if taskTitle.count > 49 {
                 taskTitleTextField.text?.removeLast()
                 taskTitleCaracterCountLabel.text = "\(taskTitle.count)/50"
             }
-        } else if let postalCode = cpTextField.text, textField == cpTextField {
+        } else if textField == cpTextField, let postalCode = cpTextField.text {
+            if postalCode.count > 5 {
+                cpTextField.text?.removeLast()
+            }
+        } else if textField == numberTextField, let streetNumber = numberTextField.text {
+            if streetNumber.count > 6 {
+                numberTextField.text?.removeLast()
+            }
+        } else if textField == durationTextField, let duration = durationTextField.text {
+            self.didEditDuration = true
+            
+            if duration.count == 0 {
+                self.didEditDuration = false
+            }
+        } else if textField == budgetTextField, let budget = budgetTextField.text {
+            self.didEditBudget = true
+            
+            if budget.count == 0 {
+                self.didEditBudget = false
+            }
+        }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == cpTextField, let postalCode = cpTextField.text {
             if postalCode.count > 4 {
                 cpTextField.text?.removeLast()
             }
-        } else if let streetNumber = numberTextField.text, textField == numberTextField {
+        } else if textField == numberTextField, let streetNumber = numberTextField.text {
             if streetNumber.count > 5 {
                 numberTextField.text?.removeLast()
             }
         }
-        
+
         return true
     }
     
@@ -759,18 +898,27 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         if let taskDescription = taskDescriptionTextView.text, textView == taskDescriptionTextView {
-            taskDescriptionCaracterCountLabel.text = taskDescription.count == 1 ? "0/500" : "\(taskDescription.count)/500"
-            if taskDescription.count > 499 {
-                taskDescriptionTextView.text.removeLast()
+            if taskDescription == self.task?.description ?? "" {
+                self.didEditDescription = false
+                taskDescriptionTextView.textColor = UIColor.lightGray
+            } else {
+                self.didEditDescription = true
+                taskDescriptionTextView.textColor = UIColor.darkText
+            }
+            
+            if taskDescription.count < 1 {
+                taskDescriptionTextView.text = self.task?.description ?? ""
+                taskDescriptionTextView.textColor = UIColor.lightGray
+                taskDescriptionCaracterCountLabel.text = "\(self.task?.description.count ?? 0)/500"
+                self.didEditDescription = false
+            } else {
                 taskDescriptionCaracterCountLabel.text = "\(taskDescription.count)/500"
             }
-        }
-    }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == UIColor.lightGray {
-            textView.text = nil
-            textView.textColor = UIColor.darkText
+            
+            if taskDescription.count > 499 {
+                taskDescriptionTextView.text.removeLast()
+                taskDescriptionCaracterCountLabel.text = "500/500"
+            }
         }
     }
     
@@ -790,7 +938,7 @@ extension TaskSpecificationsVC: UITextFieldDelegate, UITextViewDelegate {
 }
 
 //MARK: MapView extension
-extension TaskSpecificationsVC: MKMapViewDelegate {
+extension EditTaskVC: MKMapViewDelegate {
     
     func placePinAt(coordinate: CLLocationCoordinate2D) {
         let annotation = MKPointAnnotation()
