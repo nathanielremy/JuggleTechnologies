@@ -399,10 +399,9 @@ class EditTaskVC: UIViewController {
         guard let task = self.task else {
             self.navigationController?.popViewController(animated: true)
             return
-            
         }
         
-        let deleteAlert = UIAlertController(title: "Eliminar esta tarea?", message: "Su tarea se eliminará indefinidamente.", preferredStyle: .alert)
+        let deleteAlert = UIAlertController(title: "¿Eliminar esta Tarea?", message: "Su tarea se eliminará indefinidamente.", preferredStyle: .alert)
         let deleteAction = UIAlertAction(title: "Eliminar", style: .destructive) { (_) in
             self.delete(task)
         }
@@ -424,14 +423,25 @@ class EditTaskVC: UIViewController {
             if let error = err {
                 print("Error deleting task: \(error)")
                 self.disableAndAnimate(false)
-                let alert = UIView.okayAlert(title: "No se Puede Eliminar Esta Tarea", message: "No podemos Editar en este momento. Por favor intente nuevamente más tarde.")
+                let alert = UIView.okayAlert(title: "No se Puede Eliminar Esta Tarea", message: "No podemos eliminar en este momento. Por favor intente nuevamente más tarde.")
                 DispatchQueue.main.async {
                     self.present(alert, animated: true, completion: nil)
                 }
             }
             
-            self.disableAndAnimate(false)
-            self.navigationController?.popToRootViewController(animated: true)
+            let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(task.userId).child(task.id)
+            userTasksRef.removeValue { (err, _) in
+                if let error = err {
+                    print("Error deleting task: \(error)")
+                    self.disableAndAnimate(false)
+                    let alert = UIView.okayAlert(title: "No se Puede Eliminar Esta Tarea", message: "No podemos eliminar en este momento. Por favor intente nuevamente más tarde.")
+                    DispatchQueue.main.async {
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+                self.disableAndAnimate(false)
+                self.navigationController?.popToRootViewController(animated: true)
+            }
         }
     }
     
@@ -451,7 +461,7 @@ class EditTaskVC: UIViewController {
             if let error = err {
                 print("PostTask(): Error updating to Firebase: ", error)
                 DispatchQueue.main.async {
-                    let alert = UIView.okayAlert(title: "No se Puede Editar Esta Tarea", message: "No podemos Editar en este momento. Por favor intente nuevamente más tarde.")
+                    let alert = UIView.okayAlert(title: "No se Puede Editar Esta Tarea", message: "No podemos editar en este momento. Por favor intente nuevamente más tarde.")
                     self.present(alert, animated: true, completion: nil)
                     self.disableAndAnimate(false)
                 }
