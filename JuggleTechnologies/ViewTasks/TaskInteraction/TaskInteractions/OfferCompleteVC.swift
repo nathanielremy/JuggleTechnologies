@@ -10,13 +10,20 @@ import UIKit
 
 class OfferCompleteVC: UIViewController {
     //MARK: Stored properties
-    var offer: (String?, String?) {
+    var offer: (String?, String?, Bool?) {
         didSet {
-            guard let offer = self.offer.0, let taskTitle = self.offer.1 else {
+            guard let offer = self.offer.0, let taskTitle = self.offer.1, let isAcceptingBudget = self.offer.2 else {
                 return
             }
             
-            let attributedText = NSMutableAttributedString(string: "Su oferta para \"\(taskTitle)\"\n\n", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray])
+            var attributedText = NSMutableAttributedString()
+            
+            if isAcceptingBudget {
+                attributedText = NSMutableAttributedString(string: "Su aceptación de \"\(taskTitle)\"\n\n", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray])
+            } else {
+                attributedText = NSMutableAttributedString(string: "Su oferta para \"\(taskTitle)\"\n\n", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray])
+            }
+            
             attributedText.append(NSAttributedString(string: "€" + offer, attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.darkText]))
             attributedText.append(NSAttributedString(string: "\n\nEsta Enviada!", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
             

@@ -111,7 +111,7 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.textAlignment = .left
-        label.textColor = .lightGray
+        label.textColor = .gray
         label.numberOfLines = 1
         
         return label
@@ -196,8 +196,8 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
     
     fileprivate func setupViews() {
         addSubview(profileImageView)
-        profileImageView.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 60, height: 60)
-        profileImageView.layer.cornerRadius = 60 / 2
+        profileImageView.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 70, height: 70)
+        profileImageView.layer.cornerRadius = 70 / 2
         profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
         addSubview(firstNameLabel)

@@ -12,11 +12,16 @@ import Firebase
 
 class TaskDetailsVC: UIViewController {
     //MARK: Stored properties
-    var previousViewController: TaskInteractionVC?
+    var previousTaskInteractionVC: TaskInteractionVC?
+    var previousOnGoingTaskInteractionVC: OnGoingTaskInteractionsVC?
     var didEditTask: Bool? {
         didSet {
             if self.didEditTask ?? false {
-                previousViewController?.task = self.task
+                if previousTaskInteractionVC != nil {
+                    previousTaskInteractionVC?.task = self.task
+                } else if previousOnGoingTaskInteractionVC != nil {
+                    previousOnGoingTaskInteractionVC?.task = self.task
+                }
             }
         }
     }

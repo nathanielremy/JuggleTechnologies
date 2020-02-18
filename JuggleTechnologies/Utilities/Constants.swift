@@ -47,7 +47,7 @@ class Constants {
         static let isOfferAccepted = "isOfferAccepted"
         static let isOfferRejected = "isOfferRejected"
         static let offerOwnerId = "offerOwnerId"
-        
+        static let isAcceptingBudget = "isAcceptingBudget"
         
         static let userTasksRef = "userTasks"
         static let jugglerTasksRef = "jugglerTasksRef"
@@ -93,6 +93,7 @@ class Constants {
         static let acceptedTaskCell = "acceptedTaskCell"
         static let completedTaskCell = "completedTaskCell"
         static let savedTaskCell = "savedTaskCell"
+        static let onGoingTaskInteractionsVCHeaderCell = "onGoingTaskInteractionsVCHeaderCell"
     }
     
     struct BarcalonaCoordinates {

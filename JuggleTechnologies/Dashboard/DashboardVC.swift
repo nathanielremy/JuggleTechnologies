@@ -20,6 +20,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     //User filteredTask arrays
     var userOnGoingTasks = [FilteredTask]()
     var userTempOnGoingTasks = [FilteredTask]()
+    var userOnGoingTasksDictionary = [String : Task]()
     
     var userAcceptedTasks = [FilteredTask]()
     var userTempAcceptedTasks = [FilteredTask]()
@@ -122,6 +123,8 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             self.showNoResultsFoundView()
             return
         }
+        
+        self.userOnGoingTasksDictionary.removeAll()
         
         if isUserMode {
             userTempOnGoingTasks.removeAll()
@@ -294,6 +297,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             }
             
             onGoingTaskCell.taskId = self.userOnGoingTasks[indexPath.item].id
+            onGoingTaskCell.delegate = self
             
             return onGoingTaskCell
             
@@ -332,10 +336,15 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return self.filterOptionsValue == 1 ? CGSize(width: view.frame.width, height: 190) : CGSize(width: view.frame.width, height: 175)
+        return self.filterOptionsValue == 1 ? CGSize(width: view.frame.width, height: 195) : CGSize(width: view.frame.width, height: 175)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if self.isUserMode && self.filterOptionsValue == 1 { //OnGoingTaskCell
+            let onGoingTaskInteractionsVC = OnGoingTaskInteractionsVC(collectionViewLayout: UICollectionViewFlowLayout())
+            onGoingTaskInteractionsVC.task = self.userOnGoingTasksDictionary[self.userOnGoingTasks[indexPath.item].id]
+            self.navigationController?.pushViewController(onGoingTaskInteractionsVC, animated: true)
+        }
         print(indexPath.item)
     }
     
@@ -406,5 +415,11 @@ extension DashboardVC: DashboardHeaderCellDelegate {
         self.present(alert, animated: true, completion: nil)
         
         return
+    }
+}
+
+extension DashboardVC: OnGoingTaskCellDelegate {
+    func addUserOnGoingTaskToDictionary(forTask task: Task) {
+        self.userOnGoingTasksDictionary[task.id] = task
     }
 }

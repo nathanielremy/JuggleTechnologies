@@ -543,7 +543,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         let taskDetailsVC = TaskDetailsVC()
         taskDetailsVC.task = self.task
         taskDetailsVC.user = user
-        taskDetailsVC.previousViewController = self
+        taskDetailsVC.previousTaskInteractionVC = self
         navigationController?.pushViewController(taskDetailsVC, animated: true)
     }
     
@@ -553,6 +553,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         self.anchorCollectionViewToTop(andScroll: true, keyBoardHeight: keyBoardHeight)
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detalles", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
+        self.navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
     }
     
     func makeOffer() {
@@ -613,6 +614,12 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
             self.dispalayBecomeAJugglerAlert()
             return
         }
+        
+        let acceptTaskVC = AcceptTaskVC()
+        acceptTaskVC.task = task
+        acceptTaskVC.user = self.taskInteractionView.user
+        let acceptTaskNavVC = UINavigationController(rootViewController: acceptTaskVC)
+        self.present(acceptTaskNavVC, animated: true, completion: nil)
     }
     
     func handleProfileImageView(forUser user: User) {

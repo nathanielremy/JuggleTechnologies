@@ -15,6 +15,7 @@ struct Offer {
     let creationDate: Date
     let offerPrice: Int
     let taskId: String
+    let isAcceptingBudget: Bool
     
     init(offerDictionary: [String : Any]) {
         self.offerOwnerId = offerDictionary[Constants.FirebaseDatabase.offerOwnerId] as? String ?? ""
@@ -25,5 +26,6 @@ struct Offer {
         self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)
         self.offerPrice = offerDictionary[Constants.FirebaseDatabase.offerPrice] as? Int ?? 0
         self.taskId = offerDictionary[Constants.FirebaseDatabase.taskId] as? String ?? ""
+        self.isAcceptingBudget = offerDictionary[Constants.FirebaseDatabase.isAcceptingBudget] as? Bool ?? false
     }
 }

@@ -9,10 +9,15 @@
 import UIKit
 import Firebase
 
+protocol OnGoingTaskCellDelegate {
+    func addUserOnGoingTaskToDictionary(forTask task: Task)
+}
+
 class OnGoingTaskCell: UICollectionViewCell {
     //MARK: Stores properties
-    var messages = [Message]()
+    var delegate: OnGoingTaskCellDelegate?
     var offers = [Offer]()
+    var messages = [String : [String : Any]]()
     
     func fetchUser(withUserId userId: String) {
         Database.fetchUserFromUserID(userID: userId) { (usr) in
@@ -57,8 +62,10 @@ class OnGoingTaskCell: UICollectionViewCell {
                 return
             }
             
-            //fetchOffer function definition under init
+            //fetchOffer function definition under init.
             self.fetchOffers(forTask: task)
+            //fetchMessages function definition under fetchOffer.
+            self.fetchMessages(forTask: task)
             
             let dateFormatterPrint = DateFormatter()
             dateFormatterPrint.locale = Locale(identifier: "es_ES")
@@ -71,6 +78,7 @@ class OnGoingTaskCell: UICollectionViewCell {
             taskCategoryImageView.image = setTaskCategory(forCategory: task.category)
             taskDurationLabel.text = String(task.duration) + (task.duration > 1 ? " hrs" : " hr")
             taskBudgetLabel.text = "€\(task.budget)"
+            delegate?.addUserOnGoingTaskToDictionary(forTask: task)
         }
     }
     
@@ -204,17 +212,39 @@ class OnGoingTaskCell: UICollectionViewCell {
     let notificationsLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textColor = UIColor.mainBlue()
         
         return label
     }()
     
     fileprivate func setupNotificationsLabel() {
-        addSubview(notificationsLabel)
-        notificationsLabel.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 15)
-        notificationsLabel.backgroundColor = UIColor.darkText
-        notificationsLabel.text = "\(self.offers.count) oferta\(self.offers.count > 1 ? "s" : "") y \(self.messages.count) mensaje\(self.messages.count == 1 ? "" : "s")"
+        DispatchQueue.main.async {
+            let offersCount = self.offers.count
+            let messagesCount = self.messages.count
+            
+            var notificationsText = ""
+            
+            if offersCount > 0 {
+                notificationsText += "\(offersCount) oferta\(offersCount > 1 ? "s" : "")"
+            }
+            
+            if messagesCount > 0 {
+                notificationsText += offersCount > 0 ? " y" : ""
+                notificationsText += " \(messagesCount) mensaje\(messagesCount == 1 ? "" : "s")"
+            }
+            
+            self.notificationsLabel.text = notificationsText
+            
+            if self.messages.count == 0 && self.offers.count == 0 {
+                self.notificationsLabel.removeFromSuperview()
+                return
+            }
+            
+            self.addSubview(self.notificationsLabel)
+            self.notificationsLabel.anchor(top: nil, left: self.leftAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 20)
+            self.notificationsLabel.backgroundColor = UIColor.darkText
+        }
     }
     
     override init(frame: CGRect) {
@@ -231,9 +261,15 @@ class OnGoingTaskCell: UICollectionViewCell {
         let taskOffersRef = Database.database().reference().child(Constants.FirebaseDatabase.taskOffersRef).child(task.id)
         taskOffersRef.observeSingleEvent(of: .value, with: { (offersSnapshot) in
             guard let offers = offersSnapshot.value as? [String : [String : Any]] else {
+                self.offers.removeAll()
+                self.setupNotificationsLabel()
                 return
             }
             
+            self.offers.removeAll()
+            DispatchQueue.main.async {
+                self.notificationsLabel.removeFromSuperview()
+            }
             var offersCreated = 0
             offers.forEach { (key, value) in
                 let offer = Offer(offerDictionary: value)
@@ -249,7 +285,50 @@ class OnGoingTaskCell: UICollectionViewCell {
                 }
             }
         }) { (error) in
+            self.offers.removeAll()
+            DispatchQueue.main.async {
+                self.notificationsLabel.removeFromSuperview()
+            }
             print("Error fetching offers for \(task.id): \(error)")
+        }
+    }
+    
+    fileprivate func fetchMessages(forTask task: Task) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            self.messages.removeAll()
+            DispatchQueue.main.async {
+                self.notificationsLabel.removeFromSuperview()
+            }
+            return
+        }
+        
+        let messagesRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(currentUserId).child(task.id)
+        messagesRef.observeSingleEvent(of: .value, with: { (messagesSnapshot) in
+            guard let messagesDictionary = messagesSnapshot.value as? [String : [String : Int]] else {
+                self.messages.removeAll()
+                self.setupNotificationsLabel()
+                return
+            }
+            
+            self.messages.removeAll()
+            DispatchQueue.main.async {
+                self.notificationsLabel.removeFromSuperview()
+            }
+            var messagesCreated = 0
+            messagesDictionary.forEach { (key, value) in
+                self.messages[key] = value
+                messagesCreated += 1
+                
+                if messagesCreated == messagesDictionary.count {
+                    self.setupNotificationsLabel()
+                }
+            }
+        }) { (error) in
+            self.messages.removeAll()
+            DispatchQueue.main.async {
+                self.notificationsLabel.removeFromSuperview()
+            }
+            print("Error fetching messages for \(task.id): \(error)")
         }
     }
     
@@ -277,18 +356,18 @@ class OnGoingTaskCell: UICollectionViewCell {
         taskDetailIconsStackView.spacing = 50
         
         addSubview(taskDetailIconsStackView)
-        taskDetailIconsStackView.anchor(top: nil, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: -43, paddingRight: -50, width: nil, height: 30)
+        taskDetailIconsStackView.anchor(top: nil, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: -48, paddingRight: -50, width: nil, height: 30)
         
         addSubview(taskCategoryLabel)
-        taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 12)
+        taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 17)
         taskCategoryLabel.centerXAnchor.constraint(equalTo: taskCategoryImageView.centerXAnchor).isActive = true
         
         addSubview(taskDurationLabel)
-        taskDurationLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 12)
+        taskDurationLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 17)
         taskDurationLabel.centerXAnchor.constraint(equalTo: taskDurationImageView.centerXAnchor).isActive = true
         
         addSubview(taskBudgetLabel)
-        taskBudgetLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 12)
+        taskBudgetLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -23, paddingRight: 0, width: nil, height: 17)
         taskBudgetLabel.centerXAnchor.constraint(equalTo: taskBudgetImageView.centerXAnchor).isActive = true
         
         let bottomSeperatorView = UIView()

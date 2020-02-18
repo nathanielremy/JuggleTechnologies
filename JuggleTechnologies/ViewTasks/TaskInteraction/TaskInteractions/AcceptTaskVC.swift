@@ -1,16 +1,15 @@
-
 //
-//  TaskOfferVC.swift
+//  AcceptTaskVC.swift
 //  JuggleTechnologies
 //
-//  Created by Nathaniel Remy on 2020-02-08.
+//  Created by Nathaniel Remy on 2020-02-17.
 //  Copyright © 2020 Nathaniel Remy. All rights reserved.
 //
 
 import UIKit
 import Firebase
 
-class TaskOfferVC: UIViewController {
+class AcceptTaskVC: UIViewController {
     //MARK: Stored properties
     var user: User? {
         didSet {
@@ -32,7 +31,7 @@ class TaskOfferVC: UIViewController {
             }
             
             taskTitleLabel.text = task.title
-            initialBudgetValueLabel.text = "€\(task.budget)"
+            budgetLabel.text = "€\(task.budget)"
         }
     }
     
@@ -52,8 +51,7 @@ class TaskOfferVC: UIViewController {
             activityIndicator.stopAnimating()
         }
         
-        newOfferTextField.isUserInteractionEnabled = !bool
-        doneButton.isEnabled = !bool
+        acceptButton.isEnabled = !bool
         navigationController?.navigationBar.isUserInteractionEnabled = !bool
     }
     
@@ -87,63 +85,27 @@ class TaskOfferVC: UIViewController {
         return label
     }()
     
-    let initialBudgetValueLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 17)
-        label.textColor = .darkText
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-    let initalBudgetLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .darkText
-        label.text = "Presupuesto Inicial:"
-        
-        return label
-    }()
-    
-    lazy var newOfferTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "€€€"
-        tf.textAlignment = .center
-        tf.keyboardType = .numberPad
-        tf.font = UIFont.boldSystemFont(ofSize: 17)
-        tf.borderStyle = .none
-        tf.tintColor = UIColor.mainBlue()
-        tf.textColor = UIColor.mainBlue()
-        tf.delegate = self
-        tf.inputAccessoryView = makeTextFieldToolBar()
-        
-        return tf
-    }()
-    
-    let newOfferLabel: UILabel = {
+    let budgetLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 17)
         label.textColor = UIColor.mainBlue()
-        label.text = "Su Oferta Aquí:"
         
         return label
     }()
     
-    lazy var doneButton: UIButton = {
+    lazy var acceptButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("¡Haz Oferta!", for: .normal)
+        button.setTitle("¡Aceptar Precio!", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         button.backgroundColor = UIColor.mainBlue()
-        button.addTarget(self, action: #selector(handleDoneButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleAcceptButton), for: .touchUpInside)
         
         return button
     }()
     
-    @objc fileprivate func handleDoneButton() {
+    @objc fileprivate func handleAcceptButton() {
         self.animateAndDisableViews(true)
         guard let offerValues = getOfferValues(), let task = self.task, let currentUserId = Auth.auth().currentUser?.uid else {
             //Simply return, AlertControllers get presented from within above function
@@ -154,9 +116,9 @@ class TaskOfferVC: UIViewController {
         let taskOffersRef = Database.database().reference().child(Constants.FirebaseDatabase.taskOffersRef).child(task.id).child(currentUserId)
         taskOffersRef.updateChildValues(offerValues) { (err, _) in
             if let error = err {
-                print("Error adding offer for task: \(error)")
+                print("Error accepting task price for task: \(error)")
                 DispatchQueue.main.async {
-                    let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Oferta", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
+                    let alert = UIView.okayAlert(title: "No se Puede Aceptar Esta Tarea", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
                     self.present(alert, animated: true, completion: nil)
                     self.animateAndDisableViews(false)
                 }
@@ -164,18 +126,13 @@ class TaskOfferVC: UIViewController {
             }
             
             let offerCompleteVC = OfferCompleteVC()
-            offerCompleteVC.offer = ("\(offerValues[Constants.FirebaseDatabase.offerPrice] ?? 0)", task.title, offerValues[Constants.FirebaseDatabase.isAcceptingBudget] as? Bool)
+            offerCompleteVC.offer = ("\(task.budget)", task.title, true)
             self.navigationController?.pushViewController(offerCompleteVC, animated: true)
         }
     }
     
     fileprivate func getOfferValues() -> [String : Any]? {
         var offerValues = [String : Any]()
-        guard let offerString = newOfferTextField.text, let offerPrice = Int(offerString) else {
-            let alert = UIView.okayAlert(title: "Error con Oferta", message: "Indique cual es su oferta para esta tarea.")
-            present(alert, animated: true, completion: nil)
-            return nil
-        }
         
         guard let task = self.task, let currentUserId = Auth.auth().currentUser?.uid else {
             let alert = UIView.okayAlert(title: "No se Puede Publicar Esta Oferta", message: "No podemos publicar en este momento. Por favor intente nuevamente más tarde.")
@@ -183,8 +140,7 @@ class TaskOfferVC: UIViewController {
             return nil
         }
         
-        offerValues[Constants.FirebaseDatabase.isAcceptingBudget] = ((offerPrice == task.budget) ? true : false)
-        offerValues[Constants.FirebaseDatabase.offerPrice] = offerPrice
+        offerValues[Constants.FirebaseDatabase.isAcceptingBudget] = true
         offerValues[Constants.FirebaseDatabase.creationDate] = Date().timeIntervalSince1970
         offerValues[Constants.FirebaseDatabase.isOfferAccepted] = false
         offerValues[Constants.FirebaseDatabase.isOfferRejected] = false
@@ -197,17 +153,20 @@ class TaskOfferVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
-        setupNavigationItems()
+        setupNavigationItemsAndActivityIndicator()
         setupViews()
     }
     
-    fileprivate func setupNavigationItems() {
-        navigationItem.title = "Haz Oferta"
+    fileprivate func setupNavigationItemsAndActivityIndicator() {
+        navigationItem.title = "Aceptar Tarea"
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(handleCancelBarButton))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "¡Haz Oferta!", style: .done, target: self, action: #selector(handleDoneButton))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "¡Aceptar!", style: .done, target: self, action: #selector(handleAcceptButton))
         navigationController?.navigationBar.tintColor = .darkText
         navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
+        
+        view.addSubview(activityIndicator)
+        activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     @objc fileprivate func handleCancelBarButton() {
@@ -226,66 +185,11 @@ class TaskOfferVC: UIViewController {
         view.addSubview(taskTitleLabel)
         taskTitleLabel.anchor(top: firstNameLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
-        let currentPriceStackView = UIStackView(arrangedSubviews: [initalBudgetLabel, initialBudgetValueLabel])
-        currentPriceStackView.axis = .horizontal
-        currentPriceStackView.distribution = .fillEqually
-        currentPriceStackView.spacing = 20
+        view.addSubview(budgetLabel)
+        budgetLabel.anchor(top: taskTitleLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
-        let offerStackView = UIStackView(arrangedSubviews: [newOfferLabel, newOfferTextField])
-        currentPriceStackView.axis = .horizontal
-        currentPriceStackView.distribution = .fillEqually
-        offerStackView.spacing = 20
-        
-        let stack = UIStackView(arrangedSubviews: [currentPriceStackView, offerStackView])
-        stack.axis = .vertical
-        stack.distribution = .fillEqually
-        
-        view.addSubview(stack)
-        stack.anchor(top: taskTitleLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 50, paddingBottom: 0, paddingRight: -50, width: nil, height: 100)
-        
-        newOfferTextField.translatesAutoresizingMaskIntoConstraints = false
-        newOfferTextField.centerXAnchor.constraint(equalTo: initialBudgetValueLabel.centerXAnchor).isActive = true
-        
-        let offerSeperatorView = UIView()
-        offerSeperatorView.backgroundColor = UIColor.mainBlue()
-        
-        view.addSubview(offerSeperatorView)
-        offerSeperatorView.anchor(top: nil, left: newOfferTextField.leftAnchor, bottom: newOfferTextField.bottomAnchor, right: newOfferTextField.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)
-        
-        view.addSubview(doneButton)
-        doneButton.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
-        doneButton.layer.cornerRadius = 5
-        
-        view.addSubview(activityIndicator)
-        activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-    }
-    
-    fileprivate func makeTextFieldToolBar() -> UIToolbar {
-        let toolBar = UIToolbar()
-        toolBar.sizeToFit()
-        
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-        
-        let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(handleTextFieldDoneButton))
-        
-        toolBar.setItems([flexibleSpace, doneButton], animated: false)
-        
-        return toolBar
-    }
-}
-
-extension TaskOfferVC: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField.isFirstResponder {
-            textField.resignFirstResponder()
-        }
-        
-        return true
-    }
-    
-    // When done button is clicked on keyboard input accessory view
-    @objc func handleTextFieldDoneButton() {
-        view.endEditing(true)
+        view.addSubview(acceptButton)
+        acceptButton.anchor(top: budgetLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
+        acceptButton.layer.cornerRadius = 5
     }
 }
