@@ -60,34 +60,36 @@ class TaskInteractionDetailsView: UIView {
     }
     
     fileprivate func setTaskCategory(forCategory category: String) -> UIImage {
+        var categoryImage = #imageLiteral(resourceName: "anythingCategory")
+        taskCategoryLabel.text = Constants.TaskCategories.anything
+        
         if category == Constants.TaskCategories.cleaning {
             taskCategoryLabel.text = Constants.TaskCategories.cleaning
-            return #imageLiteral(resourceName: "CleaningPH")
+            categoryImage =  #imageLiteral(resourceName: "cleaningCategory")
         } else if category == Constants.TaskCategories.handyMan {
             taskCategoryLabel.text = Constants.TaskCategories.handyMan
-            return #imageLiteral(resourceName: "HandymanPH")
+            categoryImage = #imageLiteral(resourceName: "handymanCategory")
         } else if category == Constants.TaskCategories.computerIT {
             taskCategoryLabel.text = Constants.TaskCategories.computerIT
-            return #imageLiteral(resourceName: "ComputerITPH")
+            categoryImage = #imageLiteral(resourceName: "computerITCategory")
         } else if category == Constants.TaskCategories.photoVideo {
             taskCategoryLabel.text = Constants.TaskCategories.photoVideo
-            return #imageLiteral(resourceName: "PhotoVideoPH")
+            categoryImage = #imageLiteral(resourceName: "photoVideoCategory")
         }  else if category == Constants.TaskCategories.assembly {
             taskCategoryLabel.text = Constants.TaskCategories.assembly
-            return #imageLiteral(resourceName: "AssemblyPH")
+            categoryImage = #imageLiteral(resourceName: "assemblyCategory")
         } else if category == Constants.TaskCategories.delivery {
             taskCategoryLabel.text = Constants.TaskCategories.delivery
-            return #imageLiteral(resourceName: "DeliveryPH")
+            categoryImage = #imageLiteral(resourceName: "deliveryCategory")
         } else if category == Constants.TaskCategories.moving {
             taskCategoryLabel.text = Constants.TaskCategories.moving
-            return #imageLiteral(resourceName: "MovingPH")
+            categoryImage = #imageLiteral(resourceName: "movingCategory")
         } else if category == Constants.TaskCategories.pets {
             taskCategoryLabel.text = Constants.TaskCategories.pets
-            return #imageLiteral(resourceName: "DeliveryPH")
-        } else {
-            taskCategoryLabel.text = Constants.TaskCategories.anything
-            return #imageLiteral(resourceName: "AnythingPH")
+            categoryImage = #imageLiteral(resourceName: "petsCategory")
         }
+        
+        return categoryImage.withTintColor(UIColor.gray)
     }
     
     let profileImageView: CustomImageView = {
@@ -121,7 +123,7 @@ class TaskInteractionDetailsView: UIView {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.textAlignment = .left
-        label.textColor = .lightGray
+        label.textColor = .gray
         label.numberOfLines = 1
         
         return label
@@ -135,6 +137,13 @@ class TaskInteractionDetailsView: UIView {
         label.numberOfLines = 2
         
         return label
+    }()
+    
+    let taskLocationPin: UIImageView = {
+        let iv = UIImageView()
+        iv.image = #imageLiteral(resourceName: "locationPin")
+        
+        return iv
     }()
     
     let taskLocationLabel: UILabel = {
@@ -155,7 +164,7 @@ class TaskInteractionDetailsView: UIView {
     
     let taskCategoryLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.boldSystemFont(ofSize: 12)
         label.textColor = UIColor.darkText
         label.textAlignment = .center
         
@@ -203,8 +212,11 @@ class TaskInteractionDetailsView: UIView {
         addSubview(taskTitleLabel)
         taskTitleLabel.anchor(top: postedDateLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
+        addSubview(taskLocationPin)
+        taskLocationPin.anchor(top: taskTitleLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 14, height: 14)
+        
         addSubview(taskLocationLabel)
-        taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
+        taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: taskLocationPin.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 4, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
         let sectionSeperatorView = UIView()
         sectionSeperatorView.backgroundColor = .lightGray
@@ -213,7 +225,7 @@ class TaskInteractionDetailsView: UIView {
         sectionSeperatorView.anchor(top: nil, left: leftAnchor, bottom: topAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 175, paddingRight: -20, width: nil, height: 0.5)
         
         addSubview(taskCategoryLabel)
-        taskCategoryLabel.anchor(top: nil, left: profileImageView.rightAnchor, bottom: sectionSeperatorView.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
+        taskCategoryLabel.anchor(top: nil, left: profileImageView.rightAnchor, bottom: sectionSeperatorView.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: -7, paddingRight: 0, width: nil, height: 13)
         
         addSubview(taskCategoryImageView)
         taskCategoryImageView.anchor(top: nil, left: nil, bottom: taskCategoryLabel.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: 30, height: 30)
@@ -254,7 +266,7 @@ class TaskInteractionDetailsView: UIView {
         button.tintColor = UIColor.mainBlue()
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.titleLabel?.textAlignment = .center
-        button.layer.borderWidth = 1
+        button.layer.borderWidth = 1.5
         button.layer.borderColor = UIColor.mainBlue().cgColor
         button.addTarget(self, action: #selector(handleMakeOfferButton), for: .touchUpInside)
         
@@ -271,7 +283,7 @@ class TaskInteractionDetailsView: UIView {
         button.tintColor = UIColor.mainBlue()
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.titleLabel?.textAlignment = .center
-        button.layer.borderWidth = 1
+        button.layer.borderWidth = 1.5
         button.layer.borderColor = UIColor.mainBlue().cgColor
         button.addTarget(self, action: #selector(handleAcceptTaskButton), for: .touchUpInside)
         

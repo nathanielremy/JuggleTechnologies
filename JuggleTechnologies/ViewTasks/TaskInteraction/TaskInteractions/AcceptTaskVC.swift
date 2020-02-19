@@ -140,6 +140,7 @@ class AcceptTaskVC: UIViewController {
             return nil
         }
         
+        offerValues[Constants.FirebaseDatabase.offerPrice] = task.budget
         offerValues[Constants.FirebaseDatabase.isAcceptingBudget] = true
         offerValues[Constants.FirebaseDatabase.creationDate] = Date().timeIntervalSince1970
         offerValues[Constants.FirebaseDatabase.isOfferAccepted] = false

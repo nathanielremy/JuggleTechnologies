@@ -23,7 +23,8 @@ class TaskCategoryPickerVC: UIViewController {
     let cleaningCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "CleaningPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "cleaningCategory"), for: .normal)
+        button.tintColor = UIColor.gray
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 0
@@ -44,7 +45,8 @@ class TaskCategoryPickerVC: UIViewController {
     let computerITCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "ComputerITPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "computerITCategory"), for: .normal)
+        button.tintColor = UIColor.gray
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 2
@@ -65,7 +67,8 @@ class TaskCategoryPickerVC: UIViewController {
     let assemblyCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "AssemblyPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "assemblyCategory"), for: .normal)
+        button.tintColor = UIColor.gray
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 4
@@ -86,7 +89,8 @@ class TaskCategoryPickerVC: UIViewController {
     let movingCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "MovingPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "movingCategory"), for: .normal)
+        button.tintColor = UIColor.gray
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 6
@@ -107,7 +111,8 @@ class TaskCategoryPickerVC: UIViewController {
     let handyManCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "HandymanPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "handymanCategory"), for: .normal)
+        button.tintColor = UIColor.gray
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 1
@@ -128,7 +133,8 @@ class TaskCategoryPickerVC: UIViewController {
     let videoPhotoCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "PhotoVideoPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "photoVideoCategory"), for: .normal)
+        button.tintColor = UIColor.gray
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 3
@@ -149,7 +155,8 @@ class TaskCategoryPickerVC: UIViewController {
     let deliveryCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "DeliveryPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "deliveryCategory"), for: .normal)
+        button.tintColor = UIColor.gray
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 5
@@ -170,7 +177,11 @@ class TaskCategoryPickerVC: UIViewController {
     let petsCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "DeliveryPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "petsCategory"), for: .normal)
+        button.tintColor = UIColor.gray
+        button.layer.borderWidth = 3
+        button.layer.borderColor = UIColor.mainBlue().cgColor
+        button.layer.masksToBounds = true
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 7
@@ -191,7 +202,10 @@ class TaskCategoryPickerVC: UIViewController {
     let anythingCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage( #imageLiteral(resourceName: "AnythingPH"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "anythingCategory"), for: .normal)
+        button.tintColor = UIColor.gray
+        button.layer.borderWidth = 3
+        button.layer.borderColor = UIColor.mainBlue().cgColor
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 8
@@ -245,6 +259,7 @@ class TaskCategoryPickerVC: UIViewController {
         leftVerticalStackView.axis = .vertical
         leftVerticalStackView.distribution = .fillEqually
         leftVerticalStackView.alignment = .center
+        leftVerticalStackView.spacing = 30
 
         view.addSubview(leftVerticalStackView)
         leftVerticalStackView.anchor(top: mainLabel.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.centerXAnchor, paddingTop: 10, paddingLeft: 60, paddingBottom: -125, paddingRight: -20, width: nil, height: nil)
@@ -254,6 +269,7 @@ class TaskCategoryPickerVC: UIViewController {
         rightVerticalStackView.axis = .vertical
         rightVerticalStackView.distribution = .fillEqually
         rightVerticalStackView.alignment = .center
+        rightVerticalStackView.spacing = 30
         
         view.addSubview(rightVerticalStackView)
         rightVerticalStackView.anchor(top: mainLabel.bottomAnchor, left: view.centerXAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingTop: 10, paddingLeft: 20, paddingBottom: -125, paddingRight: -60, width: nil, height: nil)
@@ -264,6 +280,8 @@ class TaskCategoryPickerVC: UIViewController {
         anythingCategoryButton.widthAnchor.constraint(equalTo: deliveryCategoryButton.widthAnchor).isActive = true
         anythingCategoryButton.heightAnchor.constraint(equalTo: deliveryCategoryButton.heightAnchor).isActive = true
         
+        print(rightVerticalStackView.arrangedSubviews[0].frame.width)
+        petsCategoryButton.layer.cornerRadius = 40
         
         setupTaskCategoryTitles()
     }

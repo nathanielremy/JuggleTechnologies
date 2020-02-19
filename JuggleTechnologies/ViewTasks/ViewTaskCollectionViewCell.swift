@@ -46,39 +46,42 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
     }
     
     fileprivate func setTaskCategory(forCategory category: String) -> UIImage {
+        var categoryImage = #imageLiteral(resourceName: "anythingCategory")
+        taskCategoryLabel.text = Constants.TaskCategories.anything
+        
         if category == Constants.TaskCategories.cleaning {
             taskCategoryLabel.text = Constants.TaskCategories.cleaning
-            return #imageLiteral(resourceName: "CleaningPH")
+            categoryImage =  #imageLiteral(resourceName: "cleaningCategory")
         } else if category == Constants.TaskCategories.handyMan {
             taskCategoryLabel.text = Constants.TaskCategories.handyMan
-            return #imageLiteral(resourceName: "HandymanPH")
+            categoryImage = #imageLiteral(resourceName: "handymanCategory")
         } else if category == Constants.TaskCategories.computerIT {
             taskCategoryLabel.text = Constants.TaskCategories.computerIT
-            return #imageLiteral(resourceName: "ComputerITPH")
+            categoryImage = #imageLiteral(resourceName: "computerITCategory")
         } else if category == Constants.TaskCategories.photoVideo {
             taskCategoryLabel.text = Constants.TaskCategories.photoVideo
-            return #imageLiteral(resourceName: "PhotoVideoPH")
+            categoryImage = #imageLiteral(resourceName: "photoVideoCategory")
         }  else if category == Constants.TaskCategories.assembly {
             taskCategoryLabel.text = Constants.TaskCategories.assembly
-            return #imageLiteral(resourceName: "AssemblyPH")
+            categoryImage = #imageLiteral(resourceName: "assemblyCategory")
         } else if category == Constants.TaskCategories.delivery {
             taskCategoryLabel.text = Constants.TaskCategories.delivery
-            return #imageLiteral(resourceName: "DeliveryPH")
+            categoryImage = #imageLiteral(resourceName: "deliveryCategory")
         } else if category == Constants.TaskCategories.moving {
             taskCategoryLabel.text = Constants.TaskCategories.moving
-            return #imageLiteral(resourceName: "MovingPH")
+            categoryImage = #imageLiteral(resourceName: "movingCategory")
         } else if category == Constants.TaskCategories.pets {
             taskCategoryLabel.text = Constants.TaskCategories.pets
-            return #imageLiteral(resourceName: "DeliveryPH")
-        } else {
-            taskCategoryLabel.text = Constants.TaskCategories.anything
-            return #imageLiteral(resourceName: "AnythingPH")
+            categoryImage = #imageLiteral(resourceName: "petsCategory")
         }
+        
+        return categoryImage.withTintColor(UIColor.gray)
     }
     
     lazy var saveTaskButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = .red
+        button.setImage(#imageLiteral(resourceName: "taskUnsaved"), for: .normal)
+        button.tintColor = UIColor.mainBlue()
         button.addTarget(self, action: #selector(handleSaveTaskButton), for: .touchUpInside)
         
         return button
@@ -127,6 +130,13 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    let taskLocationPin: UIImageView = {
+        let iv = UIImageView()
+        iv.image = #imageLiteral(resourceName: "locationPin")
+        
+        return iv
+    }()
+    
     let taskLocationLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
@@ -139,13 +149,15 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
     
     let taskCategoryImageView: UIImageView = {
         let iv = UIImageView()
+        iv.tintColor = UIColor.gray
+        iv.image?.withTintColor(UIColor.mainBlue())
         
         return iv
     }()
     
     let taskCategoryLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.boldSystemFont(ofSize: 12)
         label.textColor = UIColor.darkText
         label.textAlignment = .center
         
@@ -154,14 +166,15 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
     
     let taskDurationImageView: UIImageView = {
         let iv = UIImageView()
-        iv.image = #imageLiteral(resourceName: "SettingsGearPH")
+        iv.image = #imageLiteral(resourceName: "taskDuration").withTintColor(UIColor.gray)
+        
         
         return iv
     }()
     
     let taskDurationLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.boldSystemFont(ofSize: 12)
         label.textColor = UIColor.darkText
         label.textAlignment = .center
         
@@ -170,16 +183,16 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
     
     let taskBudgetImageView: UIImageView = {
         let iv = UIImageView()
-        iv.image = #imageLiteral(resourceName: "DeliveryPH")
         
         return iv
     }()
     
     let taskBudgetLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = UIColor.darkText
+        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.textColor = UIColor.mainBlue()
         label.textAlignment = .center
+        label.numberOfLines = 0
         
         return label
     }()
@@ -196,8 +209,8 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
     
     fileprivate func setupViews() {
         addSubview(profileImageView)
-        profileImageView.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 70, height: 70)
-        profileImageView.layer.cornerRadius = 70 / 2
+        profileImageView.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 60, height: 60)
+        profileImageView.layer.cornerRadius = 60 / 2
         profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
         addSubview(firstNameLabel)
@@ -209,12 +222,14 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         addSubview(taskTitleLabel)
         taskTitleLabel.anchor(top: postedDateLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
+        addSubview(taskLocationPin)
+        taskLocationPin.anchor(top: taskTitleLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 14, height: 14)
+        
         addSubview(taskLocationLabel)
-        taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
+        taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: taskLocationPin.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 4, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
         addSubview(saveTaskButton)
-        saveTaskButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: -8, width: 20, height: 20)
-        saveTaskButton.layer.cornerRadius = 10
+        saveTaskButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: -8, width: 27, height: 27)
         
         let taskDetailIconsStackView = UIStackView(arrangedSubviews: [taskCategoryImageView, taskDurationImageView, taskBudgetImageView])
         taskDetailIconsStackView.axis = .horizontal
@@ -222,10 +237,10 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         taskDetailIconsStackView.spacing = 50
         
         addSubview(taskDetailIconsStackView)
-        taskDetailIconsStackView.anchor(top: nil, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: -28, paddingRight: -50, width: nil, height: 30)
+        taskDetailIconsStackView.anchor(top: profileImageView.bottomAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: -28, paddingRight: -50, width: nil, height: nil)
         
         addSubview(taskCategoryLabel)
-        taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
+        taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -7, paddingRight: 0, width: nil, height: 13)
         taskCategoryLabel.centerXAnchor.constraint(equalTo: taskCategoryImageView.centerXAnchor).isActive = true
         
         addSubview(taskDurationLabel)
@@ -233,8 +248,7 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         taskDurationLabel.centerXAnchor.constraint(equalTo: taskDurationImageView.centerXAnchor).isActive = true
         
         addSubview(taskBudgetLabel)
-        taskBudgetLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 12)
-        taskBudgetLabel.centerXAnchor.constraint(equalTo: taskBudgetImageView.centerXAnchor).isActive = true
+        taskBudgetLabel.anchor(top: taskDetailIconsStackView.topAnchor, left: taskDurationImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: -8, paddingRight: -10, width: nil, height: nil)
         
         let bottomSeperatorView = UIView()
         bottomSeperatorView.backgroundColor = .lightGray

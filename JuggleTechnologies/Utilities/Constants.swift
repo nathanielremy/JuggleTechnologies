@@ -94,6 +94,8 @@ class Constants {
         static let completedTaskCell = "completedTaskCell"
         static let savedTaskCell = "savedTaskCell"
         static let onGoingTaskInteractionsVCHeaderCell = "onGoingTaskInteractionsVCHeaderCell"
+        static let onGoingTaskOfferCell = "OnGoingTaskOfferCell"
+        static let onGoingChatMessageCell = "onGoingChatMessageCell"
     }
     
     struct BarcalonaCoordinates {

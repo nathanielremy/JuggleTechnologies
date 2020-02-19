@@ -46,7 +46,7 @@ class TaskDetailsVC: UIViewController {
             dateFormatterPrint.locale = Locale(identifier: "es_ES")
             dateFormatterPrint.dateFormat = "dd, MMM, yyyy"
             
-            self.timePostedLabel.attributedText = setupAttributedText(withTitle: "Publicado Hace", value: "\(task.creationDate.timeAgoDisplay()) el \(dateFormatterPrint.string(from: task.creationDate))")
+            self.timePostedLabel.attributedText = setupAttributedText(withTitle: "Publicado ", value: "\(task.creationDate.timeAgoDisplay()) el \(dateFormatterPrint.string(from: task.creationDate))")
             
             taskDurationLabel.attributedText = setupAttributedText(withTitle: "Duración Estimada", value: "\(task.duration)\(task.duration > 1 ? " hrs" : " hr")")
             taskBudgetLabel.attributedText = setupAttributedText(withTitle: "Presupuesto", value: "€\(task.budget)")

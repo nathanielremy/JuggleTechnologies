@@ -70,7 +70,7 @@ class UserProfileHeaderCell: UICollectionViewCell {
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.setTitleColor(UIColor.mainBlue(), for: .normal)
         button.layer.borderColor = UIColor.mainBlue().cgColor
-        button.layer.borderWidth = 1
+        button.layer.borderWidth = 1.5
         button.isEnabled = false
         button.tag = 0
         button.addTarget(self, action: #selector(handleSwitchButtons(_:)), for: .touchUpInside)
@@ -84,7 +84,7 @@ class UserProfileHeaderCell: UICollectionViewCell {
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.setTitleColor(.lightGray, for: .normal)
         button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.borderWidth = 1
+        button.layer.borderWidth = 1.5
         button.tag = 1
         button.addTarget(self, action: #selector(handleSwitchButtons(_:)), for: .touchUpInside)
         

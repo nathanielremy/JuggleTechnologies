@@ -131,7 +131,7 @@ extension UIView {
         
         let label = UILabel()
         label.text = text
-        label.textColor = .lightGray
+        label.textColor = .gray
         label.font = UIFont.systemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -176,7 +176,7 @@ extension Date {
             unit = "mes"
         }
         
-        return "\(quotient) \(unit)\(quotient == 1 ? "" : (unit != "mes" ? "s" : "es"))"
+        return "Hace \(quotient) \(unit)\(quotient == 1 ? "" : (unit != "mes" ? "s" : "es"))"
     }
 }
 
