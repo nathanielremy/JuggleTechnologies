@@ -51,7 +51,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
     func setupViewControllers() {
         //View Tasks
-        let viewTasksNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "ViewTasksPH"), selectedImage: #imageLiteral(resourceName: "ViewTasksPH"), rootViewController: ViewTasksVC(collectionViewLayout: UICollectionViewFlowLayout()))
+        let viewTasksNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "viewTasksUnselected"), selectedImage: #imageLiteral(resourceName: "viewTasksUnselected"), rootViewController: ViewTasksVC(collectionViewLayout: UICollectionViewFlowLayout()))
         
         //Notifications
         let notificationsNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "NotificationsPH"), selectedImage: #imageLiteral(resourceName: "NotificationsPH"), rootViewController: NotificationsVC(collectionViewLayout: UICollectionViewFlowLayout()))

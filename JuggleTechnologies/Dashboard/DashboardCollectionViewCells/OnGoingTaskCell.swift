@@ -202,12 +202,6 @@ class OnGoingTaskCell: UICollectionViewCell {
         return label
     }()
     
-    let taskBudgetImageView: UIImageView = {
-        let iv = UIImageView()
-        
-        return iv
-    }()
-    
     let taskBudgetLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 30)
@@ -362,20 +356,20 @@ class OnGoingTaskCell: UICollectionViewCell {
         addSubview(taskLocationLabel)
         taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: taskLocationPin.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 4, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
-        let taskDetailIconsStackView = UIStackView(arrangedSubviews: [taskCategoryImageView, taskDurationImageView, taskBudgetImageView])
+        let taskDetailIconsStackView = UIStackView(arrangedSubviews: [taskCategoryImageView, taskDurationImageView])
         taskDetailIconsStackView.axis = .horizontal
         taskDetailIconsStackView.distribution = .fillEqually
         taskDetailIconsStackView.spacing = 50
         
         addSubview(taskDetailIconsStackView)
-        taskDetailIconsStackView.anchor(top: profileImageView.bottomAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 10, paddingLeft: 50, paddingBottom: -48, paddingRight: -50, width: nil, height: nil)
+        taskDetailIconsStackView.anchor(top: profileImageView.bottomAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 10, paddingLeft: 50, paddingBottom: -48, paddingRight: 0, width: frame.width * 0.3, height: nil)
         
         addSubview(taskCategoryLabel)
         taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -27, paddingRight: 0, width: nil, height: 13)
         taskCategoryLabel.centerXAnchor.constraint(equalTo: taskCategoryImageView.centerXAnchor).isActive = true
         
         addSubview(taskDurationLabel)
-        taskDurationLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -28, paddingRight: 0, width: nil, height: 12)
+        taskDurationLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -27, paddingRight: 0, width: nil, height: 13)
         taskDurationLabel.centerXAnchor.constraint(equalTo: taskDurationImageView.centerXAnchor).isActive = true
         
         addSubview(taskBudgetLabel)
