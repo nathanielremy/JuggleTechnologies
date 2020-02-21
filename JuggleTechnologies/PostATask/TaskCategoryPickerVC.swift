@@ -179,9 +179,6 @@ class TaskCategoryPickerVC: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(#imageLiteral(resourceName: "petsCategory"), for: .normal)
         button.tintColor = UIColor.gray
-        button.layer.borderWidth = 3
-        button.layer.borderColor = UIColor.mainBlue().cgColor
-        button.layer.masksToBounds = true
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 7
@@ -204,8 +201,6 @@ class TaskCategoryPickerVC: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(#imageLiteral(resourceName: "anythingCategory"), for: .normal)
         button.tintColor = UIColor.gray
-        button.layer.borderWidth = 3
-        button.layer.borderColor = UIColor.mainBlue().cgColor
         
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 8
@@ -279,9 +274,6 @@ class TaskCategoryPickerVC: UIViewController {
         anythingCategoryButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         anythingCategoryButton.widthAnchor.constraint(equalTo: deliveryCategoryButton.widthAnchor).isActive = true
         anythingCategoryButton.heightAnchor.constraint(equalTo: deliveryCategoryButton.heightAnchor).isActive = true
-        
-        print(rightVerticalStackView.arrangedSubviews[0].frame.width)
-        petsCategoryButton.layer.cornerRadius = 40
         
         setupTaskCategoryTitles()
     }

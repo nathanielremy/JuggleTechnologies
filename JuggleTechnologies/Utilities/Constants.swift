@@ -82,20 +82,19 @@ class Constants {
     }
     
     struct CollectionViewCellIds {
-        static let userProfileHeaderCell = "userProfileHeaderCell"
-        static let userProfileStatisticsCell = "userProfileStatisticsCell"
-        static let userSelfDescriptionCell = "userSelfDescriptionCell"
-        static let viewTaskCollectionViewCell = "viewTaskCollectionViewCell"
-        static let viewTasksHeaderCell = "viewTasksHeaderCell"
-        static let chatMessageCellId = "chatMessageCellId"
-        static let dashboardHeaderCell = "dashboardHeaderCell"
-        static let onGoingTaskCell = "onGoingTaskCell"
-        static let acceptedTaskCell = "acceptedTaskCell"
-        static let completedTaskCell = "completedTaskCell"
-        static let savedTaskCell = "savedTaskCell"
-        static let onGoingTaskInteractionsVCHeaderCell = "onGoingTaskInteractionsVCHeaderCell"
-        static let onGoingTaskOfferCell = "OnGoingTaskOfferCell"
-        static let onGoingChatMessageCell = "onGoingChatMessageCell"
+        static let userProfileHeaderCell = "userProfileHeaderCellId"
+        static let userProfileStatisticsCell = "userProfileStatisticsCellId"
+        static let userSelfDescriptionCell = "userSelfDescriptionCellId"
+        static let viewTaskCollectionViewCell = "viewTaskCollectionViewCellId"
+        static let viewTasksHeaderCell = "viewTasksHeaderCellId"
+        static let chatMessageCell = "chatMessageCellId"
+        static let dashboardHeaderCell = "dashboardHeaderCellId"
+        static let onGoingTaskCell = "onGoingTaskCellId"
+        static let assignedTaskCell = "assignedTaskCellId"
+        static let savedTaskCell = "savedTaskCellId"
+        static let onGoingTaskInteractionsHeaderCell = "onGoingTaskInteractionsHeaderCellId"
+        static let onGoingTaskOfferCell = "onGoingTaskOfferCellId"
+        static let onGoingTaskChatMessageCell = "onGoingTaskChatMessageCellId"
     }
     
     struct BarcalonaCoordinates {

@@ -124,9 +124,9 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
         collectionView.bounces = true
         
         //Register the CollectionViewCells
-        collectionView.register(OnGoingTaskInteractionsHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskInteractionsVCHeaderCell)
+        collectionView.register(OnGoingTaskInteractionsHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskInteractionsHeaderCell)
         collectionView.register(OnGoingTaskOfferCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskOfferCell)
-        collectionView.register(OnGoingChatMessageCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.onGoingChatMessageCell)
+        collectionView.register(ChatMessageCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.chatMessageCell)
         
         // Manualy refresh the collectionView
         let refreshController = UIRefreshControl()
@@ -241,19 +241,19 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if self.filterMode == 0 { //Offers
-            guard let onGoingTaskOfferCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskOfferCell, for: indexPath) as? OnGoingTaskOfferCell else {
+            guard let taskOfferCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskOfferCell, for: indexPath) as? OnGoingTaskOfferCell else {
                 return UICollectionViewCell()
             }
             
-            onGoingTaskOfferCell.offer = self.offers[indexPath.item]
+            taskOfferCell.offer = self.offers[indexPath.item]
             
-            return onGoingTaskOfferCell
+            return taskOfferCell
         } else { //Messages
-            guard let onGoingChatMessageCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.onGoingChatMessageCell, for: indexPath) as? OnGoingChatMessageCell else {
+            guard let chatMessageCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskChatMessageCell, for: indexPath) as? OnGoingTaskChatMessageCell else {
                 return UICollectionViewCell()
             }
             
-            return onGoingChatMessageCell
+            return chatMessageCell
         }
     }
     
@@ -274,7 +274,7 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
     // Add section header for collectionView a supplementary kind
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
-        guard let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskInteractionsVCHeaderCell, for: indexPath) as? OnGoingTaskInteractionsHeaderCell else { fatalError("Unable to dequeue DashboardHeaderCell")}
+        guard let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskInteractionsHeaderCell, for: indexPath) as? OnGoingTaskInteractionsHeaderCell else { fatalError("Unable to dequeue DashboardHeaderCell")}
             
         headerCell.delegate = self
             

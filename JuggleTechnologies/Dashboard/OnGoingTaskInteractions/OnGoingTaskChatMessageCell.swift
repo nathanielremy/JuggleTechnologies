@@ -1,5 +1,5 @@
 //
-//  OnGoingChatMessageCell.swift
+//  OnGoingTaskChatMessageCell.swift
 //  JuggleTechnologies
 //
 //  Created by Nathaniel Remy on 2020-02-19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class OnGoingChatMessageCell: UICollectionViewCell {
+class OnGoingTaskChatMessageCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .red

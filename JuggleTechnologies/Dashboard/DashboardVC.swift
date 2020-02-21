@@ -89,8 +89,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         //Register the CollectionViewCells
         collectionView.register(DashboardHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.dashboardHeaderCell)
         collectionView.register(OnGoingTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskCell)
-        collectionView.register(AcceptedTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.acceptedTaskCell)
-        collectionView.register(CompletedTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.completedTaskCell)
+        collectionView.register(AssignedTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.assignedTaskCell)
         collectionView.register(SavedTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.savedTaskCell)
         
         // Manualy refresh the collectionView
@@ -303,7 +302,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             
         } else if self.filterOptionsValue == 2 {
             
-            guard let acceptedTaskCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.acceptedTaskCell, for: indexPath) as? AcceptedTaskCell else {
+            guard let acceptedTaskCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.assignedTaskCell, for: indexPath) as? AssignedTaskCell else {
                 return UICollectionViewCell()
             }
             
@@ -311,7 +310,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             
         } else if self.filterOptionsValue == 3 {
             
-            guard let completedTaskCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskCell, for: indexPath) as? OnGoingTaskCell else {
+            guard let completedTaskCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.assignedTaskCell, for: indexPath) as? AssignedTaskCell else {
                 return UICollectionViewCell()
             }
             

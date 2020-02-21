@@ -1,5 +1,5 @@
 //
-//  AcceptedTaskCell.swift
+//  AssignedTaskCell.swift
 //  JuggleTechnologies
 //
 //  Created by Nathaniel Remy on 2020-02-04.
@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class AcceptedTaskCell: UICollectionViewCell {
+class AssignedTaskCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)

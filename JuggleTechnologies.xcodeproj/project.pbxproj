@@ -36,15 +36,14 @@
 		445D530223FAFBAC002C1939 /* AcceptTaskVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445D530123FAFBAC002C1939 /* AcceptTaskVC.swift */; };
 		4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */; };
 		4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */; };
-		447A9ED023FD3EF00047AEE1 /* OnGoingChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447A9ECF23FD3EF00047AEE1 /* OnGoingChatMessageCell.swift */; };
+		447A9ED023FD3EF00047AEE1 /* OnGoingTaskChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447A9ECF23FD3EF00047AEE1 /* OnGoingTaskChatMessageCell.swift */; };
 		447C128823EF24DA00947FE8 /* TaskOfferVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447C128723EF24DA00947FE8 /* TaskOfferVC.swift */; };
 		447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447FA35F23E1FF150020247E /* TaskDetailsVC.swift */; };
 		4483FCF823DF28E000178E84 /* TaskInteractionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */; };
 		4483FCFA23DF2E9C00178E84 /* TaskInteractionDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */; };
 		4483FCFD23DF320A00178E84 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */; };
 		44972CCB23E9E34900798745 /* OnGoingTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */; };
-		44972CCD23E9E38900798745 /* AcceptedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCC23E9E38900798745 /* AcceptedTaskCell.swift */; };
-		44972CCF23E9E3B400798745 /* CompletedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCE23E9E3B400798745 /* CompletedTaskCell.swift */; };
+		44972CCD23E9E38900798745 /* AssignedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCC23E9E38900798745 /* AssignedTaskCell.swift */; };
 		44972CD123E9E8EF00798745 /* SavedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CD023E9E8EF00798745 /* SavedTaskCell.swift */; };
 		44BECA8C23F15F8500014A59 /* JugglerApplicationStepsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BECA8B23F15F8500014A59 /* JugglerApplicationStepsVC.swift */; };
 		44BECA8E23F1608700014A59 /* JugglerSignupRequirementsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BECA8D23F1608700014A59 /* JugglerSignupRequirementsVC.swift */; };
@@ -95,15 +94,14 @@
 		445D530123FAFBAC002C1939 /* AcceptTaskVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcceptTaskVC.swift; sourceTree = "<group>"; };
 		4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeaderCell.swift; sourceTree = "<group>"; };
 		4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
-		447A9ECF23FD3EF00047AEE1 /* OnGoingChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnGoingChatMessageCell.swift; sourceTree = "<group>"; };
+		447A9ECF23FD3EF00047AEE1 /* OnGoingTaskChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnGoingTaskChatMessageCell.swift; sourceTree = "<group>"; };
 		447C128723EF24DA00947FE8 /* TaskOfferVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskOfferVC.swift; sourceTree = "<group>"; };
 		447FA35F23E1FF150020247E /* TaskDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailsVC.swift; sourceTree = "<group>"; };
 		4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInteractionVC.swift; sourceTree = "<group>"; };
 		4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInteractionDetailsView.swift; sourceTree = "<group>"; };
 		4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnGoingTaskCell.swift; sourceTree = "<group>"; };
-		44972CCC23E9E38900798745 /* AcceptedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcceptedTaskCell.swift; sourceTree = "<group>"; };
-		44972CCE23E9E3B400798745 /* CompletedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTaskCell.swift; sourceTree = "<group>"; };
+		44972CCC23E9E38900798745 /* AssignedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignedTaskCell.swift; sourceTree = "<group>"; };
 		44972CD023E9E8EF00798745 /* SavedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedTaskCell.swift; sourceTree = "<group>"; };
 		44BECA8B23F15F8500014A59 /* JugglerApplicationStepsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JugglerApplicationStepsVC.swift; sourceTree = "<group>"; };
 		44BECA8D23F1608700014A59 /* JugglerSignupRequirementsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JugglerSignupRequirementsVC.swift; sourceTree = "<group>"; };
@@ -156,8 +154,7 @@
 			children = (
 				4438EBA823E71F6D000CF489 /* DashboardHeaderCell.swift */,
 				44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */,
-				44972CCC23E9E38900798745 /* AcceptedTaskCell.swift */,
-				44972CCE23E9E3B400798745 /* CompletedTaskCell.swift */,
+				44972CCC23E9E38900798745 /* AssignedTaskCell.swift */,
 				44972CD023E9E8EF00798745 /* SavedTaskCell.swift */,
 			);
 			path = DashboardCollectionViewCells;
@@ -254,7 +251,7 @@
 			children = (
 				4446E10023D358E5007933AF /* DashboardVC.swift */,
 				4438EBAA23E888EA000CF489 /* DashboardCollectionViewCells */,
-				44D0CEDA23FA6CE3001C9DB5 /* OnGoingInteractions */,
+				44D0CEDA23FA6CE3001C9DB5 /* OnGoingTaskInteractions */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -302,15 +299,15 @@
 			path = TaskInteraction;
 			sourceTree = "<group>";
 		};
-		44D0CEDA23FA6CE3001C9DB5 /* OnGoingInteractions */ = {
+		44D0CEDA23FA6CE3001C9DB5 /* OnGoingTaskInteractions */ = {
 			isa = PBXGroup;
 			children = (
 				44D0CED823FA6C74001C9DB5 /* OnGoingTaskInteractionsVC.swift */,
 				44D0CEDB23FA6D35001C9DB5 /* OnGoingTaskInteractionsHeaderCell.swift */,
 				4435835823FC5848006601DA /* OnGoingTaskOfferCell.swift */,
-				447A9ECF23FD3EF00047AEE1 /* OnGoingChatMessageCell.swift */,
+				447A9ECF23FD3EF00047AEE1 /* OnGoingTaskChatMessageCell.swift */,
 			);
-			path = OnGoingInteractions;
+			path = OnGoingTaskInteractions;
 			sourceTree = "<group>";
 		};
 		44FB731F23D36BB2000B8987 /* Login-Signup */ = {
@@ -489,20 +486,19 @@
 				4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */,
 				4446E0FB23D3533F007933AF /* NotificationsVC.swift in Sources */,
 				44FB732623D36CAA000B8987 /* Constants.swift in Sources */,
-				447A9ED023FD3EF00047AEE1 /* OnGoingChatMessageCell.swift in Sources */,
+				447A9ED023FD3EF00047AEE1 /* OnGoingTaskChatMessageCell.swift in Sources */,
 				441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */,
 				4446E0FE23D35678007933AF /* TaskCategoryPickerVC.swift in Sources */,
 				44BECA8C23F15F8500014A59 /* JugglerApplicationStepsVC.swift in Sources */,
 				447C128823EF24DA00947FE8 /* TaskOfferVC.swift in Sources */,
 				44BECA8E23F1608700014A59 /* JugglerSignupRequirementsVC.swift in Sources */,
 				444AA33123EB4DA100872EB9 /* Message.swift in Sources */,
-				44972CCF23E9E3B400798745 /* CompletedTaskCell.swift in Sources */,
 				4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */,
 				44D0CEDC23FA6D35001C9DB5 /* OnGoingTaskInteractionsHeaderCell.swift in Sources */,
 				443C4FB323F9D1B20070309E /* OfferCompleteVC.swift in Sources */,
 				4446E0E223D341B1007933AF /* SceneDelegate.swift in Sources */,
 				4446E10423D3620D007933AF /* ProfileVC.swift in Sources */,
-				44972CCD23E9E38900798745 /* AcceptedTaskCell.swift in Sources */,
+				44972CCD23E9E38900798745 /* AssignedTaskCell.swift in Sources */,
 				4438EBA923E71F6D000CF489 /* DashboardHeaderCell.swift in Sources */,
 				44972CCB23E9E34900798745 /* OnGoingTaskCell.swift in Sources */,
 				442698A523D610870095A495 /* PostCompleteVC.swift in Sources */,

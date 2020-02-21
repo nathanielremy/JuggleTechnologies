@@ -301,7 +301,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         collectionView?.keyboardDismissMode = .interactive
         
         //Register collectionViewCells
-        collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.chatMessageCellId)
+        collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.chatMessageCell)
         collectionView?.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 58, right: 0)
         collectionView?.scrollIndicatorInsets = UIEdgeInsets.init(top: 0, left: 0, bottom: 58, right: 0)
         
@@ -395,7 +395,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let chatMessageCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.chatMessageCellId, for: indexPath) as? ChatMessageCell else {
+        guard let chatMessageCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.chatMessageCell, for: indexPath) as? ChatMessageCell else {
             return UICollectionViewCell()
         }
 
