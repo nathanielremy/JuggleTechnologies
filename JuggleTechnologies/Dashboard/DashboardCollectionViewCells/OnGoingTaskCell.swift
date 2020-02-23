@@ -217,7 +217,7 @@ class OnGoingTaskCell: UICollectionViewCell {
         label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.backgroundColor = UIColor.mainBlue()
-        label.textColor = .white
+        label.textColor = .darkText
         
         return label
     }()
@@ -359,10 +359,10 @@ class OnGoingTaskCell: UICollectionViewCell {
         let taskDetailIconsStackView = UIStackView(arrangedSubviews: [taskCategoryImageView, taskDurationImageView])
         taskDetailIconsStackView.axis = .horizontal
         taskDetailIconsStackView.distribution = .fillEqually
-        taskDetailIconsStackView.spacing = 50
+        taskDetailIconsStackView.spacing = 58
         
         addSubview(taskDetailIconsStackView)
-        taskDetailIconsStackView.anchor(top: profileImageView.bottomAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 10, paddingLeft: 50, paddingBottom: -48, paddingRight: 0, width: frame.width * 0.3, height: nil)
+        taskDetailIconsStackView.anchor(top: profileImageView.bottomAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 18, paddingLeft: 50, paddingBottom: -48, paddingRight: 0, width: frame.width * 0.25, height: nil)
         
         addSubview(taskCategoryLabel)
         taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -27, paddingRight: 0, width: nil, height: 13)

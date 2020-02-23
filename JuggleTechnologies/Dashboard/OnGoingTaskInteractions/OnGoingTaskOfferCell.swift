@@ -9,9 +9,14 @@
 import UIKit
 import Firebase
 
+protocol OnGoingTaskOfferCellDelegate {
+    func handleProfileImageView(forOfferOwner offerOwner: User?)
+}
+
 class OnGoingTaskOfferCell: UICollectionViewCell {
-    
     //MARK: Stored properties
+    var delegate: OnGoingTaskOfferCellDelegate?
+    
     var offer: Offer? {
         didSet {
             guard let offer = self.offer else {
@@ -53,6 +58,10 @@ class OnGoingTaskOfferCell: UICollectionViewCell {
         return iv
     }()
     
+    @objc fileprivate func handleProfileImageView() {
+        self.delegate?.handleProfileImageView(forOfferOwner: self.offerOwner)
+    }
+    
     let fullNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
@@ -65,21 +74,32 @@ class OnGoingTaskOfferCell: UICollectionViewCell {
     
     lazy var denyButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = .red
+        button.layer.borderColor = UIColor.red.withAlphaComponent(0.5).cgColor
+        button.layer.borderWidth = 2
+        button.setTitle("X", for: .normal)
+        button.setTitleColor(UIColor.red, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        button.titleLabel?.textAlignment = .center
+        button.titleLabel?.alpha = 0.6
         
         return button
     }()
     
     lazy var acceptButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.mainBlue()
+        button.layer.borderColor = UIColor.mainBlue().cgColor
+        button.layer.borderWidth = 2
+        button.setTitle("✓", for: .normal)
+        button.setTitleColor(UIColor.mainBlue(), for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
+        button.titleLabel?.textAlignment = .center
         
         return button
     }()
     
     let offerPriceLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 22)
+        label.font = UIFont.boldSystemFont(ofSize: 30)
         label.textAlignment = .left
         label.textColor = UIColor.mainBlue()
         
@@ -133,8 +153,16 @@ class OnGoingTaskOfferCell: UICollectionViewCell {
         addSubview(timeAgoLabel)
         timeAgoLabel.anchor(top: nil, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: -8, paddingRight: 0, width: nil, height: nil)
         
+        //Add button over profileImageView to view user's profile
+        let button = UIButton()
+        button.backgroundColor = nil
+        addSubview(button)
+        button.anchor(top: profileImageView.topAnchor, left: profileImageView.leftAnchor, bottom: profileImageView.bottomAnchor, right: profileImageView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 60, height: 60)
+        button.layer.cornerRadius = 60/2
+        button.addTarget(self, action: #selector(handleProfileImageView), for: .touchUpInside)
+        
         let bottomSeperatorView = UIView()
-        bottomSeperatorView.backgroundColor = .darkText
+        bottomSeperatorView.backgroundColor = .lightGray
         addSubview(bottomSeperatorView)
         bottomSeperatorView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: nil, height: 0.5)
     }

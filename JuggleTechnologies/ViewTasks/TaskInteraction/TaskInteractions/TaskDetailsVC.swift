@@ -100,6 +100,16 @@ class TaskDetailsVC: UIViewController {
         return image
     }()
     
+    @objc fileprivate func handleProfileImageView() {
+        guard let user = self.user, user.userId != Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        profileVC.user = user
+        self.navigationController?.pushViewController(profileVC, animated: true)
+    }
+    
     let fullNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
@@ -245,6 +255,13 @@ class TaskDetailsVC: UIViewController {
         
         scrollView.addSubview(taskLocationLabel)
         taskLocationLabel.anchor(top: taskBudgetLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+        
+        //Add button over profileImageView to view user's profile
+        let button = UIButton()
+        button.backgroundColor = nil
+        scrollView.addSubview(button)
+        button.anchor(top: profileImageView.topAnchor, left: profileImageView.leftAnchor, bottom: profileImageView.bottomAnchor, right: profileImageView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        button.addTarget(self, action: #selector(handleProfileImageView), for: .touchUpInside)
     }
     
     fileprivate func setupMapView() {

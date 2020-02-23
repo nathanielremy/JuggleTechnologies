@@ -66,6 +66,16 @@ class AcceptTaskVC: UIViewController {
         return iv
     }()
     
+    @objc fileprivate func handleProfileImageView() {
+        guard let user = self.user, user.userId != Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        profileVC.user = user
+        self.navigationController?.pushViewController(profileVC, animated: true)
+    }
+    
     let firstNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
@@ -192,5 +202,12 @@ class AcceptTaskVC: UIViewController {
         view.addSubview(acceptButton)
         acceptButton.anchor(top: budgetLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
         acceptButton.layer.cornerRadius = 5
+        
+        //Add button over profileImageView to view user's profile
+        let button = UIButton()
+        button.backgroundColor = nil
+        view.addSubview(button)
+        button.anchor(top: profileImageView.topAnchor, left: profileImageView.leftAnchor, bottom: profileImageView.bottomAnchor, right: profileImageView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        button.addTarget(self, action: #selector(handleProfileImageView), for: .touchUpInside)
     }
 }

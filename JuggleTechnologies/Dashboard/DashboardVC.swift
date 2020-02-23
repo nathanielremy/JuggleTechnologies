@@ -344,7 +344,6 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             onGoingTaskInteractionsVC.task = self.userOnGoingTasksDictionary[self.userOnGoingTasks[indexPath.item].id]
             self.navigationController?.pushViewController(onGoingTaskInteractionsVC, animated: true)
         }
-        print(indexPath.item)
     }
     
     //MARK: DashboardHeaderCell Methods

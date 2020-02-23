@@ -26,7 +26,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     let activityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
         ai.hidesWhenStopped = true
-        ai.color = UIColor.darkText
+        ai.color = UIColor.mainBlue()
         ai.translatesAutoresizingMaskIntoConstraints = false
         
         return ai

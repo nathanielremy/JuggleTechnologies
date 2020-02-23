@@ -14,12 +14,13 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
     var currentUser: User?
     var filterMode: Int = 0 // 0 == offers, 1 == mensajes
     var canFetchOffers = true
-    var canFetchMessagess = true
     
     var offers = [Offer]()
     var tempOffers = [Offer]()
     
     var messages = [Message]()
+    var messagesDictionary = [String : Message]()
+    var timer: Timer?
     
     var task: Task? {
         didSet {
@@ -29,6 +30,7 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
             }
             
             self.fetchOffers(forTask: task)
+            self.observeUserMessages(forTask: task)
             setupNavigationBar(forTask: task)
         }
     }
@@ -36,6 +38,7 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
     fileprivate func setupNavigationBar(forTask task: Task) {
         navigationItem.title = task.title
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detalles", style: .plain, target: self, action: #selector(handleDetailsNavBarButton))
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
     }
     
     @objc fileprivate func handleDetailsNavBarButton() {
@@ -66,6 +69,9 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
         } else {
             self.activityIndicator.stopAnimating()
         }
+        
+        self.collectionView.isUserInteractionEnabled = !bool
+        self.navigationItem.rightBarButtonItem?.isEnabled = !bool
     }
     
     let noMessagessView: UIView = {
@@ -117,6 +123,89 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
         }
     }
     
+    fileprivate func observeUserMessages(forTask task: Task) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            self.attemptReloadTable()
+            print("No currentuserId to fetch OnGoingTaskMessages")
+            return
+        }
+        
+        self.attemptReloadTable()
+        
+        // Fetch the references to message objects in database
+        let userMessagesRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(currentUserId).child(task.id)
+        userMessagesRef.observe(.childAdded, with: { (userMessagesSnapshot) in
+            
+            let userId = userMessagesSnapshot.key
+            
+            // From reference fetch message objects
+            let userRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(currentUserId).child(task.id).child(userId)
+            userRef.observe(.childAdded, with: { (messageIdSnapshot) in
+                
+                let messageId = messageIdSnapshot.key
+                self.fetchMessage(withMessageId: messageId)
+                
+            }) { (error) in
+                self.attemptReloadTable()
+                print("Error fetching userRef in OnGoingTaskInteractionsVC: \(error)")
+            }
+        }) { (error) in
+            self.attemptReloadTable()
+            print("Error fetching userMessages in OnGoingTaskInteractionsVC: \(error)")
+        }
+    }
+    
+    fileprivate func fetchMessage(withMessageId messageId: String) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            self.attemptReloadTable()
+            print("No current user")
+            return
+        }
+        
+        let messagesRef = Database.database().reference().child(Constants.FirebaseDatabase.messagesRef).child(messageId)
+        messagesRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let dictionary = snapshot.value as? [String : Any] else {
+                self.attemptReloadTable()
+                print("snapShot not convertible to [String : Any]")
+                return
+            }
+            
+            let message = Message(key: snapshot.key, dictionary: dictionary)
+            
+            //Grouping all messages per user and users can only message about their own tasks
+            if let chatPartnerId = message.chatPartnerId(), currentUserId == message.taskOwnerId {
+                self.messagesDictionary[chatPartnerId] = message
+            }
+            
+            self.attemptReloadTable()
+            
+        }, withCancel: { (error) in
+            self.attemptReloadTable()
+            print("ERROR: ", error)
+            return
+        })
+    }
+    
+    fileprivate func attemptReloadTable() {
+        // Solution with timer to only reload the tableView once
+        self.timer?.invalidate()
+        self.timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.handleReloadCollectionView), userInfo: nil, repeats: false)
+    }
+    
+    @objc func handleReloadCollectionView() {
+        self.messages = Array(self.messagesDictionary.values)
+        self.messages.sort(by: { (msg1, msg2) -> Bool in
+            return Double(msg1.creationDate.timeIntervalSince1970) > Double(msg2.creationDate.timeIntervalSince1970)
+        })
+        
+        if self.filterMode == 1 {
+            // Reload table view
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -126,7 +215,7 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
         //Register the CollectionViewCells
         collectionView.register(OnGoingTaskInteractionsHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskInteractionsHeaderCell)
         collectionView.register(OnGoingTaskOfferCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskOfferCell)
-        collectionView.register(ChatMessageCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.chatMessageCell)
+        collectionView.register(OnGoingTaskChatMessageCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskChatMessageCell)
         
         // Manualy refresh the collectionView
         let refreshController = UIRefreshControl()
@@ -134,9 +223,9 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
         refreshController.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView?.refreshControl = refreshController
         
-        self.animateAndShowActivityIndicator(true)
         self.fetchCurrentUser()
         self.setupActivityIndicator()
+        self.animateAndShowActivityIndicator(true)
     }
     
     @objc fileprivate func handleRefresh() {
@@ -148,6 +237,8 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
         if self.filterMode == 0 {
             self.tempOffers.removeAll()
             fetchOffers(forTask: task)
+        } else if self.filterMode == 1 {
+            self.observeUserMessages(forTask: task)
         }
     }
     
@@ -246,11 +337,25 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
             }
             
             taskOfferCell.offer = self.offers[indexPath.item]
+            taskOfferCell.delegate = self
             
             return taskOfferCell
         } else { //Messages
             guard let chatMessageCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskChatMessageCell, for: indexPath) as? OnGoingTaskChatMessageCell else {
                 return UICollectionViewCell()
+            }
+            let message = self.messages[indexPath.row]
+            
+            if self.messages.count >= indexPath.row {
+                if let uId = message.chatPartnerId() {
+                    Database.fetchUserFromUserID(userID: uId) { (jglr) in
+                        guard let juggler = jglr else { print("Could not fetch Juggler from Database"); return }
+                        DispatchQueue.main.async {
+                            chatMessageCell.message = (message, juggler)
+                            chatMessageCell.delegate = self
+                        }
+                    }
+                }
             }
             
             return chatMessageCell
@@ -267,7 +372,32 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath.item)
+        guard self.filterMode == 1 else { //Make sure collectionView is displaying messages not offers.
+            return
+        }
+        
+        self.animateAndShowActivityIndicator(true)
+        let message = self.messages[indexPath.item]
+        
+        guard let jugglerId = message.chatPartnerId() else {
+            self.animateAndShowActivityIndicator(false)
+            print("No chatPartnerId")
+            return
+        }
+        
+        Database.fetchUserFromUserID(userID: jugglerId) { (usr) in
+            self.animateAndShowActivityIndicator(false)
+            guard let user = usr, let task = self.task else {
+                let alert = UIView.okayAlert(title: "Error Grabando Mensajes", message: "Error al grabar de los mensajes. Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            
+            let dashboardChatlogVC = DashboardChatLogVC(collectionViewLayout: UICollectionViewFlowLayout())
+            dashboardChatlogVC.chatPartner = user
+            dashboardChatlogVC.task = task
+            self.navigationController?.pushViewController(dashboardChatlogVC, animated: true)
+        }
     }
     
     //MARK: DashboardHeaderCell Methods
@@ -292,5 +422,29 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskInteractionsHeaderCellDelegate {
     func changeFilterOption(forTag tag: Int) {
         self.filterMode = tag
         self.collectionView.reloadData()
+    }
+}
+
+extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
+    func handleProfileImageView(forOfferOwner offerOwner: User?) {
+        guard let juggler = offerOwner else {
+            return
+        }
+        
+        let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        profileVC.user = juggler
+        self.navigationController?.pushViewController(profileVC, animated: true)
+    }
+}
+
+extension OnGoingTaskInteractionsVC: OnGoingTaskChatMessageCellDelegate {
+    func handleProfileImageView(forJuggler juggler: User?) {
+        guard let juggler = juggler else {
+            return
+        }
+        
+        let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        profileVC.user = juggler
+        self.navigationController?.pushViewController(profileVC, animated: true)
     }
 }

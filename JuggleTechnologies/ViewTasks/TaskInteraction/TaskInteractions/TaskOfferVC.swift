@@ -68,6 +68,16 @@ class TaskOfferVC: UIViewController {
         return iv
     }()
     
+    @objc fileprivate func handleProfileImageView() {
+        guard let user = self.user, user.userId != Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        profileVC.user = user
+        self.navigationController?.pushViewController(profileVC, animated: true)
+    }
+    
     let firstNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
@@ -259,6 +269,12 @@ class TaskOfferVC: UIViewController {
         view.addSubview(activityIndicator)
         activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        let button = UIButton()
+        button.backgroundColor = nil
+        view.addSubview(button)
+        button.anchor(top: profileImageView.topAnchor, left: profileImageView.leftAnchor, bottom: profileImageView.bottomAnchor, right: profileImageView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        button.addTarget(self, action: #selector(handleProfileImageView), for: .touchUpInside)
     }
     
     fileprivate func makeTextFieldToolBar() -> UIToolbar {

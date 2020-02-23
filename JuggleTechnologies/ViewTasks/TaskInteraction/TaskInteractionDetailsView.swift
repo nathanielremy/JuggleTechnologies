@@ -228,7 +228,7 @@ class TaskInteractionDetailsView: UIView {
         taskCategoryLabel.anchor(top: nil, left: profileImageView.rightAnchor, bottom: sectionSeperatorView.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: -7, paddingRight: 0, width: nil, height: 13)
         
         addSubview(taskCategoryImageView)
-        taskCategoryImageView.anchor(top: nil, left: nil, bottom: taskCategoryLabel.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: 30, height: 30)
+        taskCategoryImageView.anchor(top: nil, left: nil, bottom: taskCategoryLabel.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: 20, height: 22)
         taskCategoryImageView.centerXAnchor.constraint(equalTo: taskCategoryLabel.centerXAnchor).isActive = true
         
         addSubview(moreDetailsButton)

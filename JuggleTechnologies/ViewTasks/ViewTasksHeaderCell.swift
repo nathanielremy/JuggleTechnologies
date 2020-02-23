@@ -21,7 +21,7 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         let sv = UIScrollView()
         sv.bounces = true
         sv.backgroundColor = .white
-        sv.showsHorizontalScrollIndicator = true
+        sv.showsHorizontalScrollIndicator = false
         
         return sv
     }()
@@ -31,7 +31,7 @@ class ViewTasksHeaderCell: UICollectionViewCell {
     lazy var allCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle(Constants.TaskCategories.all, for: .normal)
-        button.tintColor = UIColor.mainBlue()
+        button.tintColor = UIColor.darkText
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.addTarget(self, action: #selector(changeTaskCategory(_:)), for: .touchUpInside)
         
@@ -128,10 +128,25 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         return button
     }()
     
+    let categorySeperatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.darkText
+        
+        return view
+    }()
+    
+    fileprivate func setupCategorySeperatorView(forButton button: UIButton) {
+        categorySeperatorView.removeFromSuperview()
+        button.addSubview(categorySeperatorView)
+        categorySeperatorView.anchor(top: nil, left: button.leftAnchor, bottom: button.bottomAnchor, right: button.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: 0, width: nil, height: 1)
+    }
+    
     @objc fileprivate func changeTaskCategory(_ button: UIButton) {
         if button.titleLabel?.text == self.currentCategory {
             return
         }
+        
+        self.setupCategorySeperatorView(forButton: button)
 
         allCategoryButton.tintColor = UIColor.lightGray
         cleaningCategoryButton.tintColor = UIColor.lightGray
@@ -143,63 +158,55 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         movingCategoryButton.tintColor = UIColor.lightGray
         petsCategoryButton.tintColor = UIColor.lightGray
         anythingCategoryButton.tintColor = UIColor.lightGray
+        
+        button.tintColor = UIColor.darkText
 
         if button.titleLabel?.text == Constants.TaskCategories.all {
-            allCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.all)
             self.currentCategory = Constants.TaskCategories.all
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.cleaning {
-            cleaningCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.cleaning)
             self.currentCategory = Constants.TaskCategories.cleaning
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.handyMan {
-            handyManCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.handyMan)
             self.currentCategory = Constants.TaskCategories.handyMan
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.computerIT {
-            computerITCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.computerIT)
             self.currentCategory = Constants.TaskCategories.computerIT
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.photoVideo {
-            photoVideoCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.photoVideo)
             self.currentCategory = Constants.TaskCategories.photoVideo
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.assembly {
-            assemblyCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.assembly)
             self.currentCategory = Constants.TaskCategories.assembly
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.delivery {
-            deliveryCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.delivery)
             self.currentCategory = Constants.TaskCategories.delivery
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.moving {
-            movingCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.moving)
             self.currentCategory = Constants.TaskCategories.moving
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.pets {
-            petsCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.pets)
             self.currentCategory = Constants.TaskCategories.pets
 
             return
         } else if button.titleLabel?.text == Constants.TaskCategories.anything {
-            anythingCategoryButton.tintColor = UIColor.mainBlue()
             delegate?.didChangeCategory(to: Constants.TaskCategories.anything)
             self.currentCategory = Constants.TaskCategories.anything
 
@@ -207,19 +214,19 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         }
     }
     
-    lazy var filterButton: UIButton = {
+    lazy var sortButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("|||", for: .normal)
+        button.setImage(#imageLiteral(resourceName: "sortTask"), for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        button.tintColor = UIColor.mainBlue()
-        button.addTarget(self, action: #selector(handleFilterButton), for: .touchUpInside)
+        button.tintColor = UIColor.darkText
+        button.addTarget(self, action: #selector(handleSortButton), for: .touchUpInside)
         
         return button
     }()
     
     
-    @objc fileprivate func handleFilterButton() {
-        print("Handeling filterButton")
+    @objc fileprivate func handleSortButton() {
+        print("Handeling sortButton")
     }
     
     override init(frame: CGRect) {
@@ -243,23 +250,19 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         stackView.distribution = .fillEqually
         
         scrollView.addSubview(stackView)
-        stackView.anchor(top: scrollView.topAnchor, left: scrollView.leftAnchor, bottom: scrollView.bottomAnchor, right: scrollView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 50)
+        stackView.anchor(top: scrollView.topAnchor, left: scrollView.leftAnchor, bottom: scrollView.bottomAnchor, right: scrollView.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
         
-        let seperatorView = UIView()
-        seperatorView.backgroundColor = UIColor.mainBlue()
+        addSubview(sortButton)
+        sortButton.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 30, height: 30)
+        sortButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -25).isActive = true
         
-        addSubview(seperatorView)
-        seperatorView.anchor(top: nil, left: leftAnchor, bottom: scrollView.bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 3)
-        
-        addSubview(filterButton)
-        filterButton.anchor(top: seperatorView.bottomAnchor, left: leftAnchor
-            , bottom: bottomAnchor, right: nil, paddingTop: 8, paddingLeft: 17, paddingBottom: -8, paddingRight: 0, width: 50, height: nil)
+        setupCategorySeperatorView(forButton: allCategoryButton)
         
         let bottomSeperatorView = UIView()
-        bottomSeperatorView.backgroundColor = .lightGray
+        bottomSeperatorView.backgroundColor = UIColor.darkText
         bottomSeperatorView.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(bottomSeperatorView)
-        bottomSeperatorView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1.5)
+        bottomSeperatorView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 1)
     }
 }
