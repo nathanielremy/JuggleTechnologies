@@ -345,7 +345,7 @@ class TaskSpecificationsVC: UIViewController {
     let mapViewActivityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
         ai.hidesWhenStopped = true
-        ai.color = UIColor.darkText
+        ai.color = UIColor.mainBlue()
         ai.translatesAutoresizingMaskIntoConstraints = false
         
         return ai
@@ -461,7 +461,6 @@ class TaskSpecificationsVC: UIViewController {
         taskValues[Constants.FirebaseDatabase.taskDuration] = inputs.duration
         taskValues[Constants.FirebaseDatabase.taskBudget] = inputs.budget
         taskValues[Constants.FirebaseDatabase.taskStatus] = 0
-        taskValues[Constants.FirebaseDatabase.isTaskReviewed] = 0
         taskValues[Constants.FirebaseDatabase.isTaskOnline] = isTaskOnline ? 1 : 0
         taskValues[Constants.FirebaseDatabase.userId] = userId
         taskValues[Constants.FirebaseDatabase.creationDate] = Date().timeIntervalSince1970

@@ -11,6 +11,9 @@ import Firebase
 
 class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     //MARK: Stored properties
+    var dashboardVC: DashboardVC?
+    var dashboardVCTaskIndex: Int?
+    
     var currentUser: User?
     var filterMode: Int = 0 // 0 == offers, 1 == mensajes
     var canFetchOffers = true
@@ -337,6 +340,7 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
             }
             
             taskOfferCell.offer = self.offers[indexPath.item]
+            taskOfferCell.indexOfOffer = indexPath.item
             taskOfferCell.delegate = self
             
             return taskOfferCell
@@ -434,6 +438,124 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
         let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
         profileVC.user = juggler
         self.navigationController?.pushViewController(profileVC, animated: true)
+    }
+    
+    func handleDenyOffer(_ offer: Offer?, index: Int?) {
+        self.animateAndShowActivityIndicator(true)
+        
+        let denyOfferAlert = UIAlertController(title: "Seguro?", message: "Esta oferta sera eliminada indefinadamente", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel) { (_) in
+            self.animateAndShowActivityIndicator(false)
+        }
+        let denyAction = UIAlertAction(title: "Denega", style: .default) { (_) in
+            guard let offer = offer, let index = index else {
+                let alert = UIView.okayAlert(title: "No se Puede Denegar Esta Oferta", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                self.animateAndShowActivityIndicator(false)
+                return
+            }
+            
+            let offerValues = [Constants.FirebaseDatabase.isOfferRejected : true]
+            let taskOffersRef = Database.database().reference().child(Constants.FirebaseDatabase.taskOffersRef).child(offer.taskId).child(offer.offerOwnerId)
+            taskOffersRef.updateChildValues(offerValues) { (err, _) in
+                if let error = err {
+                    print("Error denying offer: \(error)")
+                    let alert = UIView.okayAlert(title: "No se Puede Denegar Esta Oferta", message: "Sal e intente nuevamente")
+                    self.present(alert, animated: true, completion: nil)
+                    self.animateAndShowActivityIndicator(false)
+                    return
+                }
+                
+                self.animateAndShowActivityIndicator(false)
+                self.offers.remove(at: index)
+                self.collectionView.reloadData()
+            }
+        }
+        
+        denyOfferAlert.addAction(cancelAction)
+        denyOfferAlert.addAction(denyAction)
+        present(denyOfferAlert, animated: true, completion: nil)
+    }
+    
+    func handleAcceptOffer(_ offer: Offer?, offerOwner: User?) {
+        self.animateAndShowActivityIndicator(true)
+        
+        guard let offer = offer, let index = self.dashboardVCTaskIndex, let offerOwner = offerOwner, let task = self.task else {
+            print("Error accepting offer")
+            let alert = UIView.okayAlert(title: "No se Puede Acceptar Esta Oferta", message: "Sal e intente nuevamente")
+            self.present(alert, animated: true, completion: nil)
+            self.animateAndShowActivityIndicator(false)
+            return
+        }
+        
+        let acceptOfferAlert = UIAlertController(title: "Seguro?", message: "Esta oferta sera accepta por \(offerOwner.firstName)", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel) { (_) in
+            self.animateAndShowActivityIndicator(false)
+        }
+        let acceptAction = UIAlertAction(title: "Acepta", style: .default) { (_) in
+            if self.dashboardVC == nil {
+                print("self.dashboardVC == nil")
+                let alert = UIView.okayAlert(title: "No se Puede Acceptar Esta Oferta", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                self.animateAndShowActivityIndicator(false)
+                return
+            }
+            
+            let acceptedDate = Date().timeIntervalSince1970
+            let tasksRefValues: [String : Any] = [
+                Constants.FirebaseDatabase.taskBudget : offer.offerPrice,
+                Constants.FirebaseDatabase.assignedJugglerId : offerOwner.userId,
+                Constants.FirebaseDatabase.taskStatus : 1
+            ]
+            let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(offer.taskId)
+            tasksRef.updateChildValues(tasksRefValues) { (err, _) in
+                if let error = err {
+                    print("Error accepting offer: \(error)")
+                    let alert = UIView.okayAlert(title: "No se Puede aceptar Esta Oferta", message: "Sal e intente nuevamente")
+                    self.present(alert, animated: true, completion: nil)
+                    self.animateAndShowActivityIndicator(false)
+                    return
+                }
+                
+                let userTasksValues: [String : Any] = [
+                    Constants.FirebaseDatabase.acceptedDate : acceptedDate,
+                    Constants.FirebaseDatabase.taskStatus : 1
+                ]
+                let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(task.userId).child(offer.taskId)
+                userTasksRef.updateChildValues(userTasksValues) { (err, _) in
+                    if let error = err {
+                        print("Error accepting offer: \(error)")
+                        let alert = UIView.okayAlert(title: "No se Puede aceptar Esta Oferta", message: "Sal e intente nuevamente")
+                        self.present(alert, animated: true, completion: nil)
+                        self.animateAndShowActivityIndicator(false)
+                        return
+                    }
+                    
+                    let jugglerTasksValues = [
+                        Constants.FirebaseDatabase.acceptedDate : acceptedDate,
+                        Constants.FirebaseDatabase.taskStatus : 1
+                    ]
+                    let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(offer.offerOwnerId).child(offer.taskId)
+                    jugglerTasksRef.updateChildValues(jugglerTasksValues) { (err, _) in
+                        if let error = err {
+                            print("Error accepting offer: \(error)")
+                            let alert = UIView.okayAlert(title: "No se Puede aceptar Esta Oferta", message: "Sal e intente nuevamente")
+                            self.present(alert, animated: true, completion: nil)
+                            self.animateAndShowActivityIndicator(false)
+                            return
+                        }
+                        
+                        self.dashboardVC?.acceptedIndex = index
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
+            }
+             
+        }
+        
+        acceptOfferAlert.addAction(cancelAction)
+        acceptOfferAlert.addAction(acceptAction)
+        self.present(acceptOfferAlert, animated: true, completion: nil)
     }
 }
 

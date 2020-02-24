@@ -253,7 +253,7 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         stackView.anchor(top: scrollView.topAnchor, left: scrollView.leftAnchor, bottom: scrollView.bottomAnchor, right: scrollView.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
         
         addSubview(sortButton)
-        sortButton.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 30, height: 30)
+        sortButton.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 30, height: 27)
         sortButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -25).isActive = true
         
         setupCategorySeperatorView(forButton: allCategoryButton)

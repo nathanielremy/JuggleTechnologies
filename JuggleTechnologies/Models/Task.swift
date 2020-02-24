@@ -30,15 +30,13 @@ struct Task {
     let description: String
     let title: String
     let creationDate: Date
+    let acceptedDate: Date
 //    var completionDate: Date
     
     let isJugglerComplete: Bool
     var isUserComplete: Bool
-    var isTaskReviewd: Bool
-//    var isTaskDenied: Bool
-//    var mutuallyAcceptedBy: String?
-//    var taskAccepters: [String : Bool]?
-//    var jugglersAccepted: [String : Bool]?
+    var assignedJugglerId: String?
+
     
     init(id: String, dictionary: [String : Any]) {
         
@@ -67,44 +65,19 @@ struct Task {
         self.title = dictionary[Constants.FirebaseDatabase.taskTitle] as? String ?? ""
         self.duration = dictionary[Constants.FirebaseDatabase.taskDuration] as? Double ?? 0.0
         
-        let secondsFrom1970 = dictionary[Constants.FirebaseDatabase.creationDate] as? Double ?? 0
-        self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)
+        let creationSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.creationDate] as? Double ?? 0
+        self.creationDate = Date(timeIntervalSince1970: creationSecondsFrom1970)
+        
+        let acceptedSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.creationDate] as? Double ?? 0
+        self.acceptedDate = Date(timeIntervalSince1970: acceptedSecondsFrom1970)
         
 //        let completionSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.completionDate] as? Double ?? 0
 //        self.completionDate = Date.init(timeIntervalSince1970: completionSecondsFrom1970)
         
         self.isJugglerComplete = dictionary[Constants.FirebaseDatabase.isJugglerComplete] as? Bool ?? false
         self.isUserComplete = dictionary[Constants.FirebaseDatabase.isUserComplete] as? Bool ?? false
-        self.isTaskReviewd = dictionary[Constants.FirebaseDatabase.isTaskReviewed] as? Bool ?? false
-//        self.isTaskDenied = dictionary[Constants.FirebaseDatabase.isTaskDenied] as? Bool ?? false
-//        self.mutuallyAcceptedBy = dictionary[Constants.FirebaseDatabase.mutuallyAcceptedBy] as? String
-//
-//        self.taskAccepters = dictionary[Constants.FirebaseDatabase.taskAccepters] as? [String : Bool]
-//        self.jugglersAccepted = dictionary[Constants.FirebaseDatabase.jugglersAccepted] as? [String : Bool]
+        self.assignedJugglerId = dictionary[Constants.FirebaseDatabase.assignedJugglerId] as? String
     }
-    
-//    mutating func verifyAndUpdateAcceptance() {
-//        guard let jugglerAccepted = self.jugglersAccepted else {
-//            return
-//        }
-//
-//        taskAccepters?.forEach({ (key, _) in
-//            if jugglerAccepted[key] != nil {
-//                let values: [String : Any] = [
-//                    Constants.FirebaseDatabase.taskStatus : 1,
-//                    Constants.FirebaseDatabase.mutuallyAcceptedBy : key
-//                ]
-//
-//                self.mutuallyAcceptedBy = key
-//                self.status = 1
-//
-//                let databaseRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(self.id)
-//                databaseRef.updateChildValues(values)
-//
-//                Database.updateJugglerTasks(forJugglerID: key, userID: self.userId, task: self, status: 1)
-//            }
-//        })
-//    }
 }
 
 struct FilteredTask {

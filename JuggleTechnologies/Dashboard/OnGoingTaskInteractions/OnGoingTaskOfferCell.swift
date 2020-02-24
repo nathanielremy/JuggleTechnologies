@@ -11,11 +11,14 @@ import Firebase
 
 protocol OnGoingTaskOfferCellDelegate {
     func handleProfileImageView(forOfferOwner offerOwner: User?)
+    func handleDenyOffer(_ offer: Offer?, index: Int?)
+    func handleAcceptOffer(_ offer: Offer?, offerOwner: User?)
 }
 
 class OnGoingTaskOfferCell: UICollectionViewCell {
     //MARK: Stored properties
     var delegate: OnGoingTaskOfferCellDelegate?
+    var indexOfOffer: Int?
     
     var offer: Offer? {
         didSet {
@@ -81,9 +84,14 @@ class OnGoingTaskOfferCell: UICollectionViewCell {
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         button.titleLabel?.textAlignment = .center
         button.titleLabel?.alpha = 0.6
+        button.addTarget(self, action: #selector(handleDenyButton), for: .touchUpInside)
         
         return button
     }()
+    
+    @objc fileprivate func handleDenyButton() {
+        delegate?.handleDenyOffer(_: self.offer, index: indexOfOffer)
+    }
     
     lazy var acceptButton: UIButton = {
         let button = UIButton(type: .system)
@@ -93,9 +101,14 @@ class OnGoingTaskOfferCell: UICollectionViewCell {
         button.setTitleColor(UIColor.mainBlue(), for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
         button.titleLabel?.textAlignment = .center
+        button.addTarget(self, action: #selector(handleAcceptButton), for: .touchUpInside)
         
         return button
     }()
+    
+    @objc fileprivate func handleAcceptButton() {
+        delegate?.handleAcceptOffer(self.offer, offerOwner: self.offerOwner)
+    }
     
     let offerPriceLabel: UILabel = {
         let label = UILabel()

@@ -26,6 +26,7 @@ class Constants {
         static let description = "description"
         
         static let creationDate = "creationDate"
+        static let acceptedDate = "acceptedDate"
         
         static let tasksRef = "tasks"
         static let latitude = "latitude"
@@ -38,9 +39,9 @@ class Constants {
         static let taskBudget = "taskBudget"
         static let isTaskOnline = "isTaskOnline"
         static let taskStatus = "taskStatus"
-        static let isTaskReviewed = "isTaskReviewed"
         static let isJugglerComplete = "isJugglerComplete"
         static let isUserComplete = "isUserComplete"
+        static let assignedJugglerId = "assignedJugglerId"
         
         static let taskOffersRef = "taskOffers"
         static let offerPrice = "offerPrice"
@@ -50,7 +51,7 @@ class Constants {
         static let isAcceptingBudget = "isAcceptingBudget"
         
         static let userTasksRef = "userTasks"
-        static let jugglerTasksRef = "jugglerTasksRef"
+        static let jugglerTasksRef = "jugglerTasks"
         
         static let messagesRef = "messages"
         static let userMessagesRef = "userMessages"

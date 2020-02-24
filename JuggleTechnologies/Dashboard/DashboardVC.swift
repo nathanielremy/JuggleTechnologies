@@ -38,6 +38,16 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     var jugglerSavedTasks = [FilteredTask]()
     var jugglerTempSavedTasks = [FilteredTask]()
     
+    var acceptedIndex: Int? {
+        didSet {
+            guard let index = self.acceptedIndex else {
+                return
+            }
+            self.userOnGoingTasks.remove(at: index)
+            self.collectionView.reloadData()
+        }
+    }
+    
     // Display activity indicator while changing categories
     let activityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
@@ -136,7 +146,9 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             //self.fetchSavedTasks()
         }
         
-        self.fetchTasks(forUserId: currentUserId, isUserMode: self.isUserMode)
+        if self.isUserMode {
+            self.fetchTasks(forUserId: currentUserId, isUserMode: self.isUserMode)
+        }
     }
     
     fileprivate func setupActivityIndicator() {
@@ -341,6 +353,8 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if self.isUserMode && self.filterOptionsValue == 1 { //OnGoingTaskCell
             let onGoingTaskInteractionsVC = OnGoingTaskInteractionsVC(collectionViewLayout: UICollectionViewFlowLayout())
+            onGoingTaskInteractionsVC.dashboardVC = self
+            onGoingTaskInteractionsVC.dashboardVCTaskIndex = indexPath.item
             onGoingTaskInteractionsVC.task = self.userOnGoingTasksDictionary[self.userOnGoingTasks[indexPath.item].id]
             self.navigationController?.pushViewController(onGoingTaskInteractionsVC, animated: true)
         }
