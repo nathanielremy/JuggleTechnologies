@@ -10,6 +10,7 @@ import UIKit
 
 protocol ViewTasksHeaderCellDelegate {
     func didChangeCategory(to category: String)
+    func handleMapViewUIOption()
 }
 
 class ViewTasksHeaderCell: UICollectionViewCell {
@@ -229,6 +230,39 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         print("Handeling sortButton")
     }
     
+    lazy var listViewUIOptionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.isUserInteractionEnabled = false
+        button.setTitle("Lista", for: .normal)
+        button.tintColor = .white
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.layer.borderColor = UIColor.darkText.cgColor
+        button.layer.borderWidth = 0.5
+        button.backgroundColor = .darkText
+        button.tag = 0
+        button.addTarget(self, action: #selector(handleUIOptionButton(_:)), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    lazy var mapViewUIOptionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Mapa", for: .normal)
+        button.tintColor = .darkText
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.layer.borderColor = UIColor.darkText.cgColor
+        button.layer.borderWidth = 0.5
+        button.backgroundColor = .white
+        button.tag = 1
+        button.addTarget(self, action: #selector(handleUIOptionButton(_:)), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    @objc fileprivate func handleUIOptionButton(_ button: UIButton) {
+        delegate?.handleMapViewUIOption()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
@@ -255,6 +289,15 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         addSubview(sortButton)
         sortButton.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 30, height: 27)
         sortButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -25).isActive = true
+        
+        let UIOptionButtonStackView = UIStackView(arrangedSubviews: [listViewUIOptionButton, mapViewUIOptionButton])
+        UIOptionButtonStackView.axis = .horizontal
+        UIOptionButtonStackView.distribution = .fillEqually
+        UIOptionButtonStackView.spacing = 0
+        
+        addSubview(UIOptionButtonStackView)
+        UIOptionButtonStackView.anchor(top: nil, left: nil, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: 130, height: 27)
+        UIOptionButtonStackView.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -25).isActive = true
         
         setupCategorySeperatorView(forButton: allCategoryButton)
         

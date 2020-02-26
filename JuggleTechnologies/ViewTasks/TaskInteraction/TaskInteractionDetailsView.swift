@@ -14,11 +14,31 @@ protocol TaskInteractionDetailsViewDelegate {
     func makeOffer()
     func acceptTask()
     func handleProfileImageView(forUser user: User)
+    func cancelOffer()
+    func changeOffer()
 }
 
 class TaskInteractionDetailsView: UIView {
     //MARK: Stored properties
     var delegate: TaskInteractionDetailsViewDelegate?
+    
+    var currentJugglerOffer: Offer? {
+        didSet {
+            guard let offer = self.currentJugglerOffer else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.makeOfferButton.tintColor = UIColor.lightGray
+                self.makeOfferButton.layer.borderColor = UIColor.lightGray.cgColor
+                self.makeOfferButton.setTitle("Cancelar Oferta", for: .normal)
+                
+                self.acceptTaskButton.tintColor = UIColor.lightGray
+                self.acceptTaskButton.layer.borderColor = UIColor.lightGray.cgColor
+                self.acceptTaskButton.setTitle("Editar Oferta de €\(offer.offerPrice)", for: .normal)
+            }
+        }
+    }
     
     var user: User? {
         didSet {
@@ -39,10 +59,7 @@ class TaskInteractionDetailsView: UIView {
                 return
             }
             
-            let dateFormatterPrint = DateFormatter()
-            dateFormatterPrint.locale = Locale(identifier: "es_ES")
-            dateFormatterPrint.dateFormat = "dd, MMM, yyyy"
-            postedDateLabel.text = dateFormatterPrint.string(from: task.creationDate)
+            postedTimeAgoLabel.text = task.creationDate.timeAgoDisplay()
             
             taskTitleLabel.text = task.title
             taskLocationLabel.text = task.isOnline ? "Internet/Teléfono" : task.stringLocation
@@ -119,7 +136,7 @@ class TaskInteractionDetailsView: UIView {
         return label
     }()
     
-    let postedDateLabel: UILabel = {
+    let postedTimeAgoLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.textAlignment = .left
@@ -206,11 +223,11 @@ class TaskInteractionDetailsView: UIView {
         addSubview(firstNameLabel)
         firstNameLabel.anchor(top: profileImageView.bottomAnchor, left: leftAnchor, bottom: nil, right: profileImageView.rightAnchor, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 12, width: nil, height: nil)
         
-        addSubview(postedDateLabel)
-        postedDateLabel.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
+        addSubview(postedTimeAgoLabel)
+        postedTimeAgoLabel.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
         addSubview(taskTitleLabel)
-        taskTitleLabel.anchor(top: postedDateLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+        taskTitleLabel.anchor(top: postedTimeAgoLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
         addSubview(taskLocationPin)
         taskLocationPin.anchor(top: taskTitleLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 14, height: 14)
@@ -274,7 +291,11 @@ class TaskInteractionDetailsView: UIView {
     }()
     
     @objc fileprivate func handleMakeOfferButton() {
-        delegate?.makeOffer()
+        if self.currentJugglerOffer != nil {
+            delegate?.cancelOffer()
+        } else {
+            delegate?.makeOffer()
+        }
     }
     
     lazy var acceptTaskButton: UIButton = {
@@ -291,7 +312,11 @@ class TaskInteractionDetailsView: UIView {
     }()
     
     @objc fileprivate func handleAcceptTaskButton() {
-        delegate?.acceptTask()
+        if self.currentJugglerOffer != nil {
+            delegate?.changeOffer()
+        } else {
+            delegate?.acceptTask()
+        }
     }
     
     lazy var hideDetailsButton: UIButton = {

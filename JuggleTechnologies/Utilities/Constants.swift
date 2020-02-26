@@ -27,6 +27,7 @@ class Constants {
         
         static let creationDate = "creationDate"
         static let acceptedDate = "acceptedDate"
+        static let completionDate = "completionDate"
         
         static let tasksRef = "tasks"
         static let latitude = "latitude"

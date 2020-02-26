@@ -16,7 +16,62 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     let taskInteractionView = TaskInteractionDetailsView()
     var containerViewBottomAnchor: NSLayoutConstraint?
     
-    var currentUser: User?
+    var jugglerOffer: Offer? {
+        didSet {
+            guard let offer = self.jugglerOffer else {
+                return
+            }
+            
+            self.taskInteractionView.currentJugglerOffer = offer
+        }
+    }
+    
+    var jugglerFilteredTask: FilteredTask? {
+        didSet {
+            guard let filteredTask = self.jugglerFilteredTask, let currentUser = self.currentUser else {
+                return
+            }
+            
+            //Check if currentUser has previously made an offer on this task
+            let taskOffersRef = Database.database().reference().child(Constants.FirebaseDatabase.taskOffersRef).child(filteredTask.id).child(currentUser.userId)
+            taskOffersRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                
+                guard let taskOfferDictionary = snapshot.value as? [String : Any] else {
+                    return
+                }
+                
+                let taskOffer = Offer(offerDictionary: taskOfferDictionary)
+                self.jugglerOffer = taskOffer
+                
+            }) { (error) in
+                print("Error fetchning taskOffer: \(error)")
+            }
+        }
+    }
+    
+    var currentUser: User? {
+        didSet {
+            guard let currentUser = self.currentUser, currentUser.isJuggler, let task = self.task else {
+                return
+            }
+            
+            //Check if current task is in currentUser's jugglerTasks. Since currentUser.isJuggler
+            let jugglerTaskRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(currentUser.userId).child(task.id)
+            jugglerTaskRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                
+                guard let filteredtaskDictionary = snapshot.value as? [String : Any] else {
+                    return
+                }
+                
+                let filteredTask = FilteredTask(id: snapshot.key, dictionary: filteredtaskDictionary)
+                self.jugglerFilteredTask = filteredTask
+                
+            }) { (error) in
+                print("Error fetchning filteredTask: \(error)")
+            }
+            
+        }
+    }
     
     var chatPartner: User? { //Set before pushing controller, used as toUserId when sending messages
         didSet {
@@ -287,8 +342,35 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
             }
         }
         
+        self.updatedJugglerTasks(forJugglerId: fromUserId, task: task)
         self.disableViews(false)
         self.messageTextField.text = ""
+    }
+    
+    fileprivate func updatedJugglerTasks(forJugglerId jugglerId: String, task: Task) {
+        if self.jugglerFilteredTask != nil {
+            return
+        }
+        
+        let jugglerTasksValues = [
+            Constants.FirebaseDatabase.creationDate : Date().timeIntervalSince1970,
+            Constants.FirebaseDatabase.taskStatus : 0
+        ]
+        //Update Juggler's task at location jugglerTasks/offer.taskId
+        let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(jugglerId).child(task.id)
+        jugglerTasksRef.updateChildValues(jugglerTasksValues) { (err, snapshot) in
+            if let _ = err {
+                return
+            }
+            
+            guard let id = snapshot.key else {
+                return
+            }
+            
+            let filteredTaskDictionary: [String : Any] = [Constants.FirebaseDatabase.creationDate : Date().timeIntervalSince1970]
+            let filteredTask = FilteredTask(id: id, dictionary: filteredTaskDictionary)
+            self.jugglerFilteredTask = filteredTask
+        }
     }
     
     override func viewDidLoad() {
@@ -550,7 +632,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
     func hideTaskInteractionDetailsView(andScroll scroll: Bool, keyBoardHeight: CGFloat) {
         self.taskInteractionView.removeFromSuperview()
         
-        self.anchorCollectionViewToTop(andScroll: true, keyBoardHeight: keyBoardHeight)
+        self.anchorCollectionViewToTop(andScroll: scroll, keyBoardHeight: keyBoardHeight)
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detalles", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
         self.navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
@@ -630,6 +712,16 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
         profileVC.user = user
         navigationController?.pushViewController(profileVC, animated: true)
+    }
+    
+    func cancelOffer() {
+        let alert = UIView.okayAlert(title: "Still working on canceling offers", message: "")
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func changeOffer() {
+        let alert = UIView.okayAlert(title: "Still working on changing offers", message: "")
+        self.present(alert, animated: true, completion: nil)
     }
 }
 

@@ -315,4 +315,11 @@ extension ViewTasksVC: ViewTasksHeaderCellDelegate {
             self.fetchFilteredTasksFor(category: category)
         }
     }
+    
+    func handleMapViewUIOption() {
+        let alert = UIView.okayAlert(title: "Espera a la próxima versión de Juggle para ver el mapa", message: "")
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
 }

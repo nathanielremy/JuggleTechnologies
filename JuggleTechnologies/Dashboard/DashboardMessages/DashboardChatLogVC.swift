@@ -130,33 +130,6 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
         }
     }
     
-    let noResultsView: UIView = {
-        let view = UIView.noResultsView(withText: "No hay mensajes en este momento.")
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    fileprivate func showNoResultsFoundView() {
-        self.collectionView.bounces = false
-        self.collectionView?.refreshControl?.endRefreshing()
-        DispatchQueue.main.async {
-            self.collectionView?.reloadData()
-            self.collectionView?.addSubview(self.noResultsView)
-            self.noResultsView.centerYAnchor.constraint(equalTo: (self.collectionView?.centerYAnchor)!).isActive = true
-            self.noResultsView.centerXAnchor.constraint(equalTo: (self.collectionView?.centerXAnchor)!).isActive = true
-        }
-    }
-    
-    fileprivate func removeNoResultsView() {
-        self.collectionView.bounces = true
-        self.collectionView?.refreshControl?.endRefreshing()
-        DispatchQueue.main.async {
-            self.noResultsView.removeFromSuperview()
-            self.collectionView?.reloadData()
-        }
-    }
-    
     fileprivate func sendMessage(withText text: String) {
         self.disableViews(true)
         
@@ -306,7 +279,6 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
         guard let currentUserId = Auth.auth().currentUser?.uid, let task = self.task else {
             print("No current user id")
             self.disableViews(false)
-            self.showNoResultsFoundView()
             
             return
         }
@@ -314,7 +286,6 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
         let userMessagesRef = Database.database().reference().child(Constants.FirebaseDatabase.userMessagesRef).child(currentUserId).child(task.id).child(chatPartnerId)
         
         self.disableViews(false)
-        self.showNoResultsFoundView()
         
         userMessagesRef.observe(.childAdded, with: { (messagesSnapshot) in
             let messageId = messagesSnapshot.key
@@ -323,7 +294,6 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
                 
                 guard let messageDictionary = messageSnapshot.value as? [String : Any] else {
                     self.disableViews(false)
-                    self.showNoResultsFoundView()
                     return
                 }
                 
@@ -333,18 +303,18 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
                     self.messages.append(message)
                     DispatchQueue.main.async {
                         self.disableViews(false)
-                        self.removeNoResultsView()
+                        self.collectionView.reloadData()
+                        //Make collectionView scroll to bottom when message is sent and/or recieved
+                        self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: .bottom, animated: true)
                     }
                 }
             }) { (error) in
                 print("Error fetching userMessages for user: \(currentUserId): ", error)
                 self.disableViews(false)
-                self.showNoResultsFoundView()
                 return
             }
         }) { (error) in
             print("Error fetching userMessages for user: \(currentUserId): ", error)
-            self.showNoResultsFoundView()
             self.disableViews(false)
             return
         }

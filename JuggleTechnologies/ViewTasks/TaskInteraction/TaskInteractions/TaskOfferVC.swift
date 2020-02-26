@@ -173,9 +173,25 @@ class TaskOfferVC: UIViewController {
                 return
             }
             
-            let offerCompleteVC = OfferCompleteVC()
-            offerCompleteVC.offer = ("\(offerValues[Constants.FirebaseDatabase.offerPrice] ?? 0)", task.title, offerValues[Constants.FirebaseDatabase.isAcceptingBudget] as? Bool)
-            self.navigationController?.pushViewController(offerCompleteVC, animated: true)
+            let jugglerTasksValues = [
+                Constants.FirebaseDatabase.creationDate : Date().timeIntervalSince1970,
+                Constants.FirebaseDatabase.taskStatus : 0
+            ]
+            //Update Juggler's task at location jugglerTasks/offer.taskId
+            let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(currentUserId).child(task.id)
+            jugglerTasksRef.updateChildValues(jugglerTasksValues) { (err, _) in
+                if let error = err {
+                    print("Error accepting offer: \(error)")
+                    let alert = UIView.okayAlert(title: "No se Puede aceptar Esta Oferta", message: "Sal e intente nuevamente")
+                    self.present(alert, animated: true, completion: nil)
+                    self.animateAndDisableViews(false)
+                    return
+                }
+                
+                let offerCompleteVC = OfferCompleteVC()
+                offerCompleteVC.offer = ("\(offerValues[Constants.FirebaseDatabase.offerPrice] ?? 0)", task.title, offerValues[Constants.FirebaseDatabase.isAcceptingBudget] as? Bool)
+                self.navigationController?.pushViewController(offerCompleteVC, animated: true)
+            }
         }
     }
     

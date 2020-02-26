@@ -30,12 +30,10 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
             guard let task = task else {
                 return
             }
+            
             fetchUser(withUserId: task.userId)
             
-            let dateFormatterPrint = DateFormatter()
-            dateFormatterPrint.locale = Locale(identifier: "es_ES")
-            dateFormatterPrint.dateFormat = "dd, MMM, yyyy"
-            postedDateLabel.text = dateFormatterPrint.string(from: task.creationDate)
+            postedTimeagoLabel.text = task.creationDate.timeAgoDisplay()
             
             taskTitleLabel.text = task.title
             taskLocationLabel.text = task.isOnline ? "Internet/Teléfono" : task.stringLocation
@@ -110,7 +108,7 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    let postedDateLabel: UILabel = {
+    let postedTimeagoLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.textAlignment = .left
@@ -209,11 +207,11 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         addSubview(firstNameLabel)
         firstNameLabel.anchor(top: profileImageView.bottomAnchor, left: leftAnchor, bottom: nil, right: profileImageView.rightAnchor, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 12, width: nil, height: nil)
         
-        addSubview(postedDateLabel)
-        postedDateLabel.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
+        addSubview(postedTimeagoLabel)
+        postedTimeagoLabel.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
         addSubview(taskTitleLabel)
-        taskTitleLabel.anchor(top: postedDateLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+        taskTitleLabel.anchor(top: postedTimeagoLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -47, width: nil, height: nil)
         
         addSubview(taskLocationPin)
         taskLocationPin.anchor(top: taskTitleLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 14, height: 14)
@@ -222,7 +220,7 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: taskLocationPin.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 4, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
         addSubview(saveTaskButton)
-        saveTaskButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: -8, width: 27, height: 27)
+        saveTaskButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: 27, height: 27)
         
         let taskDetailIconsStackView = UIStackView(arrangedSubviews: [taskCategoryImageView, taskDurationImageView])
         taskDetailIconsStackView.axis = .horizontal

@@ -32,6 +32,8 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
                 return
             }
             
+            self.tempOffers.removeAll()
+            self.messages.removeAll()
             self.fetchOffers(forTask: task)
             self.observeUserMessages(forTask: task)
             setupNavigationBar(forTask: task)
@@ -507,6 +509,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
                 Constants.FirebaseDatabase.assignedJugglerId : offerOwner.userId,
                 Constants.FirebaseDatabase.taskStatus : 1
             ]
+            //Update the task at location tasks/offer.taskId
             let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(offer.taskId)
             tasksRef.updateChildValues(tasksRefValues) { (err, _) in
                 if let error = err {
@@ -521,6 +524,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
                     Constants.FirebaseDatabase.acceptedDate : acceptedDate,
                     Constants.FirebaseDatabase.taskStatus : 1
                 ]
+                //Update user's task at location userTasks/offer.taskId
                 let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(task.userId).child(offer.taskId)
                 userTasksRef.updateChildValues(userTasksValues) { (err, _) in
                     if let error = err {
@@ -535,6 +539,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
                         Constants.FirebaseDatabase.acceptedDate : acceptedDate,
                         Constants.FirebaseDatabase.taskStatus : 1
                     ]
+                    //Update Juggler's task at location jugglerTasks/offer.taskId
                     let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(offer.offerOwnerId).child(offer.taskId)
                     jugglerTasksRef.updateChildValues(jugglerTasksValues) { (err, _) in
                         if let error = err {

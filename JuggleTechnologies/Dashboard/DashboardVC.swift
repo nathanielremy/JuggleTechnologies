@@ -38,6 +38,8 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     var jugglerSavedTasks = [FilteredTask]()
     var jugglerTempSavedTasks = [FilteredTask]()
     
+    var didFetchJugglerTasks = false
+    
     var acceptedIndex: Int? {
         didSet {
             guard let index = self.acceptedIndex else {
@@ -146,9 +148,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             //self.fetchSavedTasks()
         }
         
-        if self.isUserMode {
-            self.fetchTasks(forUserId: currentUserId, isUserMode: self.isUserMode)
-        }
+        self.fetchTasks(forUserId: currentUserId, isUserMode: self.isUserMode)
     }
     
     fileprivate func setupActivityIndicator() {
@@ -168,10 +168,15 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         }
         canFetchTasks = false
         
+        //UserTasks or JugglerTasks
         let childReference: String = isUserMode ? Constants.FirebaseDatabase.userTasksRef : Constants.FirebaseDatabase.jugglerTasksRef
         
-        let userTasksRef = Database.database().reference().child(childReference).child(userId)
-        userTasksRef.observeSingleEvent(of: .value, with: { (snapshot) in
+        if !self.didFetchJugglerTasks {
+            self.didFetchJugglerTasks = childReference == Constants.FirebaseDatabase.jugglerTasksRef
+        }
+        
+        let tasksRef = Database.database().reference().child(childReference).child(userId)
+        tasksRef.observeSingleEvent(of: .value, with: { (snapshot) in
             
             guard let filteredTasksDictionary = snapshot.value as? [String : [String : Any]] else {
                 print("Error fetching filtered tasks")
@@ -195,71 +200,63 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             var filteredTasksCreated = 0
             filteredTasksDictionary.forEach { (key, value) in
                 let filteredTask = FilteredTask(id: key, dictionary: value)
-                
                 filteredTasksCreated += 1
                 
                 if self.isUserMode {
-                    if filteredTask.status == 0 {
+                    if filteredTask.status == 0 { //OnGoing
                         self.userTempOnGoingTasks.append(filteredTask)
                         self.userTempOnGoingTasks.sort(by: { (task1, task2) -> Bool in
                             return task1.creationDate.compare(task2.creationDate) == .orderedDescending
                         })
-                    } else if filteredTask.status == 1 {
+                    } else if filteredTask.status == 1 { //Accepted
                         self.userTempAcceptedTasks.append(filteredTask)
                         self.userTempAcceptedTasks.sort(by: { (task1, task2) -> Bool in
-                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                            return task1.acceptedDate.compare(task2.acceptedDate) == .orderedDescending
                         })
-                    } else if filteredTask.status == 2 {
+                    } else if filteredTask.status == 2 { //Completed
                         self.userTempCompletedTasks.append(filteredTask)
-                        //FIXME: Sort by completionDate not creationDate
                         self.userTempCompletedTasks.sort(by: { (task1, task2) -> Bool in
-                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                            return task1.completionDate.compare(task2.completionDate) == .orderedDescending
                         })
                     }
-                } else { // else if task.mutuallyAcceptedBy == userId
-                    if filteredTask.status == 1 {
-                        self.jugglerAcceptedTasks.append(filteredTask)
+                } else {
+                    if filteredTask.status == 1 { //Accepted
+                        self.jugglerTempAcceptedTasks.append(filteredTask)
                         self.jugglerTempAcceptedTasks.sort(by: { (task1, task2) -> Bool in
-                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                            return task1.acceptedDate.compare(task2.acceptedDate) == .orderedDescending
                         })
-                    } else if filteredTask.status == 2 {
+                    } else if filteredTask.status == 2 { //Completed
                         self.jugglerTempCompletedTasks.append(filteredTask)
-                        //FIXME: Sort by completionDate not creationDate
                         self.jugglerTempCompletedTasks.sort(by: { (task1, task2) -> Bool in
-                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                            return task1.completionDate.compare(task2.completionDate) == .orderedDescending
                         })
                     }
                 }
                 
                 if filteredTasksCreated == filteredTasksDictionary.count {
-                    if self.isUserMode {
+                    self.canFetchTasks = true
+                    self.removeNoResultsView()
+                    self.animateAndShowActivityIndicator(false)
+                    
+                    if isUserMode {
                         self.userOnGoingTasks = self.userTempOnGoingTasks
                         self.userAcceptedTasks = self.userTempAcceptedTasks
                         self.userCompletedTasks = self.userTempCompletedTasks
-                    } else {
-                        self.jugglerAcceptedTasks = self.jugglerTempAcceptedTasks
-                        self.jugglerCompletedTasks = self.jugglerTempCompletedTasks
-                    }
-                    
-                    self.canFetchTasks = true
-                    self.animateAndShowActivityIndicator(false)
-                    self.removeNoResultsView()
-                    
-                    if self.isUserMode {
-                        if self.filterOptionsValue == 1 && self.userTempOnGoingTasks.count == 0 {
+                        
+                        if self.filterOptionsValue == 1 && self.userOnGoingTasks.isEmpty {
                             self.showNoResultsFoundView()
-                        } else if self.filterOptionsValue == 2 && self.userTempAcceptedTasks.count == 0 {
+                        } else if self.filterOptionsValue == 2 && self.userAcceptedTasks.isEmpty {
                             self.showNoResultsFoundView()
-                        } else if self.filterOptionsValue == 3 && self.userTempCompletedTasks.count == 0 {
+                        } else if self.filterOptionsValue == 3 && self.userCompletedTasks.isEmpty {
                             self.showNoResultsFoundView()
                         }
                     } else {
-                        if self.filterOptionsValue == 2 && self.jugglerTempAcceptedTasks.count == 0 {
+                        self.jugglerAcceptedTasks = self.jugglerTempAcceptedTasks
+                        self.jugglerCompletedTasks = self.jugglerTempCompletedTasks
+                        
+                        if self.filterOptionsValue == 2 && self.jugglerAcceptedTasks.isEmpty {
                             self.showNoResultsFoundView()
-                        } else if self.filterOptionsValue == 3 && self.jugglerTempCompletedTasks.count == 0 {
-                            self.showNoResultsFoundView()
-                        } else if self.filterOptionsValue == 4 {
-                            //FIXME: Does this need to be here?
+                        } else if self.filterOptionsValue == 3 && self.jugglerCompletedTasks.isEmpty {
                             self.showNoResultsFoundView()
                         }
                     }
@@ -290,6 +287,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         if self.filterOptionsValue == 1 {
             return self.isUserMode ? self.userOnGoingTasks.count : 0
         } else if self.filterOptionsValue == 2 {
+            print(self.jugglerAcceptedTasks.count)
             return self.isUserMode ? self.userAcceptedTasks.count : self.jugglerAcceptedTasks.count
         } else if self.filterOptionsValue == 3 {
             return self.isUserMode ? self.userCompletedTasks.count : self.jugglerCompletedTasks.count
@@ -317,6 +315,8 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             guard let acceptedTaskCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.assignedTaskCell, for: indexPath) as? AssignedTaskCell else {
                 return UICollectionViewCell()
             }
+            
+            acceptedTaskCell.taskId =  self.isUserMode ? self.userAcceptedTasks[indexPath.item].id : self.jugglerAcceptedTasks[indexPath.item].id
             
             return acceptedTaskCell
             
@@ -395,13 +395,21 @@ extension DashboardVC: DashboardHeaderCellDelegate {
                 return
             }
         } else {
+            if !self.didFetchJugglerTasks {
+                if let userId = Auth.auth().currentUser?.uid {
+                    self.animateAndShowActivityIndicator(true)
+                    self.fetchTasks(forUserId: userId, isUserMode: false)
+                    return
+                }
+            }
+            
             if filterValue == 2 && self.jugglerAcceptedTasks.isEmpty {
                 self.showNoResultsFoundView()
                 return
             } else if filterValue == 3 && self.jugglerCompletedTasks.isEmpty {
                 self.showNoResultsFoundView()
                 return
-            }else if filterValue == 4 && self.jugglerSavedTasks.isEmpty {
+            } else if filterValue == 4 && self.jugglerSavedTasks.isEmpty {
                 self.showNoResultsFoundView()
                 return
             }

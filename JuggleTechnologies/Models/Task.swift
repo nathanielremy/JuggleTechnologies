@@ -31,7 +31,7 @@ struct Task {
     let title: String
     let creationDate: Date
     let acceptedDate: Date
-//    var completionDate: Date
+    let completionDate: Date
     
     let isJugglerComplete: Bool
     var isUserComplete: Bool
@@ -68,11 +68,11 @@ struct Task {
         let creationSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.creationDate] as? Double ?? 0
         self.creationDate = Date(timeIntervalSince1970: creationSecondsFrom1970)
         
-        let acceptedSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.creationDate] as? Double ?? 0
+        let acceptedSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.acceptedDate] as? Double ?? 0
         self.acceptedDate = Date(timeIntervalSince1970: acceptedSecondsFrom1970)
         
-//        let completionSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.completionDate] as? Double ?? 0
-//        self.completionDate = Date.init(timeIntervalSince1970: completionSecondsFrom1970)
+        let completionSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.completionDate] as? Double ?? 0
+        self.completionDate = Date.init(timeIntervalSince1970: completionSecondsFrom1970)
         
         self.isJugglerComplete = dictionary[Constants.FirebaseDatabase.isJugglerComplete] as? Bool ?? false
         self.isUserComplete = dictionary[Constants.FirebaseDatabase.isUserComplete] as? Bool ?? false
@@ -84,12 +84,21 @@ struct FilteredTask {
     let id: String
     let status: Int
     let creationDate: Date
+    let acceptedDate: Date
+    let completionDate: Date
     
     init(id: String, dictionary: [String : Any]) {
         self.id = id
         
         self.status = dictionary[Constants.FirebaseDatabase.taskStatus] as? Int ?? 0
+        
         let secondsFrom1970 = dictionary[Constants.FirebaseDatabase.creationDate] as? Double ?? 0
         self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)
+        
+        let acceptedSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.acceptedDate] as? Double ?? 0
+        self.acceptedDate = Date(timeIntervalSince1970: acceptedSecondsFrom1970)
+        
+        let completionSecondsFrom1970 = dictionary[Constants.FirebaseDatabase.completionDate] as? Double ?? 0
+        self.completionDate = Date.init(timeIntervalSince1970: completionSecondsFrom1970)
     }
 }
