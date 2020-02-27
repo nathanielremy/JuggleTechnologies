@@ -51,22 +51,22 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     
     func setupViewControllers() {
         //View Tasks
-        let viewTasksNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "viewTasksUnselected"), selectedImage: #imageLiteral(resourceName: "viewTasksUnselected"), rootViewController: ViewTasksVC(collectionViewLayout: UICollectionViewFlowLayout()))
+        let viewTasksNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "viewTasksTab"), selectedImage: #imageLiteral(resourceName: "viewTasksTab"), title: "Tareas", rootViewController: ViewTasksVC(collectionViewLayout: UICollectionViewFlowLayout()))
         
         //Notifications
-        let notificationsNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "NotificationsPH"), selectedImage: #imageLiteral(resourceName: "NotificationsPH"), rootViewController: NotificationsVC(collectionViewLayout: UICollectionViewFlowLayout()))
+        let notificationsNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "notificationsTab"), selectedImage: #imageLiteral(resourceName: "notificationsTab"), title: "Notificaciones", rootViewController: NotificationsVC(collectionViewLayout: UICollectionViewFlowLayout()))
         
         //Post a Task
-        let postATaskVC = templateNavController(unselectedImage: #imageLiteral(resourceName: "PostATaskPH"), selectedImage: #imageLiteral(resourceName: "PostATaskPH"))
+        let postATaskVC = templateNavController(unselectedImage: #imageLiteral(resourceName: "postATaskTab"), selectedImage: #imageLiteral(resourceName: "postATaskTab"), title: "")
         
         //Dashboard
-        let dashboardNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "MyTasksPH"), selectedImage: #imageLiteral(resourceName: "MyTasksPH"), rootViewController: DashboardVC(collectionViewLayout: UICollectionViewFlowLayout()))
+        let dashboardNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "dashboardTab"), selectedImage: #imageLiteral(resourceName: "dashboardTab"), title: "Mis Tareas", rootViewController: DashboardVC(collectionViewLayout: UICollectionViewFlowLayout()))
         
         //Profile
-        let profileNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "ProfilePH"), selectedImage: #imageLiteral(resourceName: "ProfilePH"), rootViewController: ProfileVC(collectionViewLayout: UICollectionViewFlowLayout()))
+        let profileNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "profileTab"), selectedImage: #imageLiteral(resourceName: "profileTab"), title: "Perfil", rootViewController: ProfileVC(collectionViewLayout: UICollectionViewFlowLayout()))
         
         
-        //FIXME: Fix tabBar's tint color
+        tabBar.tintColor = UIColor.mainBlue()
         self.viewControllers = [
             viewTasksNavController,
             notificationsNavController,
@@ -76,11 +76,12 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         ]
     }
     
-    fileprivate func templateNavController(unselectedImage: UIImage, selectedImage: UIImage, rootViewController: UIViewController = UIViewController()) -> UINavigationController {
+    fileprivate func templateNavController(unselectedImage: UIImage, selectedImage: UIImage, title: String, rootViewController: UIViewController = UIViewController()) -> UINavigationController {
         let vC = rootViewController
         let navVC = UINavigationController(rootViewController: vC)
         navVC.tabBarItem.image = unselectedImage
         navVC.tabBarItem.selectedImage = selectedImage
+        navVC.tabBarItem.title = title
         
         return navVC
     }

@@ -445,7 +445,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
     func handleDenyOffer(_ offer: Offer?, index: Int?) {
         self.animateAndShowActivityIndicator(true)
         
-        let denyOfferAlert = UIAlertController(title: "Seguro?", message: "Esta oferta sera eliminada indefinadamente", preferredStyle: .alert)
+        let denyOfferAlert = UIAlertController(title: "¿Seguro?", message: "Esta oferta sera eliminada indefinadamente", preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel) { (_) in
             self.animateAndShowActivityIndicator(false)
         }
@@ -490,7 +490,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
             return
         }
         
-        let acceptOfferAlert = UIAlertController(title: "Seguro?", message: "Esta oferta sera accepta por \(offerOwner.firstName)", preferredStyle: .alert)
+        let acceptOfferAlert = UIAlertController(title: "¿Seguro?", message: "Esta oferta sera accepta por \(offerOwner.firstName)", preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel) { (_) in
             self.animateAndShowActivityIndicator(false)
         }
@@ -505,9 +505,10 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
             
             let acceptedDate = Date().timeIntervalSince1970
             let tasksRefValues: [String : Any] = [
+                Constants.FirebaseDatabase.acceptedDate : acceptedDate,
                 Constants.FirebaseDatabase.taskBudget : offer.offerPrice,
                 Constants.FirebaseDatabase.assignedJugglerId : offerOwner.userId,
-                Constants.FirebaseDatabase.taskStatus : 1
+                Constants.FirebaseDatabase.taskStatus : 1,
             ]
             //Update the task at location tasks/offer.taskId
             let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(offer.taskId)

@@ -11,6 +11,7 @@ import Firebase
 
 protocol OnGoingTaskCellDelegate {
     func addUserOnGoingTaskToDictionary(forTask task: Task)
+    func addJugglerOnGoingTaskToDictionary(forTask task: Task)
 }
 
 class OnGoingTaskCell: UICollectionViewCell {
@@ -277,7 +278,10 @@ class OnGoingTaskCell: UICollectionViewCell {
             offers.forEach { (key, value) in
                 let offer = Offer(offerDictionary: value)
                 offersCreated += 1
-                self.offers.append(offer)
+                
+                if !offer.isOfferRejected && !offer.isOfferAccepted {
+                    self.offers.append(offer)
+                }
                 
                 self.offers.sort(by: { (offer1, offer2) -> Bool in
                     return offer1.creationDate.compare(offer2.creationDate) == .orderedDescending

@@ -12,6 +12,8 @@ import Firebase
 class ViewTaskCollectionViewCell: UICollectionViewCell {
     
     //MARK: Stored properties
+    var delegate: OnGoingTaskCellDelegate?
+    
     func fetchUser(withUserId userId: String) {
         Database.fetchUserFromUserID(userID: userId) { (usr) in
             guard let user = usr else {
@@ -40,6 +42,29 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
             taskCategoryImageView.image = setTaskCategory(forCategory: task.category)
             taskDurationLabel.text = String(task.duration) + (task.duration > 1 ? " hrs" : " hr")
             taskBudgetLabel.text = "€\(task.budget)"
+            delegate?.addJugglerOnGoingTaskToDictionary(forTask: task)
+        }
+    }
+    
+    var taskId: String? {
+        didSet {
+            guard let taskId = self.taskId else {
+                return
+            }
+            
+            let taskRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(taskId)
+            taskRef.observeSingleEvent(of: .value, with: { (taskSnapshot) in
+                
+                guard let taskDictionary = taskSnapshot.value as? [String : Any] else {
+                    return
+                }
+                
+                let task = Task(id: taskSnapshot.key, dictionary: taskDictionary)
+                self.task = task
+                
+            }) { (error) in
+                print("Error fetching task from taskId for Juggler onGoing tasks: \(error)")
+            }
         }
     }
     

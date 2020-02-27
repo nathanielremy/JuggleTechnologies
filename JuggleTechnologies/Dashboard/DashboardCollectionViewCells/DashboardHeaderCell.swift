@@ -81,7 +81,6 @@ class DashboardHeaderCell: UICollectionViewCell {
             //Rearrange UIStackView with the correct filter options
             filterOptionsStackView.removeArrangedSubview(savedFilterOptionButton)
             savedFilterOptionButton.isHidden = true
-            onGoingFilterOptionButton.isHidden = false
             
             filterOptionsStackView.addArrangedSubview(onGoingFilterOptionButton)
             filterOptionsStackView.addArrangedSubview(acceptedFilterOptionButton)
@@ -89,23 +88,21 @@ class DashboardHeaderCell: UICollectionViewCell {
             
             addSubview(filterOptionsStackView)
             filterOptionsStackView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
-            
-            self.handleUserFilterOptionButton(forButton: onGoingFilterOptionButton)
         } else if mode == 1 {
             //Rearrange UIStackView with the correct filter options
-            filterOptionsStackView.removeArrangedSubview(onGoingFilterOptionButton)
-            onGoingFilterOptionButton.isHidden = true
+            filterOptionsStackView.removeArrangedSubview(savedFilterOptionButton)
             savedFilterOptionButton.isHidden = false
             
             filterOptionsStackView.addArrangedSubview(acceptedFilterOptionButton)
             filterOptionsStackView.addArrangedSubview(completedFilterOptionButton)
             filterOptionsStackView.addArrangedSubview(savedFilterOptionButton)
             
+            
             addSubview(filterOptionsStackView)
             filterOptionsStackView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
-            
-            self.handleUserFilterOptionButton(forButton: acceptedFilterOptionButton)
         }
+        
+        self.handleUserFilterOptionButton(forButton: onGoingFilterOptionButton)
     }
     
     //MARK: User filrer option buttons below until initializer method

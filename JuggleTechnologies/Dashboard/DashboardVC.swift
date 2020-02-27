@@ -29,6 +29,10 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     var userTempCompletedTasks = [FilteredTask]()
     
     //Juggler filteredTask arrays
+    var jugglerTempOnGoingTasks = [FilteredTask]()
+    var jugglerOnGoingTasks = [FilteredTask]()
+    var jugglerOnGoingTasksDictionary = [String : Task]()
+    
     var jugglerAcceptedTasks = [FilteredTask]()
     var jugglerTempAcceptedTasks = [FilteredTask]()
     
@@ -103,6 +107,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         collectionView.register(OnGoingTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskCell)
         collectionView.register(AssignedTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.assignedTaskCell)
         collectionView.register(SavedTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.savedTaskCell)
+        collectionView.register(ViewTaskCollectionViewCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.viewTaskCollectionViewCell)
         
         // Manualy refresh the collectionView
         let refreshController = UIRefreshControl()
@@ -135,15 +140,16 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             return
         }
         
-        self.userOnGoingTasksDictionary.removeAll()
-        
         if isUserMode {
             userTempOnGoingTasks.removeAll()
             userTempAcceptedTasks.removeAll()
             userTempCompletedTasks.removeAll()
+            userOnGoingTasksDictionary.removeAll()
         } else {
+            jugglerTempOnGoingTasks.removeAll()
             jugglerTempAcceptedTasks.removeAll()
             jugglerTempCompletedTasks.removeAll()
+            jugglerOnGoingTasksDictionary.removeAll()
             jugglerTempSavedTasks.removeAll()
             //self.fetchSavedTasks()
         }
@@ -187,6 +193,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                     self.userAcceptedTasks.removeAll()
                     self.userCompletedTasks.removeAll()
                 } else {
+                    self.jugglerOnGoingTasks.removeAll()
                     self.jugglerAcceptedTasks.removeAll()
                     self.jugglerCompletedTasks.removeAll()
                 }
@@ -220,7 +227,12 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                         })
                     }
                 } else {
-                    if filteredTask.status == 1 { //Accepted
+                    if filteredTask.status == 0 { //OnGoing
+                        self.jugglerTempOnGoingTasks.append(filteredTask)
+                        self.jugglerTempOnGoingTasks.sort(by: { (task1, task2) -> Bool in
+                            return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                        })
+                    } else if filteredTask.status == 1 { //Accepted
                         self.jugglerTempAcceptedTasks.append(filteredTask)
                         self.jugglerTempAcceptedTasks.sort(by: { (task1, task2) -> Bool in
                             return task1.acceptedDate.compare(task2.acceptedDate) == .orderedDescending
@@ -251,10 +263,13 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                             self.showNoResultsFoundView()
                         }
                     } else {
+                        self.jugglerOnGoingTasks = self.jugglerTempOnGoingTasks
                         self.jugglerAcceptedTasks = self.jugglerTempAcceptedTasks
                         self.jugglerCompletedTasks = self.jugglerTempCompletedTasks
                         
-                        if self.filterOptionsValue == 2 && self.jugglerAcceptedTasks.isEmpty {
+                        if self.filterOptionsValue == 1 && self.jugglerOnGoingTasks.isEmpty {
+                            self.showNoResultsFoundView()
+                        } else if self.filterOptionsValue == 2 && self.jugglerAcceptedTasks.isEmpty {
                             self.showNoResultsFoundView()
                         } else if self.filterOptionsValue == 3 && self.jugglerCompletedTasks.isEmpty {
                             self.showNoResultsFoundView()
@@ -271,6 +286,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                 self.userAcceptedTasks.removeAll()
                 self.userCompletedTasks.removeAll()
             } else {
+                self.jugglerOnGoingTasks.removeAll()
                 self.jugglerAcceptedTasks.removeAll()
                 self.jugglerCompletedTasks.removeAll()
             }
@@ -285,7 +301,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     //MARK: CollectionView Delegate Methods
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if self.filterOptionsValue == 1 {
-            return self.isUserMode ? self.userOnGoingTasks.count : 0
+            return self.isUserMode ? self.userOnGoingTasks.count : self.jugglerOnGoingTasks.count
         } else if self.filterOptionsValue == 2 {
             print(self.jugglerAcceptedTasks.count)
             return self.isUserMode ? self.userAcceptedTasks.count : self.jugglerAcceptedTasks.count
@@ -299,7 +315,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if self.filterOptionsValue == 1 {
+        if self.filterOptionsValue == 1 && self.isUserMode {
             
             guard let onGoingTaskCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskCell, for: indexPath) as? OnGoingTaskCell else {
                 return UICollectionViewCell()
@@ -309,6 +325,17 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             onGoingTaskCell.delegate = self
             
             return onGoingTaskCell
+            
+        } else if self.filterOptionsValue == 1 && !self.isUserMode {
+
+            guard let viewTaskCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.viewTaskCollectionViewCell, for: indexPath) as? ViewTaskCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            
+            viewTaskCollectionViewCell.taskId = self.jugglerOnGoingTasks[indexPath.item].id
+            viewTaskCollectionViewCell.delegate = self
+            
+            return viewTaskCollectionViewCell
             
         } else if self.filterOptionsValue == 2 {
             
@@ -351,12 +378,23 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if self.isUserMode && self.filterOptionsValue == 1 { //OnGoingTaskCell
+        if self.filterOptionsValue == 1 && self.isUserMode { //OnGoingTaskCell
+            
             let onGoingTaskInteractionsVC = OnGoingTaskInteractionsVC(collectionViewLayout: UICollectionViewFlowLayout())
             onGoingTaskInteractionsVC.dashboardVC = self
             onGoingTaskInteractionsVC.dashboardVCTaskIndex = indexPath.item
             onGoingTaskInteractionsVC.task = self.userOnGoingTasksDictionary[self.userOnGoingTasks[indexPath.item].id]
             self.navigationController?.pushViewController(onGoingTaskInteractionsVC, animated: true)
+            
+        } else if self.filterOptionsValue == 1 && !self.isUserMode {
+            guard let task = self.jugglerOnGoingTasksDictionary[self.jugglerOnGoingTasks[indexPath.item].id] else {
+                return
+            }
+            
+            let taskInteractionVC = TaskInteractionVC(collectionViewLayout: UICollectionViewFlowLayout())
+            taskInteractionVC.chatPartner = userCache[task.userId]
+            taskInteractionVC.task = task
+            self.navigationController?.pushViewController(taskInteractionVC, animated: true)
         }
     }
     
@@ -403,7 +441,10 @@ extension DashboardVC: DashboardHeaderCellDelegate {
                 }
             }
             
-            if filterValue == 2 && self.jugglerAcceptedTasks.isEmpty {
+            if filterValue == 1 && self.jugglerOnGoingTasks.isEmpty {
+                self.showNoResultsFoundView()
+                return
+            } else if filterValue == 2 && self.jugglerAcceptedTasks.isEmpty {
                 self.showNoResultsFoundView()
                 return
             } else if filterValue == 3 && self.jugglerCompletedTasks.isEmpty {
@@ -441,5 +482,9 @@ extension DashboardVC: DashboardHeaderCellDelegate {
 extension DashboardVC: OnGoingTaskCellDelegate {
     func addUserOnGoingTaskToDictionary(forTask task: Task) {
         self.userOnGoingTasksDictionary[task.id] = task
+    }
+    
+    func addJugglerOnGoingTaskToDictionary(forTask task: Task) {
+        self.jugglerOnGoingTasksDictionary[task.id] = task
     }
 }
