@@ -24,6 +24,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     
     var userAcceptedTasks = [FilteredTask]()
     var userTempAcceptedTasks = [FilteredTask]()
+    var userAcceptedTasksDictionary = [String : Task]()
     
     var userCompletedTasks = [FilteredTask]()
     var userTempCompletedTasks = [FilteredTask]()
@@ -35,6 +36,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     
     var jugglerAcceptedTasks = [FilteredTask]()
     var jugglerTempAcceptedTasks = [FilteredTask]()
+    var jugglerAcceptedTasksDictionary = [String : Task]()
     
     var jugglerCompletedTasks = [FilteredTask]()
     var jugglerTempCompletedTasks = [FilteredTask]()
@@ -70,6 +72,8 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         } else {
             self.activityIndicator.stopAnimating()
         }
+        
+        self.collectionView.isUserInteractionEnabled = !bool
     }
     
     let noResultsView: UIView = {
@@ -165,7 +169,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     
     fileprivate func setupTopNavigationBar() {
         navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "Tablero"
+        navigationItem.title = "Mis Tareas"
     }
     
     fileprivate func fetchTasks(forUserId userId: String, isUserMode: Bool) {
@@ -247,7 +251,6 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                 
                 if filteredTasksCreated == filteredTasksDictionary.count {
                     self.canFetchTasks = true
-                    self.removeNoResultsView()
                     self.animateAndShowActivityIndicator(false)
                     
                     if isUserMode {
@@ -275,6 +278,8 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                             self.showNoResultsFoundView()
                         }
                     }
+                    
+                    self.removeNoResultsView()
                 }
             }
         }) { (error) in
@@ -303,7 +308,6 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         if self.filterOptionsValue == 1 {
             return self.isUserMode ? self.userOnGoingTasks.count : self.jugglerOnGoingTasks.count
         } else if self.filterOptionsValue == 2 {
-            print(self.jugglerAcceptedTasks.count)
             return self.isUserMode ? self.userAcceptedTasks.count : self.jugglerAcceptedTasks.count
         } else if self.filterOptionsValue == 3 {
             return self.isUserMode ? self.userCompletedTasks.count : self.jugglerCompletedTasks.count
@@ -343,7 +347,17 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                 return UICollectionViewCell()
             }
             
-            acceptedTaskCell.taskId =  self.isUserMode ? self.userAcceptedTasks[indexPath.item].id : self.jugglerAcceptedTasks[indexPath.item].id
+            acceptedTaskCell.taskId = nil
+            acceptedTaskCell.task = nil
+            acceptedTaskCell.taskPartner = nil
+            acceptedTaskCell.delegate = self
+            acceptedTaskCell.acceptedIndex = indexPath.item
+            
+            if self.isUserMode {
+                acceptedTaskCell.taskId = self.userAcceptedTasks[indexPath.item].id
+            } else {
+                acceptedTaskCell.taskId = self.jugglerAcceptedTasks[indexPath.item].id
+            }
             
             return acceptedTaskCell
             
@@ -351,6 +365,17 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             
             guard let completedTaskCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.assignedTaskCell, for: indexPath) as? AssignedTaskCell else {
                 return UICollectionViewCell()
+            }
+            
+            completedTaskCell.taskId = nil
+            completedTaskCell.task = nil
+            completedTaskCell.taskPartner = nil
+            completedTaskCell.delegate = self
+            
+            if self.isUserMode {
+                completedTaskCell.taskId = self.userCompletedTasks[indexPath.item].id
+            } else {
+                completedTaskCell.taskId = self.jugglerCompletedTasks[indexPath.item].id
             }
             
             return completedTaskCell
@@ -374,7 +399,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return self.filterOptionsValue == 1 ? CGSize(width: view.frame.width, height: 195) : CGSize(width: view.frame.width, height: 175)
+        return (self.filterOptionsValue == 1 && self.isUserMode) ? CGSize(width: view.frame.width, height: 195) : CGSize(width: view.frame.width, height: 175)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -395,6 +420,21 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             taskInteractionVC.chatPartner = userCache[task.userId]
             taskInteractionVC.task = task
             self.navigationController?.pushViewController(taskInteractionVC, animated: true)
+        } else if self.filterOptionsValue == 2 {
+            guard let task = (self.isUserMode ? self.userAcceptedTasksDictionary[self.userAcceptedTasks[indexPath.item].id] : self.jugglerAcceptedTasksDictionary[self.jugglerAcceptedTasks[indexPath.item].id]), let assignedJugglerId = task.assignedJugglerId else {
+                return
+            }
+            
+            let chatPartnerId = self.isUserMode ? assignedJugglerId : task.userId
+            
+            Database.fetchUserFromUserID(userID: chatPartnerId) { (user) in
+                if let chatPartner = user {
+                    let dashboardChatlogVC = DashboardChatLogVC(collectionViewLayout: UICollectionViewFlowLayout())
+                    dashboardChatlogVC.chatPartner = chatPartner
+                    dashboardChatlogVC.task = task
+                    self.navigationController?.pushViewController(dashboardChatlogVC, animated: true)
+                }
+            }
         }
     }
     
@@ -405,6 +445,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         guard let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.CollectionViewCellIds.dashboardHeaderCell, for: indexPath) as? DashboardHeaderCell else { fatalError("Unable to dequeue DashboardHeaderCell")}
             
         headerCell.delegate = self
+        headerCell.isUserMode = self.isUserMode
             
         return headerCell
     }
@@ -486,5 +527,158 @@ extension DashboardVC: OnGoingTaskCellDelegate {
     
     func addJugglerOnGoingTaskToDictionary(forTask task: Task) {
         self.jugglerOnGoingTasksDictionary[task.id] = task
+    }
+}
+
+extension DashboardVC: AssignedTaskCellDelegate {
+    func cancelOrShowDetails(forTask task: Task?, taskPartner: User?) {
+        guard let task = task, let taskPartner = taskPartner else {
+            return
+        }
+        
+        guard task.status == 1 else {
+            let taskDetailsVC = TaskDetailsVC()
+            taskDetailsVC.task = task
+            Database.fetchUserFromUserID(userID: task.userId) { (usr) in
+                if let user = usr {
+                    taskDetailsVC.user = user
+                }
+            }
+            self.present(taskDetailsVC, animated: true, completion: nil)
+            return
+        }
+        
+        
+    }
+    
+    func completeOrReviewTask(task: Task?, taskPartner: User?, index: Int?) {
+        guard let task = task, let taskPartner = taskPartner, let currentUserId = Auth.auth().currentUser?.uid, let index = index else {
+            let alert = UIView.okayAlert(title: "No se puede completar esta tarea", message: "Sal e intente nuevamente")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        if task.status == 1 {
+            guard task.userId == taskPartner.userId else {
+                let alert = UIView.okayAlert(title: "No se puede completar esta tarea", message: "")
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            
+            let completeAlert = UIAlertController(title: "¿Seguro?", message: "Esta tarea se marcará como completada indefinidamente.", preferredStyle: .alert)
+            
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+            let completarAction = UIAlertAction(title: "Completar", style: .default) { (_) in
+                let jugglerId = task.assignedJugglerId ?? (task.userId == currentUserId ? taskPartner.userId : currentUserId)
+                self.completeTask(forTaskId: task.id, userId: task.userId, jugglerId: jugglerId, acceptedIndex: index)
+            }
+            
+            completeAlert.addAction(cancelAction)
+            completeAlert.addAction(completarAction)
+            self.present(completeAlert, animated: true, completion: nil)
+        } else if task.status == 2 {
+            
+            let reviewProfileVC = ReviewProfileVC()
+            reviewProfileVC.task = task
+            reviewProfileVC.user = taskPartner
+            
+            if task.userId != taskPartner.userId && !task.isJugglerReviewed { //Review Juggler
+                reviewProfileVC.isReviewingUser = false
+            } else if !task.isUserReviewed { //Review User
+                reviewProfileVC.isReviewingUser = true
+            }
+            
+            let reviewNavVC =  UINavigationController(rootViewController: reviewProfileVC)
+            self.present(reviewNavVC, animated: true, completion: nil)
+        }
+    }
+    
+    func completeTask(forTaskId taskId: String, userId: String, jugglerId: String, acceptedIndex: Int) {
+        self.animateAndShowActivityIndicator(true)
+        
+        let completedDate = Date().timeIntervalSince1970
+        
+        // Update tasks Node
+        let tasksRefValues: [String : Any] = [
+            Constants.FirebaseDatabase.isJugglerComplete : true,
+            Constants.FirebaseDatabase.taskStatus : 2,
+            Constants.FirebaseDatabase.completionDate : completedDate
+        ]
+        
+        let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(taskId)
+        tasksRef.updateChildValues(tasksRefValues) { (err, _) in
+            if let error = err {
+                print("Error updating tasksRefNode: \(error)")
+                DispatchQueue.main.async {
+                    self.animateAndShowActivityIndicator(false)
+                    let alert = UIView.okayAlert(title: "No se puede completar esta tarea", message: "Sal e intente nuevamente")
+                    self.present(alert, animated: true, completion: nil)
+                }
+                return
+            }
+            
+            // Update userTasks Node
+            let userTasksRefValues: [String : Any] = [
+                Constants.FirebaseDatabase.taskStatus : 2,
+                Constants.FirebaseDatabase.completionDate : completedDate
+            ]
+            
+            let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(userId).child(taskId)
+            userTasksRef.updateChildValues(userTasksRefValues) { (err, _) in
+                if let error = err {
+                    print("Error updating userTasksNode: \(error)")
+                    DispatchQueue.main.async {
+                        self.animateAndShowActivityIndicator(false)
+                        let alert = UIView.okayAlert(title: "No se puede completar esta tarea", message: "Sal e intente nuevamente")
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                    return
+                }
+                
+                // Update jugglerTasks Node
+                let jugglerTasksRefValues: [String : Any] = [
+                    Constants.FirebaseDatabase.taskStatus : 2,
+                    Constants.FirebaseDatabase.completionDate : completedDate
+                ]
+                
+                let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(jugglerId).child(taskId)
+                jugglerTasksRef.updateChildValues(jugglerTasksRefValues) { (err, _) in
+                    if let error = err {
+                        print("Error updating jugglerTasksNode: \(error)")
+                        DispatchQueue.main.async {
+                            self.animateAndShowActivityIndicator(false)
+                            let alert = UIView.okayAlert(title: "No se puede completar esta tarea", message: "Sal e intente nuevamente")
+                            self.present(alert, animated: true, completion: nil)
+                        }
+                        return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.animateAndShowActivityIndicator(false)
+                        self.jugglerAcceptedTasks.remove(at: acceptedIndex)
+                        self.collectionView.reloadData()
+                        
+                        if self.jugglerAcceptedTasks.count == 0 {
+                            self.showNoResultsFoundView()
+                        }
+                        
+                        print("Review User")
+                    }
+                }
+            }
+        }
+    }
+    
+    func addAssignedTaskToDictionary(forTask task: Task) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            print("No currentUserId")
+            return
+        }
+        
+        if task.userId == currentUserId {
+            self.userAcceptedTasksDictionary[task.id] = task
+        } else {
+            self.jugglerAcceptedTasksDictionary[task.id] = task
+        }
     }
 }

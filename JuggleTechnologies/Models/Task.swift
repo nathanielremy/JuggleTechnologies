@@ -26,6 +26,7 @@ struct Task {
     let isOnline: Bool
     let duration: Double
     let budget: Int
+    let acceptedBudget: Int?
     let category: String
     let description: String
     let title: String
@@ -34,8 +35,10 @@ struct Task {
     let completionDate: Date
     
     let isJugglerComplete: Bool
-    var isUserComplete: Bool
     var assignedJugglerId: String?
+    
+    let isUserReviewed: Bool
+    let isJugglerReviewed: Bool
 
     
     init(id: String, dictionary: [String : Any]) {
@@ -60,6 +63,7 @@ struct Task {
         self.status = dictionary[Constants.FirebaseDatabase.taskStatus] as? Int ?? 0
         
         self.budget = dictionary[Constants.FirebaseDatabase.taskBudget] as? Int ?? 0
+        self.acceptedBudget = dictionary[Constants.FirebaseDatabase.acceptedBudget] as? Int ?? nil
         self.category = dictionary[Constants.FirebaseDatabase.taskCategory] as? String ?? ""
         self.description = dictionary[Constants.FirebaseDatabase.taskDescription] as? String ?? ""
         self.title = dictionary[Constants.FirebaseDatabase.taskTitle] as? String ?? ""
@@ -75,8 +79,10 @@ struct Task {
         self.completionDate = Date.init(timeIntervalSince1970: completionSecondsFrom1970)
         
         self.isJugglerComplete = dictionary[Constants.FirebaseDatabase.isJugglerComplete] as? Bool ?? false
-        self.isUserComplete = dictionary[Constants.FirebaseDatabase.isUserComplete] as? Bool ?? false
         self.assignedJugglerId = dictionary[Constants.FirebaseDatabase.assignedJugglerId] as? String
+        
+        self.isUserReviewed = dictionary[Constants.FirebaseDatabase.isUserReviewed] as? Bool ?? false
+        self.isJugglerReviewed = dictionary[Constants.FirebaseDatabase.isJugglerReviewed] as? Bool ?? false
     }
 }
 

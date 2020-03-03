@@ -449,7 +449,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
         let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel) { (_) in
             self.animateAndShowActivityIndicator(false)
         }
-        let denyAction = UIAlertAction(title: "Denega", style: .default) { (_) in
+        let denyAction = UIAlertAction(title: "Denegar", style: .default) { (_) in
             guard let offer = offer, let index = index else {
                 let alert = UIView.okayAlert(title: "No se Puede Denegar Esta Oferta", message: "Sal e intente nuevamente")
                 self.present(alert, animated: true, completion: nil)
@@ -494,7 +494,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
         let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel) { (_) in
             self.animateAndShowActivityIndicator(false)
         }
-        let acceptAction = UIAlertAction(title: "Acepta", style: .default) { (_) in
+        let acceptAction = UIAlertAction(title: "Aceptar", style: .default) { (_) in
             if self.dashboardVC == nil {
                 print("self.dashboardVC == nil")
                 let alert = UIView.okayAlert(title: "No se Puede Acceptar Esta Oferta", message: "Sal e intente nuevamente")
@@ -506,11 +506,11 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
             let acceptedDate = Date().timeIntervalSince1970
             let tasksRefValues: [String : Any] = [
                 Constants.FirebaseDatabase.acceptedDate : acceptedDate,
-                Constants.FirebaseDatabase.taskBudget : offer.offerPrice,
+                Constants.FirebaseDatabase.acceptedBudget : offer.offerPrice,
                 Constants.FirebaseDatabase.assignedJugglerId : offerOwner.userId,
                 Constants.FirebaseDatabase.taskStatus : 1,
             ]
-            //Update the task at location tasks/offer.taskId
+            //Update the tasksRef at location tasks/offer.taskId
             let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(offer.taskId)
             tasksRef.updateChildValues(tasksRefValues) { (err, _) in
                 if let error = err {

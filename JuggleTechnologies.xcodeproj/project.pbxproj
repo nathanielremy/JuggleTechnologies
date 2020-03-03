@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4407527323D4AAA00025D8AA /* TaskSpecificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */; };
+		44103509240EBFAB00C9BCED /* ReviewProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44103508240EBFAB00C9BCED /* ReviewProfileVC.swift */; };
 		441FB4B323D8A39800D8B115 /* UserProfileStatisticsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */; };
 		441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */; };
 		44203CA423DB278A00F6D71A /* ViewTaskCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44203CA323DB278A00F6D71A /* ViewTaskCollectionViewCell.swift */; };
@@ -66,6 +67,7 @@
 		04890BF0E14186AEA33503B3 /* Pods_JuggleTechnologies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JuggleTechnologies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2496946D5B215D5F762AE27C /* Pods-JuggleTechnologies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.release.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.release.xcconfig"; sourceTree = "<group>"; };
 		4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSpecificationsVC.swift; sourceTree = "<group>"; };
+		44103508240EBFAB00C9BCED /* ReviewProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewProfileVC.swift; sourceTree = "<group>"; };
 		441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStatisticsCell.swift; sourceTree = "<group>"; };
 		441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelfDescriptionCell.swift; sourceTree = "<group>"; };
 		44203CA323DB278A00F6D71A /* ViewTaskCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTaskCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -142,6 +144,30 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		44103505240E5DDF00C9BCED /* Reviews */ = {
+			isa = PBXGroup;
+			children = (
+				44103506240E5DF600C9BCED /* UserReviews */,
+				44103507240E5DFE00C9BCED /* JuggleAppReviews */,
+			);
+			path = Reviews;
+			sourceTree = "<group>";
+		};
+		44103506240E5DF600C9BCED /* UserReviews */ = {
+			isa = PBXGroup;
+			children = (
+				44103508240EBFAB00C9BCED /* ReviewProfileVC.swift */,
+			);
+			path = UserReviews;
+			sourceTree = "<group>";
+		};
+		44103507240E5DFE00C9BCED /* JuggleAppReviews */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = JuggleAppReviews;
+			sourceTree = "<group>";
+		};
 		4422DBC92402BF25008B56A3 /* DashboardMessages */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +231,7 @@
 				4446E0FC23D3546A007933AF /* PostATask */,
 				4446E0FF23D358CA007933AF /* Dashboard */,
 				4446E10223D361C4007933AF /* Profile */,
+				44103505240E5DDF00C9BCED /* Reviews */,
 				4446E0F523D34366007933AF /* Views */,
 				4446E0ED23D341B2007933AF /* Info.plist */,
 				4446E10523D36882007933AF /* SupportingFiles */,
@@ -539,6 +566,7 @@
 				442698A723D610D90095A495 /* Task.swift in Sources */,
 				44E53D4723F8333700102397 /* EditTaskVC.swift in Sources */,
 				447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */,
+				44103509240EBFAB00C9BCED /* ReviewProfileVC.swift in Sources */,
 				442871A623F05317000B1AC4 /* BecomeAJugglerVC.swift in Sources */,
 				44203CA423DB278A00F6D71A /* ViewTaskCollectionViewCell.swift in Sources */,
 				4446E0F423D3426F007933AF /* MainTabBarController.swift in Sources */,

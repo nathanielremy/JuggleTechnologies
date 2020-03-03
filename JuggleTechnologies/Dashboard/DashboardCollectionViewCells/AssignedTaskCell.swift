@@ -9,25 +9,82 @@
 import UIKit
 import Firebase
 
+protocol AssignedTaskCellDelegate {
+    func cancelOrShowDetails(forTask task: Task?, taskPartner: User?)
+    func completeOrReviewTask(task: Task?, taskPartner: User?, index: Int?)
+    func addAssignedTaskToDictionary(forTask task: Task)
+}
+
 class AssignedTaskCell: UICollectionViewCell {
     //MARK: Stored properties
-    var assignedJuggler: User? {
+    var delegate: AssignedTaskCellDelegate?
+    var acceptedIndex: Int?
+    
+    var taskPartner: User? {
         didSet {
-            guard let juggler = self.assignedJuggler else {
-                self.profileImageView.image = #imageLiteral(resourceName: "DefaultProfileImage")
-                self.firstNameLabel.text = "Sin Nombre"
+            guard let user = self.taskPartner else {
+                self.profileImageView.image = nil
                 return
             }
             
             self.profileImageView.image = nil
-            self.profileImageView.loadImage(from: juggler.profileImageURLString)
-            self.firstNameLabel.text = juggler.firstName
+            self.firstNameLabel.text = user.firstName
+            
+            guard let task = self.task else {
+                return
+            }
+            
+            if task.assignedJugglerId == Auth.auth().currentUser?.uid {
+                self.setupCompleteOrReviewButton(forTask: task, isTaskOwner: false)
+                if task.status == 1 { // Current user accepted for other user's task
+                    
+                    let attributedText = NSMutableAttributedString(string: "Estas aceptado para\n\n", attributes: [.font : UIFont.boldSystemFont(ofSize: 12), .foregroundColor : UIColor.gray])
+                    
+                    attributedText.append(NSAttributedString(string: task.title, attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.darkText]))
+                    attributedText.append(NSAttributedString(string: "\n\nPor ", attributes: [.font : UIFont.boldSystemFont(ofSize: 12), .foregroundColor : UIColor.gray]))
+                    attributedText.append(NSAttributedString(string: "€\(task.acceptedBudget ?? task.budget)", attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.mainBlue()]))
+                    
+                    self.detailsLabel.attributedText = attributedText
+                    
+                } else if task.status == 2 { // Current user completed other user's task
+                    
+                    let attributedText = NSMutableAttributedString(string: "Has completado\n\n", attributes: [.font : UIFont.boldSystemFont(ofSize: 12), .foregroundColor : UIColor.gray])
+                    
+                    attributedText.append(NSAttributedString(string: task.title, attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.darkText]))
+                    attributedText.append(NSAttributedString(string: "\n\nPor ", attributes: [.font : UIFont.boldSystemFont(ofSize: 12), .foregroundColor : UIColor.gray]))
+                    attributedText.append(NSAttributedString(string: "€\(task.acceptedBudget ?? task.budget)", attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.mainBlue()]))
+                    
+                    self.detailsLabel.attributedText = attributedText
+                }
+            } else {
+                self.setupCompleteOrReviewButton(forTask: task, isTaskOwner: true)
+                if task.status == 1 { // Current user's task accepted another Juggler
+                    
+                    let attributedText = NSMutableAttributedString(string: user.firstName + " esta aceptado para\n\n", attributes: [.font : UIFont.boldSystemFont(ofSize: 12), .foregroundColor : UIColor.gray])
+                    attributedText.append(NSAttributedString(string: task.title, attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.darkText]))
+                    attributedText.append(NSAttributedString(string: "\n\nPor ", attributes: [.font : UIFont.boldSystemFont(ofSize: 12), .foregroundColor : UIColor.gray]))
+                    attributedText.append(NSAttributedString(string: "€\(task.acceptedBudget ?? task.budget)", attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.mainBlue()]))
+                    
+                    self.detailsLabel.attributedText = attributedText
+                    
+                } else if task.status == 2 { // Current user's task completed another Juggler
+                    
+                    let attributedText = NSMutableAttributedString(string: user.firstName + " ha completado\n\n", attributes: [.font : UIFont.boldSystemFont(ofSize: 12), .foregroundColor : UIColor.gray])
+                    attributedText.append(NSAttributedString(string: task.title, attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.darkText]))
+                    attributedText.append(NSAttributedString(string: "\n\nPor ", attributes: [.font : UIFont.boldSystemFont(ofSize: 12), .foregroundColor : UIColor.gray]))
+                    attributedText.append(NSAttributedString(string: "€\(task.acceptedBudget ?? task.budget)", attributes: [.font : UIFont.boldSystemFont(ofSize: 17), .foregroundColor : UIColor.mainBlue()]))
+                    
+                    self.detailsLabel.attributedText = attributedText
+                }
+            }
+            
+            self.profileImageView.loadImage(from: user.profileImageURLString)
         }
     }
     
-    fileprivate func fetchAssignedJuggler(forJugglerId jugglerId: String) {
-        Database.fetchUserFromUserID(userID: jugglerId) { (juggler) in
-            self.assignedJuggler = juggler
+    fileprivate func fetchTaskPartner(forUserId userId: String) {
+        Database.fetchUserFromUserID(userID: userId) { (user) in
+            self.taskPartner = user
         }
     }
     
@@ -37,14 +94,15 @@ class AssignedTaskCell: UICollectionViewCell {
                 return
             }
             
-            self.fetchAssignedJuggler(forJugglerId: task.userId == currentuserId ? (task.assignedJugglerId ?? "SINUSERID") : (task.userId))
-            postedTimeagoLabel.text = task.acceptedDate.timeAgoDisplay()
-            taskTitleLabel.text = task.title
-            taskLocationLabel.text = task.isOnline ? "Internet/Teléfono" : task.stringLocation
-            taskCategoryImageView.image = setTaskCategory(forCategory: task.category)
-            taskDurationLabel.text = String(task.duration) + (task.duration > 1 ? " hrs" : " hr")
-            taskBudgetLabel.text = "€\(task.budget)"
+            self.delegate?.addAssignedTaskToDictionary(forTask: task)
+            self.fetchTaskPartner(forUserId: task.userId == currentuserId ? (task.assignedJugglerId ?? "SINUSERID") : (task.userId))
+            self.postedTimeAgoLabel.text = task.status == 1 ? task.acceptedDate.timeAgoDisplay() : task.completionDate.timeAgoDisplay()
             
+            if task.status == 1 {
+                self.cancelOrDetailsButton.setTitle("Cancelar", for: .normal)
+            } else {
+                self.cancelOrDetailsButton.setTitle("Detalles", for: .normal)
+            }
         }
     }
     
@@ -53,6 +111,9 @@ class AssignedTaskCell: UICollectionViewCell {
             guard let taskId = self.taskId else {
                 return
             }
+            
+            self.detailsLabel.attributedText = NSAttributedString(string: "")
+            self.completeOrReviewButton.removeFromSuperview()
             
             let taskRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(taskId)
             taskRef.observeSingleEvent(of: .value, with: { (snapshot) in
@@ -69,39 +130,6 @@ class AssignedTaskCell: UICollectionViewCell {
                 return
             }
         }
-    }
-    
-    fileprivate func setTaskCategory(forCategory category: String) -> UIImage {
-        var categoryImage = #imageLiteral(resourceName: "anythingCategory")
-        taskCategoryLabel.text = Constants.TaskCategories.anything
-        
-        if category == Constants.TaskCategories.cleaning {
-            taskCategoryLabel.text = Constants.TaskCategories.cleaning
-            categoryImage =  #imageLiteral(resourceName: "cleaningCategory")
-        } else if category == Constants.TaskCategories.handyMan {
-            taskCategoryLabel.text = Constants.TaskCategories.handyMan
-            categoryImage = #imageLiteral(resourceName: "handymanCategory")
-        } else if category == Constants.TaskCategories.computerIT {
-            taskCategoryLabel.text = Constants.TaskCategories.computerIT
-            categoryImage = #imageLiteral(resourceName: "computerITCategory")
-        } else if category == Constants.TaskCategories.photoVideo {
-            taskCategoryLabel.text = Constants.TaskCategories.photoVideo
-            categoryImage = #imageLiteral(resourceName: "photoVideoCategory")
-        }  else if category == Constants.TaskCategories.assembly {
-            taskCategoryLabel.text = Constants.TaskCategories.assembly
-            categoryImage = #imageLiteral(resourceName: "assemblyCategory")
-        } else if category == Constants.TaskCategories.delivery {
-            taskCategoryLabel.text = Constants.TaskCategories.delivery
-            categoryImage = #imageLiteral(resourceName: "deliveryCategory")
-        } else if category == Constants.TaskCategories.moving {
-            taskCategoryLabel.text = Constants.TaskCategories.moving
-            categoryImage = #imageLiteral(resourceName: "movingCategory")
-        } else if category == Constants.TaskCategories.pets {
-            taskCategoryLabel.text = Constants.TaskCategories.pets
-            categoryImage = #imageLiteral(resourceName: "petsCategory")
-        }
-        
-        return categoryImage.withTintColor(UIColor.gray)
     }
     
     let profileImageView: CustomImageView = {
@@ -123,90 +151,101 @@ class AssignedTaskCell: UICollectionViewCell {
         return label
     }()
     
-    let postedTimeagoLabel: UILabel = {
+    let postedTimeAgoLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.textAlignment = .left
-        label.textColor = .gray
+        label.textColor = .lightGray
         label.numberOfLines = 1
         
         return label
     }()
     
-    let taskTitleLabel: UILabel = {
+    let detailsLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textAlignment = .left
-        label.textColor = .darkText
-        label.numberOfLines = 2
-        
-        return label
-    }()
-    
-    let taskLocationPin: UIImageView = {
-        let iv = UIImageView()
-        iv.image = #imageLiteral(resourceName: "locationPin")
-        
-        return iv
-    }()
-    
-    let taskLocationLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textAlignment = .left
-        label.textColor = .darkText
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    let taskCategoryImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.tintColor = UIColor.gray
-        
-        return iv
-    }()
-    
-    let taskCategoryLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.textColor = UIColor.darkText
-        label.textAlignment = .center
-        
-        return label
-    }()
-    
-    let taskDurationImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.image = #imageLiteral(resourceName: "taskDuration").withTintColor(UIColor.gray)
-        
-        
-        return iv
-    }()
-    
-    let taskDurationLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.textColor = UIColor.darkText
-        label.textAlignment = .center
-        
-        return label
-    }()
-    
-    let taskBudgetLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 30)
-        label.textColor = UIColor.mainBlue()
-        label.textAlignment = .center
         label.numberOfLines = 0
         
         return label
     }()
     
+    lazy var cancelOrDetailsButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.titleLabel?.textAlignment = .center
+        button.tintColor = UIColor.lightGray
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        button.addTarget(self, action: #selector(handleCancelOrDetailsButton), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    @objc fileprivate func handleCancelOrDetailsButton() {
+        self.delegate?.cancelOrShowDetails(forTask: self.task, taskPartner: self.taskPartner)
+    }
+    
+    lazy var completeOrReviewButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.titleLabel?.textAlignment = .center
+        button.tintColor = UIColor.mainBlue()
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+        button.addTarget(self, action: #selector(handleCompleteOrReviewButton), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    fileprivate func setupCompleteOrReviewButton(forTask task: Task, isTaskOwner: Bool) {
+        if !isTaskOwner {
+            if task.status == 1 {
+                completeOrReviewButton.setTitle("Completar", for: .normal)
+                completeOrReviewButton.layer.borderColor = UIColor.mainBlue().cgColor
+                completeOrReviewButton.layer.borderWidth = 1.5
+                completeOrReviewButton.isEnabled = true
+            } else if task.status == 2 {
+                if task.isUserReviewed {
+                    completeOrReviewButton.setTitle("Evaluado", for: .normal)
+                    completeOrReviewButton.layer.borderColor = nil
+                    completeOrReviewButton.layer.borderWidth = 0
+                    completeOrReviewButton.isEnabled = false
+                } else {
+                    completeOrReviewButton.setTitle("Evaluar", for: .normal)
+                    completeOrReviewButton.layer.borderColor = UIColor.mainBlue().cgColor
+                    completeOrReviewButton.layer.borderWidth = 1.5
+                    completeOrReviewButton.isEnabled = true
+                }
+            }
+        } else {
+            if task.status == 1 {
+                self.completeOrReviewButton.removeFromSuperview()
+                return
+            } else if task.status == 2 {
+                if task.isJugglerReviewed {
+                    completeOrReviewButton.setTitle("Evaluado", for: .normal)
+                    completeOrReviewButton.layer.borderColor = nil
+                    completeOrReviewButton.layer.borderWidth = 0
+                    completeOrReviewButton.isEnabled = false
+                } else {
+                    completeOrReviewButton.setTitle("Evaluar", for: .normal)
+                    completeOrReviewButton.layer.borderColor = UIColor.mainBlue().cgColor
+                    completeOrReviewButton.layer.borderWidth = 1.5
+                    completeOrReviewButton.isEnabled = true
+                }
+            }
+        }
+        
+        addSubview(completeOrReviewButton)
+        completeOrReviewButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: 100, height: 20)
+        completeOrReviewButton.layer.cornerRadius = 5
+    }
+    
+    @objc fileprivate func handleCompleteOrReviewButton() {
+        delegate?.completeOrReviewTask(task: self.task, taskPartner: self.taskPartner, index: self.acceptedIndex ?? 0)
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         backgroundColor = .white
+        self.profileImageView.image = nil
         setupViews()
     }
     
@@ -223,36 +262,14 @@ class AssignedTaskCell: UICollectionViewCell {
         addSubview(firstNameLabel)
         firstNameLabel.anchor(top: profileImageView.bottomAnchor, left: leftAnchor, bottom: nil, right: profileImageView.rightAnchor, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 12, width: nil, height: nil)
         
-        addSubview(postedTimeagoLabel)
-        postedTimeagoLabel.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
+        addSubview(postedTimeAgoLabel)
+        postedTimeAgoLabel.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
-        addSubview(taskTitleLabel)
-        taskTitleLabel.anchor(top: postedTimeagoLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -47, width: nil, height: nil)
+        addSubview(cancelOrDetailsButton)
+        cancelOrDetailsButton.anchor(top: nil, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
-        addSubview(taskLocationPin)
-        taskLocationPin.anchor(top: taskTitleLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 14, height: 14)
-        
-        addSubview(taskLocationLabel)
-        taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: taskLocationPin.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 4, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
-        
-        let taskDetailIconsStackView = UIStackView(arrangedSubviews: [taskCategoryImageView, taskDurationImageView])
-        taskDetailIconsStackView.axis = .horizontal
-        taskDetailIconsStackView.distribution = .fillEqually
-        taskDetailIconsStackView.spacing = 58
-        
-        addSubview(taskDetailIconsStackView)
-        taskDetailIconsStackView.anchor(top: profileImageView.bottomAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 8, paddingLeft: 50, paddingBottom: -28, paddingRight: 0, width: frame.width * 0.25, height: nil)
-        
-        addSubview(taskCategoryLabel)
-        taskCategoryLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -7, paddingRight: 0, width: nil, height: 13)
-        taskCategoryLabel.centerXAnchor.constraint(equalTo: taskCategoryImageView.centerXAnchor).isActive = true
-        
-        addSubview(taskDurationLabel)
-        taskDurationLabel.anchor(top: nil, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -7, paddingRight: 0, width: nil, height: 13)
-        taskDurationLabel.centerXAnchor.constraint(equalTo: taskDurationImageView.centerXAnchor).isActive = true
-        
-        addSubview(taskBudgetLabel)
-        taskBudgetLabel.anchor(top: taskDetailIconsStackView.topAnchor, left: taskDurationImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: -8, paddingRight: -10, width: nil, height: nil)
+        addSubview(detailsLabel)
+        detailsLabel.anchor(top: postedTimeAgoLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: cancelOrDetailsButton.leftAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -8, width: nil, height: nil)
         
         let bottomSeperatorView = UIView()
         bottomSeperatorView.backgroundColor = .lightGray

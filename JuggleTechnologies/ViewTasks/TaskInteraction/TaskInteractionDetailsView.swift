@@ -307,6 +307,7 @@ class TaskInteractionDetailsView: UIView {
         button.layer.borderWidth = 1.5
         button.layer.borderColor = UIColor.mainBlue().cgColor
         button.addTarget(self, action: #selector(handleAcceptTaskButton), for: .touchUpInside)
+        button.titleLabel?.numberOfLines = 0
         
         return button
     }()

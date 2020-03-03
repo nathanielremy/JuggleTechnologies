@@ -44,10 +44,28 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
                 return
             }
             
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detalles", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
+            self.navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
+            
             if let chatPartner = self.chatPartner {
                 self.observeMessages(forChatPartnerId: chatPartner.userId)
             }
         }
+    }
+    
+    @objc fileprivate func handleRightBarButtonItem() {
+        guard let task = task else {
+            return
+        }
+        
+        let taskDetailsVC = TaskDetailsVC()
+        taskDetailsVC.task = task
+        Database.fetchUserFromUserID(userID: task.userId) { (usr) in
+            if let user = usr {
+                taskDetailsVC.user = user
+            }
+        }
+        self.present(taskDetailsVC, animated: true, completion: nil)
     }
     
     //MARK: Views
@@ -127,6 +145,38 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
         //Animate the containerView going down
         UIView.animate(withDuration: keyBoardDuration) {
             self.view.layoutIfNeeded()
+        }
+    }
+    
+    let noResultsView: UIView = {
+        let view = UIView.noResultsView(withText: "No hay mensajes en este momento.")
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    fileprivate func showNoResultsFoundView(andReload reload: Bool) {
+        self.collectionView.bounces = false
+        self.collectionView?.refreshControl?.endRefreshing()
+        DispatchQueue.main.async {
+            if reload {
+                self.collectionView?.reloadData()
+            }
+            self.collectionView?.addSubview(self.noResultsView)
+            self.noResultsView.centerYAnchor.constraint(equalTo: (self.collectionView?.centerYAnchor)!).isActive = true
+            self.noResultsView.centerXAnchor.constraint(equalTo: (self.collectionView?.centerXAnchor)!).isActive = true
+        }
+    }
+    
+    fileprivate func removeNoResultsView(andReload reload: Bool) {
+        self.collectionView.bounces = true
+        self.collectionView?.refreshControl?.endRefreshing()
+        DispatchQueue.main.async {
+            self.noResultsView.removeFromSuperview()
+            if reload {
+                self.collectionView?.reloadData()
+            }
+            self.collectionView.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: self.collectionView.numberOfSections - 1), at: .top, animated: true)
         }
     }
     
@@ -322,6 +372,12 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
     
     //MARK: CollectionView Delegate Methods
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if messages.count == 0 {
+            self.showNoResultsFoundView(andReload: false)
+        } else {
+            self.removeNoResultsView(andReload: false)
+        }
+        
         return self.messages.count
     }
     

@@ -108,7 +108,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     //MARK: User filrer option buttons below until initializer method
     lazy var onGoingFilterOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Pendientes", for: .normal)
+        button.setTitle("Pendiente", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
         button.tintColor = .darkText
@@ -120,7 +120,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     lazy var acceptedFilterOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Aceptadas", for: .normal)
+        button.setTitle("Aceptada", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
         button.tintColor = .lightGray
@@ -132,7 +132,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     lazy var completedFilterOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Completadas", for: .normal)
+        button.setTitle("Completada", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
         button.tintColor = .lightGray
@@ -144,7 +144,7 @@ class DashboardHeaderCell: UICollectionViewCell {
     
     lazy var savedFilterOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Guardadas", for: .normal)
+        button.setTitle("Guardada", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.titleLabel?.textAlignment = .center
         button.tintColor = .lightGray
