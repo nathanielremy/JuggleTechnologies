@@ -25,11 +25,11 @@ class TaskCategoryPickerVC: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(#imageLiteral(resourceName: "cleaningCategory"), for: .normal)
         button.tintColor = UIColor.gray
-        
+
         //Set button.tag to match index of category string in Constants/taskCategoriesArray
         button.tag = 0
         button.addTarget(self, action: #selector(didSelectCategory(button:)), for: .touchUpInside)
-        
+
         return button
     }()
     
@@ -254,23 +254,25 @@ class TaskCategoryPickerVC: UIViewController {
         leftVerticalStackView.axis = .vertical
         leftVerticalStackView.distribution = .fillEqually
         leftVerticalStackView.alignment = .center
-        leftVerticalStackView.spacing = 30
+        leftVerticalStackView.spacing = 40
 
         view.addSubview(leftVerticalStackView)
-        leftVerticalStackView.anchor(top: mainLabel.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.centerXAnchor, paddingTop: 10, paddingLeft: 60, paddingBottom: -125, paddingRight: -20, width: nil, height: nil)
+        leftVerticalStackView.anchor(top: nil, left: nil, bottom: nil, right: view.centerXAnchor, paddingTop: 30, paddingLeft: 0, paddingBottom: 0, paddingRight: -40, width: 60, height: (60 * 4) + (40 * 3))
+        leftVerticalStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
         // Setup the right stackView
         let rightVerticalStackView = UIStackView(arrangedSubviews: [handyManCategoryButton, videoPhotoCategoryButton, deliveryCategoryButton, petsCategoryButton])
         rightVerticalStackView.axis = .vertical
         rightVerticalStackView.distribution = .fillEqually
         rightVerticalStackView.alignment = .center
-        rightVerticalStackView.spacing = 30
+        rightVerticalStackView.spacing = 40
         
         view.addSubview(rightVerticalStackView)
-        rightVerticalStackView.anchor(top: mainLabel.bottomAnchor, left: view.centerXAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingTop: 10, paddingLeft: 20, paddingBottom: -125, paddingRight: -60, width: nil, height: nil)
+        rightVerticalStackView.anchor(top: nil, left: view.centerXAnchor, bottom: nil, right: nil, paddingTop: 30, paddingLeft: 40, paddingBottom: 0, paddingRight: 0, width: 60, height: (60 * 4) + (40 * 3))
+        rightVerticalStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
         view.addSubview(anythingCategoryButton)
-        anythingCategoryButton.anchor(top: leftVerticalStackView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        anythingCategoryButton.anchor(top: leftVerticalStackView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 40, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
         anythingCategoryButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         anythingCategoryButton.widthAnchor.constraint(equalTo: deliveryCategoryButton.widthAnchor).isActive = true
         anythingCategoryButton.heightAnchor.constraint(equalTo: deliveryCategoryButton.heightAnchor).isActive = true
