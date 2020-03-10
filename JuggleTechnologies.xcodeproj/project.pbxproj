@@ -52,7 +52,11 @@
 		44BECA8E23F1608700014A59 /* JugglerSignupRequirementsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BECA8D23F1608700014A59 /* JugglerSignupRequirementsVC.swift */; };
 		44D0CED923FA6C74001C9DB5 /* OnGoingTaskInteractionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D0CED823FA6C74001C9DB5 /* OnGoingTaskInteractionsVC.swift */; };
 		44D0CEDC23FA6D35001C9DB5 /* OnGoingTaskInteractionsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D0CEDB23FA6D35001C9DB5 /* OnGoingTaskInteractionsHeaderCell.swift */; };
+		44D4E8902417DC6200DD6DC8 /* Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D4E88F2417DC6200DD6DC8 /* Review.swift */; };
+		44D4E8922418097E00DD6DC8 /* UserReviewsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D4E8912418097E00DD6DC8 /* UserReviewsVC.swift */; };
+		44D4E89424180C0F00DD6DC8 /* ReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D4E89324180C0F00DD6DC8 /* ReviewCell.swift */; };
 		44E53D4723F8333700102397 /* EditTaskVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E53D4623F8333700102397 /* EditTaskVC.swift */; };
+		44F6F6A12410EA580063CAC4 /* JuggleAppReviewsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F6F6A02410EA580063CAC4 /* JuggleAppReviewsVC.swift */; };
 		44FB732123D36BEC000B8987 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732023D36BEC000B8987 /* LoginVC.swift */; };
 		44FB732423D36C13000B8987 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732323D36C13000B8987 /* Extensions.swift */; };
 		44FB732623D36CAA000B8987 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FB732523D36CAA000B8987 /* Constants.swift */; };
@@ -113,7 +117,11 @@
 		44BECA8D23F1608700014A59 /* JugglerSignupRequirementsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JugglerSignupRequirementsVC.swift; sourceTree = "<group>"; };
 		44D0CED823FA6C74001C9DB5 /* OnGoingTaskInteractionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnGoingTaskInteractionsVC.swift; sourceTree = "<group>"; };
 		44D0CEDB23FA6D35001C9DB5 /* OnGoingTaskInteractionsHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnGoingTaskInteractionsHeaderCell.swift; sourceTree = "<group>"; };
+		44D4E88F2417DC6200DD6DC8 /* Review.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Review.swift; sourceTree = "<group>"; };
+		44D4E8912418097E00DD6DC8 /* UserReviewsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserReviewsVC.swift; sourceTree = "<group>"; };
+		44D4E89324180C0F00DD6DC8 /* ReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewCell.swift; sourceTree = "<group>"; };
 		44E53D4623F8333700102397 /* EditTaskVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskVC.swift; sourceTree = "<group>"; };
+		44F6F6A02410EA580063CAC4 /* JuggleAppReviewsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleAppReviewsVC.swift; sourceTree = "<group>"; };
 		44FB732023D36BEC000B8987 /* LoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		44FB732323D36C13000B8987 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		44FB732523D36CAA000B8987 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -164,6 +172,7 @@
 		44103507240E5DFE00C9BCED /* JuggleAppReviews */ = {
 			isa = PBXGroup;
 			children = (
+				44F6F6A02410EA580063CAC4 /* JuggleAppReviewsVC.swift */,
 			);
 			path = JuggleAppReviews;
 			sourceTree = "<group>";
@@ -305,6 +314,8 @@
 				441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */,
 				441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */,
 				442871A423F05304000B1AC4 /* Juggler */,
+				44D4E8912418097E00DD6DC8 /* UserReviewsVC.swift */,
+				44D4E89324180C0F00DD6DC8 /* ReviewCell.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -379,6 +390,7 @@
 				442698A623D610D90095A495 /* Task.swift */,
 				444AA33023EB4DA100872EB9 /* Message.swift */,
 				443C4FB423F9DD050070309E /* Offer.swift */,
+				44D4E88F2417DC6200DD6DC8 /* Review.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -533,6 +545,7 @@
 				447C128823EF24DA00947FE8 /* TaskOfferVC.swift in Sources */,
 				44BECA8E23F1608700014A59 /* JugglerSignupRequirementsVC.swift in Sources */,
 				444AA33123EB4DA100872EB9 /* Message.swift in Sources */,
+				44F6F6A12410EA580063CAC4 /* JuggleAppReviewsVC.swift in Sources */,
 				4446E0E023D341B1007933AF /* AppDelegate.swift in Sources */,
 				44D0CEDC23FA6D35001C9DB5 /* OnGoingTaskInteractionsHeaderCell.swift in Sources */,
 				443C4FB323F9D1B20070309E /* OfferCompleteVC.swift in Sources */,
@@ -551,11 +564,13 @@
 				44294A9123F3503F002F5732 /* JugglerApplicationCompleteVC.swift in Sources */,
 				4435835923FC5848006601DA /* OnGoingTaskOfferCell.swift in Sources */,
 				443C4FB523F9DD050070309E /* Offer.swift in Sources */,
+				44D4E8922418097E00DD6DC8 /* UserReviewsVC.swift in Sources */,
 				4483FCFA23DF2E9C00178E84 /* TaskInteractionDetailsView.swift in Sources */,
 				44972CD123E9E8EF00798745 /* SavedTaskCell.swift in Sources */,
 				4483FCF823DF28E000178E84 /* TaskInteractionVC.swift in Sources */,
 				4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */,
 				44203CA623DB290B00F6D71A /* ViewTasksHeaderCell.swift in Sources */,
+				44D4E8902417DC6200DD6DC8 /* Review.swift in Sources */,
 				44FB732123D36BEC000B8987 /* LoginVC.swift in Sources */,
 				44FB732923D36D96000B8987 /* User.swift in Sources */,
 				44A91E042400451D0082D903 /* OnGoingTaskChatMessageCell.swift in Sources */,
@@ -568,6 +583,7 @@
 				447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */,
 				44103509240EBFAB00C9BCED /* ReviewProfileVC.swift in Sources */,
 				442871A623F05317000B1AC4 /* BecomeAJugglerVC.swift in Sources */,
+				44D4E89424180C0F00DD6DC8 /* ReviewCell.swift in Sources */,
 				44203CA423DB278A00F6D71A /* ViewTaskCollectionViewCell.swift in Sources */,
 				4446E0F423D3426F007933AF /* MainTabBarController.swift in Sources */,
 			);

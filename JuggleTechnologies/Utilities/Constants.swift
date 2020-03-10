@@ -67,6 +67,15 @@ class Constants {
         
         static let jugglerApplicationsRef = "jugglerApplications"
         static let applicationPictureURLString = "applicationPictureURLString"
+        
+        static let reviewsRef = "reviews"
+        static let rating = "rating"
+        static let reviewerUserId = "reviewerId"
+        static let reviewedUserId = "reviewedUserId"
+        static let isFromUserPerspective = "isFromUserPerspective"
+        static let reviewDescription = "reviewDescription"
+        
+        static let juggleIOSAppReviewsRef = "juggleIOSAppReviews"
     }
     
     struct TaskCategories {
@@ -101,6 +110,7 @@ class Constants {
         static let onGoingTaskOfferCell = "onGoingTaskOfferCellId"
         static let onGoingTaskChatMessageCell = "onGoingTaskChatMessageCellId"
         static let dashboardChatMessageCell = "dashboardChatMessageCellId"
+        static let reviewCell = "reviewCell"
     }
     
     struct BarcalonaCoordinates {

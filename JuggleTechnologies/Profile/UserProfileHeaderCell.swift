@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 
 protocol UserProfileHeaderCellDelegate {
+    func switchuserMode(forMode mode: Int)
     func dispalayBecomeAJugglerAlert()
 }
 
@@ -26,12 +27,6 @@ class UserProfileHeaderCell: UICollectionViewCell {
             
             profileImageView.loadImage(from: user.profileImageURLString)
             fullNameLabel.text = user.firstName + " " + user.lastName
-            
-            let dateFormatterPrint = DateFormatter()
-            dateFormatterPrint.locale = Locale(identifier: "es_ES")
-            dateFormatterPrint.dateFormat = "dd, MMM, yyyy"
-            
-            memberSinceLabel.text = "Miembro desde el " + dateFormatterPrint.string(from: user.creationDate)
         }
     }
     
@@ -50,15 +45,6 @@ class UserProfileHeaderCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textColor = .darkText
-        label.textAlignment = .center
-        
-        return label
-    }()
-    
-    let memberSinceLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .gray
         label.textAlignment = .center
         
         return label
@@ -113,6 +99,8 @@ class UserProfileHeaderCell: UICollectionViewCell {
             jugglerSwitchButton.setTitleColor(UIColor.mainBlue(), for: .normal)
             jugglerSwitchButton.layer.borderColor = UIColor.mainBlue().cgColor
         }
+        
+        self.delegate?.switchuserMode(forMode: button.tag)
     }
     
     override init(frame: CGRect) {
@@ -134,9 +122,6 @@ class UserProfileHeaderCell: UICollectionViewCell {
         
         addSubview(fullNameLabel)
         fullNameLabel.anchor(top: profileImageView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
-        
-        addSubview(memberSinceLabel)
-        memberSinceLabel.anchor(top: fullNameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
         let switchButtonsStackView = UIStackView(arrangedSubviews: [userSwitchButton, jugglerSwitchButton])
         switchButtonsStackView.axis = .horizontal

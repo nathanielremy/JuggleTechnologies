@@ -1,32 +1,31 @@
 //
-//  ReviewProfileVC.swift
+//  JuggleAppReviewsVC.swift
 //  JuggleTechnologies
 //
-//  Created by Nathaniel Remy on 2020-03-03.
+//  Created by Nathaniel Remy on 2020-03-05.
 //  Copyright © 2020 Nathaniel Remy. All rights reserved.
 //
 
 import UIKit
 import Firebase
 
-class ReviewProfileVC: UIViewController {
+class JuggleAppReviewsVC: UIViewController {
     
     //MARK: Stored properties
     var intRating: Int = 0
-    var dashBoardVC: DashboardVC?
     
     var reviewTextViewBottomAnchor: NSLayoutConstraint?
     
-    var user: User? {
+    var task: Task? {
         didSet {
-            guard let user = self.user else {
+            guard let _ = self.task else {
                 return
             }
             
-            profileImageView.loadImage(from: user.profileImageURLString)
-            fullNameLabel.text = user.firstName + " " + user.lastName
+            let attributedText = NSMutableAttributedString(string: "Cómo fue tu experiencia con\n\n", attributes: [.foregroundColor : UIColor.darkText, .font : UIFont.boldSystemFont(ofSize: 18)])
+            attributedText.append(NSAttributedString(string: "Juggle", attributes: [.foregroundColor : UIColor.mainBlue(), .font : UIFont.boldSystemFont(ofSize: 26)]))
             
-            publiqueReviewLabel.text = "Deja una evaluación pública para \(user.firstName)"
+            detailsLabel.attributedText = attributedText
         }
     }
     
@@ -49,51 +48,10 @@ class ReviewProfileVC: UIViewController {
         self.view.isUserInteractionEnabled = !bool
     }
     
-    let profileImageView: CustomImageView = {
-        let iv = CustomImageView()
-        iv.backgroundColor = .lightGray
-        iv.clipsToBounds = true
-        iv.contentMode = .scaleAspectFill
-        
-        return iv
-    }()
-    
-    var task: Task? {
-        didSet {
-            guard let task = self.task else {
-                return
-            }
-            
-            postedTimeagoLabel.text = task.completionDate.timeAgoDisplay()
-            taskTitleLabel.text = task.title
-        }
-    }
-    
-    let postedTimeagoLabel: UILabel = {
+    let detailsLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textAlignment = .left
-        label.textColor = .lightGray
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    let taskTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 18)
-        label.textAlignment = .left
-        label.textColor = .darkText
-        label.numberOfLines = 2
-        
-        return label
-    }()
-    
-    let fullNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.textColor = .darkText
         label.textAlignment = .center
+        label.numberOfLines = 0
         
         return label
     }()
@@ -175,11 +133,13 @@ class ReviewProfileVC: UIViewController {
         }
     }
     
-    let publiqueReviewLabel: UILabel = {
+    let reviewDetailsLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textAlignment = .center
         label.textColor = .darkText
+        label.numberOfLines = 0
+        label.text = "Cuéntanos qué podemos mejorar o qué te gustó de tu experiencia con Juggle!"
         
         return label
     }()
@@ -224,7 +184,7 @@ class ReviewProfileVC: UIViewController {
     }()
     
     @objc fileprivate func handleDoneButton() {
-        guard intRating > 0, intRating < 6, let currentUserId = Auth.auth().currentUser?.uid, let task = self.task, let reviewedUserId = self.user?.userId else {
+        guard intRating > 0, intRating < 6, let currentUserId = Auth.auth().currentUser?.uid, let task = self.task else {
             let alert = UIView.okayAlert(title: "Deja una evaluación usando las estrellas", message: "")
             self.present(alert, animated: true, completion: nil)
             
@@ -238,7 +198,6 @@ class ReviewProfileVC: UIViewController {
         var reviewValues: [String : Any] = [
             Constants.FirebaseDatabase.rating : intRating,
             Constants.FirebaseDatabase.reviewerUserId : currentUserId,
-            Constants.FirebaseDatabase.reviewedUserId : reviewedUserId,
             Constants.FirebaseDatabase.creationDate : Date().timeIntervalSince1970,
             Constants.FirebaseDatabase.taskId : task.id,
             Constants.FirebaseDatabase.isFromUserPerspective : isUserPerspective
@@ -248,45 +207,22 @@ class ReviewProfileVC: UIViewController {
             reviewValues[Constants.FirebaseDatabase.reviewDescription] = reviewText
         }
         
-        sendReview(withValues: reviewValues, task: task, currentUserId: currentUserId, taskPartnerId: reviewedUserId)
+        sendReview(fromUserId: currentUserId, withReviewValues: reviewValues)
     }
     
-    fileprivate func sendReview(withValues reviewValues: [String : Any], task: Task, currentUserId: String, taskPartnerId: String) {
-        // Update task in tasksRef
-        var taskValues: [String : Any] = [String : Any]()
-        
-        if task.userId == currentUserId {
-            taskValues[Constants.FirebaseDatabase.isUserReviewed] = true
-        } else {
-            taskValues[Constants.FirebaseDatabase.isJugglerReviewed] = true
-        }
-        
-        let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(task.id)
-        tasksRef.updateChildValues(taskValues) { (err, _) in
+    fileprivate func sendReview(fromUserId userId: String, withReviewValues reviewValues: [String : Any]) {
+        let juggleIOSAppReviewsRef = Database.database().reference().child(Constants.FirebaseDatabase.juggleIOSAppReviewsRef)
+        let juggleIOSAppReviewsIdRef = juggleIOSAppReviewsRef.childByAutoId()
+        juggleIOSAppReviewsIdRef.updateChildValues(reviewValues) { (err, _) in
             if let error = err {
-                print("Error sending profile review: \(error)")
+                print("Error sending juggleIOSAppReview: \(error)")
                 self.animateAndShowActivityIndicator(false)
                 let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
                 self.present(alert, animated: true, completion: nil)
             }
             
-            // Send review for user
-            let reviewsRef = Database.database().reference().child(Constants.FirebaseDatabase.reviewsRef).child(taskPartnerId)
-            let reviewIdRef = reviewsRef.childByAutoId()
-            reviewIdRef.updateChildValues(reviewValues) { (err, _) in
-                if let error = err {
-                    print("Error sending profile review: \(error)")
-                    self.animateAndShowActivityIndicator(false)
-                    let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
-                    self.present(alert, animated: true, completion: nil)
-                }
-                
-                self.animateAndShowActivityIndicator(false)
-                self.dashBoardVC?.collectionView.reloadData()
-                let juggleAppReviewVC = JuggleAppReviewsVC()
-                juggleAppReviewVC.task = task
-                self.navigationController?.pushViewController(juggleAppReviewVC, animated: true)
-            }
+            self.animateAndShowActivityIndicator(false)
+            self.navigationController?.dismiss(animated: true, completion: nil)
         }
     }
     
@@ -328,8 +264,6 @@ class ReviewProfileVC: UIViewController {
         
         if let height = keyBoardFrame?.height {
             self.reviewTextViewBottomAnchor?.constant = -height + view.safeAreaInsets.bottom + 70
-            self.fullNameLabel.textColor = UIDevice().getDeviceSafeAreaInsetsHeightEstimation() == 88 ? UIColor.darkText : UIColor.clear
-            self.publiqueReviewLabel.textColor = UIColor.clear
             //Animate the containerView going up
             UIView.animate(withDuration: keyBoardDuration) {
                 self.view.layoutIfNeeded()
@@ -341,8 +275,6 @@ class ReviewProfileVC: UIViewController {
         //Move the keyboard back down
         let keyBoardDuration: Double = (notifaction.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
         self.reviewTextViewBottomAnchor?.constant = -40
-        self.fullNameLabel.textColor = .darkText
-        self.publiqueReviewLabel.textColor = .darkText
         //Animate the containerView going down
         UIView.animate(withDuration: keyBoardDuration) {
             self.view.layoutIfNeeded()
@@ -363,19 +295,8 @@ class ReviewProfileVC: UIViewController {
     }
     
     fileprivate func setupViews() {
-        view.addSubview(postedTimeagoLabel)
-        postedTimeagoLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 40, paddingBottom: 0, paddingRight: -40, width: nil, height: nil)
-        
-        view.addSubview(taskTitleLabel)
-        taskTitleLabel.anchor(top: postedTimeagoLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 40, paddingBottom: 0, paddingRight: -40, width: nil, height: nil)
-        
-        view.addSubview(profileImageView)
-        profileImageView.anchor(top: taskTitleLabel.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
-        profileImageView.layer.cornerRadius = 100 / 2
-        profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
-        view.addSubview(fullNameLabel)
-        fullNameLabel.anchor(top: profileImageView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+        view.addSubview(detailsLabel)
+        detailsLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 40, paddingLeft: 40, paddingBottom: 0, paddingRight: -40, width: nil, height: nil)
         
         let starStackView = UIStackView(arrangedSubviews: [
             oneStarRatingButton,
@@ -388,7 +309,7 @@ class ReviewProfileVC: UIViewController {
         starStackView.distribution = .fillEqually
         
         view.addSubview(starStackView)
-        starStackView.anchor(top: fullNameLabel.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 250, height: 40)
+        starStackView.anchor(top: detailsLabel.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 60, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 250, height: 40)
         starStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         view.addSubview(doneButton)
@@ -402,9 +323,8 @@ class ReviewProfileVC: UIViewController {
         view.addSubview(reviewCaracterCountLabel)
         reviewCaracterCountLabel.anchor(top: nil, left: nil, bottom: reviewTextView.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: -8, paddingRight: -20, width: nil, height: nil)
         
-        view.addSubview(publiqueReviewLabel)
-        publiqueReviewLabel.anchor(top: nil, left: nil, bottom: reviewTextView.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: -35, paddingRight: 0, width: nil, height: nil)
-        publiqueReviewLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        view.addSubview(reviewDetailsLabel)
+        reviewDetailsLabel.anchor(top: nil, left: view.leftAnchor, bottom: reviewTextView.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: -35, paddingRight: -20, width: nil, height: nil)
         
         reviewTextViewBottomAnchor = reviewTextView.bottomAnchor.constraint(equalTo: doneButton.topAnchor, constant: -50)
         reviewTextViewBottomAnchor?.isActive = true
@@ -424,7 +344,7 @@ class ReviewProfileVC: UIViewController {
     }
 }
 
-extension ReviewProfileVC: UITextViewDelegate {
+extension JuggleAppReviewsVC: UITextViewDelegate {
     // When done button is clicked on keyboard input accessory view
     @objc func handleTextFieldDoneButton() {
         view.endEditing(true)

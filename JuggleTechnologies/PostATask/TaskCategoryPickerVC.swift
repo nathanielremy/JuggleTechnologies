@@ -13,7 +13,7 @@ class TaskCategoryPickerVC: UIViewController {
     let mainLabel: UILabel = {
         let label = UILabel()
         label.text = "¿Con qué podemos ayudarle hoy?"
-        label.font = UIFont.boldSystemFont(ofSize: 17)
+        label.font = UIFont.boldSystemFont(ofSize: 18)
         label.textColor = .darkText
         label.textAlignment = .center
         
@@ -36,8 +36,8 @@ class TaskCategoryPickerVC: UIViewController {
     let cleaningCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.cleaning
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()
@@ -58,8 +58,8 @@ class TaskCategoryPickerVC: UIViewController {
     let computerITCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.computerIT
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()
@@ -80,8 +80,8 @@ class TaskCategoryPickerVC: UIViewController {
     let  assemblyCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.assembly
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()
@@ -102,8 +102,8 @@ class TaskCategoryPickerVC: UIViewController {
     let movingCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.moving
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()
@@ -124,8 +124,8 @@ class TaskCategoryPickerVC: UIViewController {
     let handymanCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.handyMan
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()
@@ -146,8 +146,8 @@ class TaskCategoryPickerVC: UIViewController {
     let videoPhotoCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.photoVideo
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()
@@ -168,8 +168,8 @@ class TaskCategoryPickerVC: UIViewController {
     let deliveryCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.delivery
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()
@@ -190,8 +190,8 @@ class TaskCategoryPickerVC: UIViewController {
     let petsCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.pets
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()
@@ -212,8 +212,8 @@ class TaskCategoryPickerVC: UIViewController {
     let anythingCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.TaskCategories.anything
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = UIColor.darkText
         
         return label
     }()

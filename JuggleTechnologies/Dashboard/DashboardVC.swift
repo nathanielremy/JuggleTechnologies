@@ -260,10 +260,13 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                         
                         if self.filterOptionsValue == 1 && self.userOnGoingTasks.isEmpty {
                             self.showNoResultsFoundView()
+                            return
                         } else if self.filterOptionsValue == 2 && self.userAcceptedTasks.isEmpty {
                             self.showNoResultsFoundView()
+                            return
                         } else if self.filterOptionsValue == 3 && self.userCompletedTasks.isEmpty {
                             self.showNoResultsFoundView()
+                            return
                         }
                     } else {
                         self.jugglerOnGoingTasks = self.jugglerTempOnGoingTasks
@@ -272,10 +275,13 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                         
                         if self.filterOptionsValue == 1 && self.jugglerOnGoingTasks.isEmpty {
                             self.showNoResultsFoundView()
+                            return
                         } else if self.filterOptionsValue == 2 && self.jugglerAcceptedTasks.isEmpty {
                             self.showNoResultsFoundView()
+                            return
                         } else if self.filterOptionsValue == 3 && self.jugglerCompletedTasks.isEmpty {
                             self.showNoResultsFoundView()
+                            return
                         }
                     }
                     
@@ -403,7 +409,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if self.filterOptionsValue == 1 && self.isUserMode { //OnGoingTaskCell
+        if self.filterOptionsValue == 1 && self.isUserMode { // User OnGoingTaskCell
             
             let onGoingTaskInteractionsVC = OnGoingTaskInteractionsVC(collectionViewLayout: UICollectionViewFlowLayout())
             onGoingTaskInteractionsVC.dashboardVC = self
@@ -411,7 +417,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             onGoingTaskInteractionsVC.task = self.userOnGoingTasksDictionary[self.userOnGoingTasks[indexPath.item].id]
             self.navigationController?.pushViewController(onGoingTaskInteractionsVC, animated: true)
             
-        } else if self.filterOptionsValue == 1 && !self.isUserMode {
+        } else if self.filterOptionsValue == 1 && !self.isUserMode { // Juggler OnGoingTaskCell
             guard let task = self.jugglerOnGoingTasksDictionary[self.jugglerOnGoingTasks[indexPath.item].id] else {
                 return
             }
@@ -420,7 +426,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             taskInteractionVC.chatPartner = userCache[task.userId]
             taskInteractionVC.task = task
             self.navigationController?.pushViewController(taskInteractionVC, animated: true)
-        } else if self.filterOptionsValue == 2 {
+        } else if self.filterOptionsValue == 2 { // Both User and Juggler acceptedCell
             guard let task = (self.isUserMode ? self.userAcceptedTasksDictionary[self.userAcceptedTasks[indexPath.item].id] : self.jugglerAcceptedTasksDictionary[self.jugglerAcceptedTasks[indexPath.item].id]), let assignedJugglerId = task.assignedJugglerId else {
                 return
             }
@@ -531,6 +537,12 @@ extension DashboardVC: OnGoingTaskCellDelegate {
 }
 
 extension DashboardVC: AssignedTaskCellDelegate {
+    func loadProfile(forUser user: User) {
+        let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        profileVC.user = user
+        self.navigationController?.pushViewController(profileVC, animated: true)
+    }
+    
     func cancelOrShowDetails(forTask task: Task?, taskPartner: User?) {
         guard let task = task, let taskPartner = taskPartner else {
             return
@@ -569,8 +581,7 @@ extension DashboardVC: AssignedTaskCellDelegate {
             
             let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
             let completarAction = UIAlertAction(title: "Completar", style: .default) { (_) in
-                let jugglerId = task.assignedJugglerId ?? (task.userId == currentUserId ? taskPartner.userId : currentUserId)
-                self.completeTask(forTaskId: task.id, userId: task.userId, jugglerId: jugglerId, acceptedIndex: index)
+                self.completeTask(forTask: task, taskPartner: taskPartner, currentUserId: currentUserId, acceptedIndex: index)
             }
             
             completeAlert.addAction(cancelAction)
@@ -581,19 +592,14 @@ extension DashboardVC: AssignedTaskCellDelegate {
             let reviewProfileVC = ReviewProfileVC()
             reviewProfileVC.task = task
             reviewProfileVC.user = taskPartner
-            
-            if task.userId != taskPartner.userId && !task.isJugglerReviewed { //Review Juggler
-                reviewProfileVC.isReviewingUser = false
-            } else if !task.isUserReviewed { //Review User
-                reviewProfileVC.isReviewingUser = true
-            }
-            
+            reviewProfileVC.dashBoardVC = self
+
             let reviewNavVC =  UINavigationController(rootViewController: reviewProfileVC)
             self.present(reviewNavVC, animated: true, completion: nil)
         }
     }
     
-    func completeTask(forTaskId taskId: String, userId: String, jugglerId: String, acceptedIndex: Int) {
+    func completeTask(forTask task: Task, taskPartner: User, currentUserId: String, acceptedIndex: Int) {
         self.animateAndShowActivityIndicator(true)
         
         let completedDate = Date().timeIntervalSince1970
@@ -605,7 +611,7 @@ extension DashboardVC: AssignedTaskCellDelegate {
             Constants.FirebaseDatabase.completionDate : completedDate
         ]
         
-        let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(taskId)
+        let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(task.id)
         tasksRef.updateChildValues(tasksRefValues) { (err, _) in
             if let error = err {
                 print("Error updating tasksRefNode: \(error)")
@@ -623,7 +629,7 @@ extension DashboardVC: AssignedTaskCellDelegate {
                 Constants.FirebaseDatabase.completionDate : completedDate
             ]
             
-            let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(userId).child(taskId)
+            let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(taskPartner.userId).child(task.id)
             userTasksRef.updateChildValues(userTasksRefValues) { (err, _) in
                 if let error = err {
                     print("Error updating userTasksNode: \(error)")
@@ -641,7 +647,7 @@ extension DashboardVC: AssignedTaskCellDelegate {
                     Constants.FirebaseDatabase.completionDate : completedDate
                 ]
                 
-                let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(jugglerId).child(taskId)
+                let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(currentUserId).child(task.id)
                 jugglerTasksRef.updateChildValues(jugglerTasksRefValues) { (err, _) in
                     if let error = err {
                         print("Error updating jugglerTasksNode: \(error)")
@@ -662,7 +668,12 @@ extension DashboardVC: AssignedTaskCellDelegate {
                             self.showNoResultsFoundView()
                         }
                         
-                        print("Review User")
+                        let reviewProfileVC = ReviewProfileVC()
+                        reviewProfileVC.task = task
+                        reviewProfileVC.user = taskPartner
+                        
+                        let reviewNavVC =  UINavigationController(rootViewController: reviewProfileVC)
+                        self.present(reviewNavVC, animated: true, completion: nil)
                     }
                 }
             }

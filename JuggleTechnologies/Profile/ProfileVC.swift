@@ -10,8 +10,23 @@ import UIKit
 import Firebase
 
 class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-    
     //MARK: Stores properties
+    var isUserMode: Bool = true
+    
+    var userTasksPostedCount: Int = 0
+    var jugglerCompletedTasksCount: Int = 0
+    
+    var didFetchUserTasks: Bool = false
+    var didFetchJugglerTasks: Bool = false
+    
+    var userReviews = [Review]()
+    var userReviewsTotalRatingCount = 0
+    
+    var jugglerReviews = [Review]()
+    var jugglerReviewsTotalRatingCount = 0
+    
+    var didFetchReviews: Bool = false
+    
     var user: User? {
         didSet {
             guard let user = self.user else {
@@ -24,13 +39,103 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             
             collectionView.refreshControl?.endRefreshing()
             collectionView.reloadData()
+            
+            self.didFetchUserTasks = false
+            self.didFetchJugglerTasks = false
+            self.userTasksPostedCount = 0
+            self.jugglerCompletedTasksCount = 0
+            self.fetchTasks(forUser: user)
+            
+            self.userReviews.removeAll()
+            self.userReviewsTotalRatingCount = 0
+            self.jugglerReviews.removeAll()
+            self.jugglerReviewsTotalRatingCount = 0
+            self.didFetchReviews = false
+            
+            self.fetchReviews(forUser: user)
+        }
+    }
+    
+    fileprivate func fetchTasks(forUser user: User) {
+        let dataReference = self.isUserMode ? Constants.FirebaseDatabase.userTasksRef : Constants.FirebaseDatabase.jugglerTasksRef
+        let tasksRef = Database.database().reference().child(dataReference).child(user.userId)
+        tasksRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            self.didFetchJugglerTasks = dataReference == Constants.FirebaseDatabase.jugglerTasksRef ? true : self.didFetchJugglerTasks
+            self.didFetchUserTasks = dataReference == Constants.FirebaseDatabase.userTasksRef ? true : self.didFetchUserTasks
+            
+            guard let filteredTasks = snapshot.value as? [String : [String : Any]] else {
+                if self.isUserMode {
+                    self.userTasksPostedCount = 0
+                } else {
+                    self.jugglerCompletedTasksCount = 0
+                }
+                
+                self.collectionView.reloadData()
+                return
+            }
+            
+            if self.isUserMode {
+                self.userTasksPostedCount = filteredTasks.count
+            } else {
+                self.jugglerCompletedTasksCount = filteredTasks.count
+            }
+            
+            self.collectionView.reloadData()
+            
+        }) { (error) in
+            print("Error fetching tasks in ProfileVC: \(error)")
+            if self.isUserMode {
+                self.userTasksPostedCount = 0
+            } else {
+                self.jugglerCompletedTasksCount = 0
+            }
+            
+            self.collectionView.reloadData()
+        }
+    }
+    
+    fileprivate func fetchReviews(forUser user: User) {
+        let dataReference = Database.database().reference().child(Constants.FirebaseDatabase.reviewsRef).child(user.userId)
+        dataReference.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            self.didFetchReviews = true
+            
+            guard let reviews = snapshot.value as? [String : [String : Any]] else {
+                if self.isUserMode {
+                    self.userReviews.removeAll()
+                } else {
+                    self.jugglerReviews.removeAll()
+                }
+                
+                self.collectionView.reloadData()
+                return
+            }
+            
+            reviews.forEach { (key, value) in
+                let review = Review(id: key, dictionary: value)
+                
+                if review.isFromUserPerspective {
+                    self.jugglerReviews.append(review)
+                    self.jugglerReviewsTotalRatingCount += review.rating
+                } else {
+                    self.userReviews.append(review)
+                    self.userReviewsTotalRatingCount += review.rating
+                }
+            }
+            
+            self.collectionView.reloadData()
+            
+        }) { (error) in
+            print("Error fetching reviews in ProfileVC: \(error)")
+            self.collectionView.reloadData()
         }
     }
     
     fileprivate func setupTopNavigationBarSettingsButton() {
         let settingsBarButton = UIBarButtonItem(title: "···", style: .done
             , target: self, action: #selector(handleSettingsBarButton))
-        settingsBarButton.setTitleTextAttributes([.font : UIFont.boldSystemFont(ofSize: 24)], for: .normal)
+        settingsBarButton.setTitleTextAttributes([.font : UIFont.boldSystemFont(ofSize: 30)], for: .normal)
         settingsBarButton.tintColor = UIColor.mainBlue()
         navigationItem.rightBarButtonItem = settingsBarButton
     }
@@ -43,7 +148,6 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         navigationController?.navigationBar.tintColor = .black
         
         //Register the CollectionViewCells
-//        collectionView.register(UserProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.userProfileHeaderCell)
         collectionView.register(UserProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.userProfileHeaderCell)
         collectionView.register(UserProfileStatisticsCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.userProfileStatisticsCell)
         collectionView.register(UserSelfDescriptionCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.userSelfDescriptionCell)
@@ -60,7 +164,9 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         
         let userId = self.user?.userId ?? (Auth.auth().currentUser?.uid ?? "")
         
-        fetchUser(withUserId: userId)
+        if self.user == nil {
+            fetchUser(withUserId: userId)
+        }
     }
     
     @objc fileprivate func handleRefresh() {
@@ -138,7 +244,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     // Define the size of the section header for the collectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        return CGSize(width: view.frame.width, height: 245)
+        return CGSize(width: view.frame.width, height: 193)
     }
     
     //MARK: CollectionView methods
@@ -157,6 +263,19 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
                 return UICollectionViewCell()
             }
             
+            userProfileStatisticsCell.isUserMode = self.isUserMode
+            userProfileStatisticsCell.user = self.user
+            userProfileStatisticsCell.delegate = self
+            
+            if (self.isUserMode && self.didFetchUserTasks) || (!self.isUserMode && self.didFetchJugglerTasks) {
+                userProfileStatisticsCell.tasksCount = self.isUserMode ? self.userTasksPostedCount : self.jugglerCompletedTasksCount
+            }
+            
+            if self.didFetchReviews {
+                userProfileStatisticsCell.intRating = self.isUserMode ? (self.userReviewsTotalRatingCount / (self.userReviews.count != 0 ? self.userReviews.count : 1)) : (self.jugglerReviewsTotalRatingCount / (self.jugglerReviews.count != 0 ? self.jugglerReviews.count : 1))
+                userProfileStatisticsCell.reviewsCount = self.isUserMode ? self.userReviews.count : self.jugglerReviews.count
+            }
+            
             return userProfileStatisticsCell
         }
         
@@ -166,11 +285,12 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         
         userSelfDescriptionCell.user = self.user
         userSelfDescriptionCell.delegate = self
+        
         return userSelfDescriptionCell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return indexPath.item == 0 ? CGSize(width: view.frame.width, height: 75) : CGSize(width: view.frame.width, height: 200)
+        return indexPath.item == 0 ? CGSize(width: view.frame.width, height: 195) : CGSize(width: view.frame.width, height: 200)
     }
 }
 
@@ -222,6 +342,19 @@ extension ProfileVC: UserSelfDescriptionCellDelegate {
 }
 
 extension ProfileVC: UserProfileHeaderCellDelegate {
+    func switchuserMode(forMode mode: Int) {
+        self.isUserMode = mode == 0 ? true : false
+        self.collectionView.reloadData()
+        
+        guard let user = self.user else {
+            return
+        }
+        
+        if (!self.isUserMode && !self.didFetchJugglerTasks) || (self.isUserMode && !self.didFetchUserTasks) {
+            self.fetchTasks(forUser: user)
+        }
+    }
+    
     func dispalayBecomeAJugglerAlert() {
         let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieres, cuando quieras con Juggle", preferredStyle: .alert)
         
@@ -239,5 +372,13 @@ extension ProfileVC: UserProfileHeaderCellDelegate {
         self.present(alert, animated: true, completion: nil)
         
         return
+    }
+}
+
+extension ProfileVC: UserProfileStatisticsCellDelegate {
+    func showReviews() {
+        let userReviewsVC = UserReviewsVC(collectionViewLayout: UICollectionViewFlowLayout())
+        userReviewsVC.reviews = self.isUserMode ? self.userReviews : self.jugglerReviews
+        self.navigationController?.pushViewController(userReviewsVC, animated: true)
     }
 }

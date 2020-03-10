@@ -23,7 +23,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     let activityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
         ai.hidesWhenStopped = true
-        ai.color = UIColor.darkText
+        ai.color = UIColor.mainBlue()
         
         return ai
     }()
@@ -31,7 +31,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     let plusPhotoButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "PlusPhoto"), for: .normal)
-        button.tintColor = UIColor.darkText
+        button.tintColor = UIColor.mainBlue()
         button.addTarget(self, action: #selector(handlePlusPhoto), for: .touchUpInside)
         
         return button
@@ -134,10 +134,10 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         let isFormValid = verifyInputFields()
         if isFormValid {
             self.signUpButton.isEnabled = true
-            self.signUpButton.backgroundColor = UIColor.darkText.withAlphaComponent(1)
+            self.signUpButton.backgroundColor = UIColor.mainBlue().withAlphaComponent(1)
         } else {
             self.signUpButton.isEnabled = false
-            self.signUpButton.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
+            self.signUpButton.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.3)
         }
     }
     
@@ -157,7 +157,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         button.backgroundColor = .clear
         
         var attributedText = NSMutableAttributedString(string: "Accept ", attributes: [.foregroundColor : UIColor.lightGray])
-        attributedText.append(NSAttributedString(string: "Terms and Conditions", attributes: [.foregroundColor : UIColor.darkText]))
+        attributedText.append(NSAttributedString(string: "Terms and Conditions", attributes: [.foregroundColor : UIColor.mainBlue()]))
         
         button.setAttributedTitle(attributedText, for: .normal)
         button.addTarget(self, action: #selector(handleTermsAndConditions), for: .touchUpInside)
@@ -168,8 +168,8 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     lazy var termsAndConditionsSwitch: UISwitch = {
         let toggle = UISwitch()
         toggle.isOn = false
-        toggle.tintColor = UIColor.darkText
-        toggle.onTintColor = UIColor.darkText
+        toggle.tintColor = UIColor.mainBlue()
+        toggle.onTintColor = UIColor.mainBlue()
         toggle.addTarget(self, action: #selector(handleTextFieldChanges), for: .valueChanged)
         
         return toggle
@@ -184,7 +184,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     let signUpButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Sign up", for: .normal)
-        button.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
+        button.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.3)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 5
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
@@ -383,7 +383,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         let button = UIButton(type: .system)
         
         let attributedTitle = NSMutableAttributedString(string: "Already have an account?  ", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.lightGray])
-        attributedTitle.append(NSAttributedString(string: "Log in.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.darkText]))
+        attributedTitle.append(NSAttributedString(string: "Log in.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.mainBlue()]))
         
         button.setAttributedTitle(attributedTitle, for: .normal)
         button.addTarget(self, action: #selector(handleSwitchToLogin), for: .touchUpInside)

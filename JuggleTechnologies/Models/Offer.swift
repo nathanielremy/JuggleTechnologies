@@ -24,6 +24,7 @@ struct Offer {
         
         let secondsFrom1970 = offerDictionary[Constants.FirebaseDatabase.creationDate] as? Double ?? 0
         self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)
+        
         self.offerPrice = offerDictionary[Constants.FirebaseDatabase.offerPrice] as? Int ?? 0
         self.taskId = offerDictionary[Constants.FirebaseDatabase.taskId] as? String ?? ""
         self.isAcceptingBudget = offerDictionary[Constants.FirebaseDatabase.isAcceptingBudget] as? Bool ?? false

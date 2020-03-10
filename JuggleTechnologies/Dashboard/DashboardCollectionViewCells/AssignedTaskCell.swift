@@ -13,6 +13,7 @@ protocol AssignedTaskCellDelegate {
     func cancelOrShowDetails(forTask task: Task?, taskPartner: User?)
     func completeOrReviewTask(task: Task?, taskPartner: User?, index: Int?)
     func addAssignedTaskToDictionary(forTask task: Task)
+    func loadProfile(forUser user: User)
 }
 
 class AssignedTaskCell: UICollectionViewCell {
@@ -100,8 +101,10 @@ class AssignedTaskCell: UICollectionViewCell {
             
             if task.status == 1 {
                 self.cancelOrDetailsButton.setTitle("Cancelar", for: .normal)
+                self.cancelOrDetailsButton.tintColor = UIColor.lightGray
             } else {
                 self.cancelOrDetailsButton.setTitle("Detalles", for: .normal)
+                self.cancelOrDetailsButton.tintColor = UIColor.mainBlue()
             }
         }
     }
@@ -141,6 +144,14 @@ class AssignedTaskCell: UICollectionViewCell {
         return iv
     }()
     
+    @objc fileprivate func handleProfileImageView() {
+        guard let user = self.taskPartner, user.userId != Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        delegate?.loadProfile(forUser: user)
+    }
+    
     let firstNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 12)
@@ -172,7 +183,6 @@ class AssignedTaskCell: UICollectionViewCell {
     lazy var cancelOrDetailsButton: UIButton = {
         let button = UIButton(type: .system)
         button.titleLabel?.textAlignment = .center
-        button.tintColor = UIColor.lightGray
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.addTarget(self, action: #selector(handleCancelOrDetailsButton), for: .touchUpInside)
         
@@ -199,18 +209,18 @@ class AssignedTaskCell: UICollectionViewCell {
                 completeOrReviewButton.setTitle("Completar", for: .normal)
                 completeOrReviewButton.layer.borderColor = UIColor.mainBlue().cgColor
                 completeOrReviewButton.layer.borderWidth = 1.5
-                completeOrReviewButton.isEnabled = true
+                completeOrReviewButton.isUserInteractionEnabled = true
             } else if task.status == 2 {
-                if task.isUserReviewed {
+                if task.isJugglerReviewed {
                     completeOrReviewButton.setTitle("Evaluado", for: .normal)
                     completeOrReviewButton.layer.borderColor = nil
                     completeOrReviewButton.layer.borderWidth = 0
-                    completeOrReviewButton.isEnabled = false
+                    completeOrReviewButton.isUserInteractionEnabled = false
                 } else {
                     completeOrReviewButton.setTitle("Evaluar", for: .normal)
                     completeOrReviewButton.layer.borderColor = UIColor.mainBlue().cgColor
                     completeOrReviewButton.layer.borderWidth = 1.5
-                    completeOrReviewButton.isEnabled = true
+                    completeOrReviewButton.isUserInteractionEnabled = true
                 }
             }
         } else {
@@ -218,16 +228,16 @@ class AssignedTaskCell: UICollectionViewCell {
                 self.completeOrReviewButton.removeFromSuperview()
                 return
             } else if task.status == 2 {
-                if task.isJugglerReviewed {
+                if task.isUserReviewed {
                     completeOrReviewButton.setTitle("Evaluado", for: .normal)
                     completeOrReviewButton.layer.borderColor = nil
                     completeOrReviewButton.layer.borderWidth = 0
-                    completeOrReviewButton.isEnabled = false
+                    completeOrReviewButton.isUserInteractionEnabled = false
                 } else {
                     completeOrReviewButton.setTitle("Evaluar", for: .normal)
                     completeOrReviewButton.layer.borderColor = UIColor.mainBlue().cgColor
                     completeOrReviewButton.layer.borderWidth = 1.5
-                    completeOrReviewButton.isEnabled = true
+                    completeOrReviewButton.isUserInteractionEnabled = true
                 }
             }
         }
@@ -270,6 +280,11 @@ class AssignedTaskCell: UICollectionViewCell {
         
         addSubview(detailsLabel)
         detailsLabel.anchor(top: postedTimeAgoLabel.bottomAnchor, left: profileImageView.rightAnchor, bottom: nil, right: cancelOrDetailsButton.leftAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: 0, paddingRight: -8, width: nil, height: nil)
+        
+        let profileImageButton = UIButton(type: .system)
+        profileImageButton.addTarget(self, action: #selector(handleProfileImageView), for: .touchUpInside)
+        addSubview(profileImageButton)
+        profileImageButton.anchor(top: profileImageView.topAnchor, left: profileImageView.leftAnchor, bottom: profileImageView.bottomAnchor, right: profileImageView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
         
         let bottomSeperatorView = UIView()
         bottomSeperatorView.backgroundColor = .lightGray

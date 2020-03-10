@@ -23,7 +23,7 @@ class LoginVC: UIViewController {
     let activityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
         ai.hidesWhenStopped = true
-        ai.color = UIColor.darkText
+        ai.color = UIColor.mainBlue()
         
         return ai
     }()
@@ -35,8 +35,12 @@ class LoginVC: UIViewController {
         logoImage.clipsToBounds = true
         logoImage.contentMode = .scaleToFill
         
+        logoImage.backgroundColor = .red
+        
         view.addSubview(logoImage)
-        logoImage.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 35, paddingBottom: 0, paddingRight: -35, width: nil, height: nil)
+        logoImage.anchor(top: view.topAnchor, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 35, paddingBottom: 0, paddingRight: -35, width: 200, height: nil)
+        logoImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        logoImage.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
         let seperatorView = UIView()
         seperatorView.backgroundColor = .lightGray
@@ -77,10 +81,10 @@ class LoginVC: UIViewController {
         let isFormValid = emailTextField.text?.count ?? 0 > 0 && passwordTextField.text?.count ?? 0 > 5
         
         if isFormValid {
-            loginButton.backgroundColor = UIColor.darkText.withAlphaComponent(1)
+            loginButton.backgroundColor = UIColor.mainBlue().withAlphaComponent(1)
             loginButton.isEnabled = true
         } else {
-            loginButton.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
+            loginButton.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.3)
             loginButton.isEnabled = false
         }
     }
@@ -90,7 +94,7 @@ class LoginVC: UIViewController {
         button.setTitle("Log in", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.tintColor = .white
-        button.backgroundColor = UIColor.darkText.withAlphaComponent(0.3)
+        button.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.3)
         button.layer.cornerRadius = 5
         button.isEnabled = false
         button.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
@@ -160,7 +164,7 @@ class LoginVC: UIViewController {
         let button = UIButton(type: .system)
 
         let attributedTitle = NSMutableAttributedString(string: "Don't have an account?  ", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.lightGray])
-        attributedTitle.append(NSAttributedString(string: "Sign up.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.darkText]))
+        attributedTitle.append(NSAttributedString(string: "Sign up.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.mainBlue()]))
 
         button.setAttributedTitle(attributedTitle, for: .normal)
         button.addTarget(self, action: #selector(handleSwitchToSignup), for: .touchUpInside)
