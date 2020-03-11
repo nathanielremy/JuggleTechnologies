@@ -314,8 +314,7 @@
 				441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */,
 				441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */,
 				442871A423F05304000B1AC4 /* Juggler */,
-				44D4E8912418097E00DD6DC8 /* UserReviewsVC.swift */,
-				44D4E89324180C0F00DD6DC8 /* ReviewCell.swift */,
+				4457884B2418EF34006C9ACA /* ProfileReviews */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -326,6 +325,15 @@
 				4446E10623D36898007933AF /* GoogleService-Info.plist */,
 			);
 			path = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		4457884B2418EF34006C9ACA /* ProfileReviews */ = {
+			isa = PBXGroup;
+			children = (
+				44D4E8912418097E00DD6DC8 /* UserReviewsVC.swift */,
+				44D4E89324180C0F00DD6DC8 /* ReviewCell.swift */,
+			);
+			path = ProfileReviews;
 			sourceTree = "<group>";
 		};
 		447FA35E23E1FEFA0020247E /* TaskInteractions */ = {

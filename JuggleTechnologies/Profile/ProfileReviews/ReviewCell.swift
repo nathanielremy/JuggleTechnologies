@@ -179,8 +179,8 @@ class ReviewCell: UICollectionViewCell {
         tv.isScrollEnabled = true
         tv.bounces = true
         tv.isEditable = false
-        tv.layer.borderWidth = 0.5
-        tv.layer.borderColor = UIColor.lightGray.cgColor
+//        tv.layer.borderWidth = 0.5
+//        tv.layer.borderColor = UIColor.lightGray.cgColor
         tv.layer.masksToBounds = true
         
         return tv
@@ -227,7 +227,7 @@ class ReviewCell: UICollectionViewCell {
         
         addSubview(reviewDescriptionTextView)
         reviewDescriptionTextView.anchor(top: starStackView.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 8, paddingLeft: 20, paddingBottom: -8, paddingRight: -20, width: nil, height: nil)
-        reviewDescriptionTextView.layer.cornerRadius = 5
+//        reviewDescriptionTextView.layer.cornerRadius = 5
         
         let bottomSeperatorView = UIView()
         bottomSeperatorView.backgroundColor = .lightGray

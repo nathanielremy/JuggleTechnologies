@@ -60,7 +60,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         // Make button perfectly round
         plusPhotoButton.layer.cornerRadius = plusPhotoButton.frame.width / 2
         plusPhotoButton.layer.masksToBounds = true
-        plusPhotoButton.layer.borderColor = UIColor.darkText.cgColor
+        plusPhotoButton.layer.borderColor = UIColor.mainBlue().cgColor
         plusPhotoButton.layer.borderWidth = 3
         
         // Dismiss image picker view

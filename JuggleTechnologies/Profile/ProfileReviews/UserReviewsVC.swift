@@ -9,7 +9,7 @@
 import UIKit
 
 class UserReviewsVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-    
+    //MARK: Stored properties
     var reviews: [Review]? {
         didSet {
             guard let reviews = self.reviews else {

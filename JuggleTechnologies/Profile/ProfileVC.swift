@@ -118,9 +118,15 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
                 if review.isFromUserPerspective {
                     self.jugglerReviews.append(review)
                     self.jugglerReviewsTotalRatingCount += review.rating
+                    self.jugglerReviews.sort(by: { (review1, review2) -> Bool in
+                        return review1.creationDate.compare(review2.creationDate) == .orderedDescending
+                    })
                 } else {
                     self.userReviews.append(review)
                     self.userReviewsTotalRatingCount += review.rating
+                    self.userReviews.sort(by: { (review1, review2) -> Bool in
+                        return review1.creationDate.compare(review2.creationDate) == .orderedDescending
+                    })
                 }
             }
             
