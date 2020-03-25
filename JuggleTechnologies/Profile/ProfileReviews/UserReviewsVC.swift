@@ -54,6 +54,8 @@ class UserReviewsVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.backgroundColor = .white
+        collectionView.alwaysBounceVertical = true
+        
         navigationItem.title = "Evaluaciones"
         
         // Register all the collectionView's cells

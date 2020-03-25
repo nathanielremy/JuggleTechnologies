@@ -11,6 +11,7 @@ import UIKit
 protocol ViewTasksHeaderCellDelegate {
     func didChangeCategory(to category: String)
     func handleMapViewUIOption()
+    func handleSortButton()
 }
 
 class ViewTasksHeaderCell: UICollectionViewCell {
@@ -227,7 +228,7 @@ class ViewTasksHeaderCell: UICollectionViewCell {
     
     
     @objc fileprivate func handleSortButton() {
-        print("Handeling sortButton")
+        self.delegate?.handleSortButton()
     }
     
     lazy var listViewUIOptionButton: UIButton = {

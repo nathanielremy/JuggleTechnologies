@@ -27,7 +27,7 @@ struct Review {
         
         self.isFromUserPerspective = dictionary[Constants.FirebaseDatabase.isFromUserPerspective] as? Bool ?? true
         self.rating = dictionary[Constants.FirebaseDatabase.rating] as? Int ?? 0
-        self.reviewDescription = dictionary[Constants.FirebaseDatabase.reviewDescription] as? String ?? "No hay descripción"
+        self.reviewDescription = dictionary[Constants.FirebaseDatabase.reviewDescription] as? String ?? "No hay evaluación"
         self.reviewedUserId = dictionary[Constants.FirebaseDatabase.reviewedUserId] as? String ?? ""
         self.reviewerUserId = dictionary[Constants.FirebaseDatabase.reviewerUserId] as? String ?? ""
         self.taskId = dictionary[Constants.FirebaseDatabase.taskId] as? String ?? ""

@@ -22,6 +22,23 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     var filteredTasks = [Task]()
     var tempFilteredTask = [Task]()
     
+    let sortOptionsView = SortOptionsView()
+    var isSortOptionsViewPresent: Bool = false
+    var selectedSortOption = 0 // 0 == recientes, 1 == antiguos, 2 == presupuesto mayor, 3 == presupuesto menor
+    
+    lazy var sortBlurrViewButton: UIButton = {
+        let  button = UIButton()
+        button.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        button.addTarget(self, action: #selector(handleSortBlurrViewButton), for: .touchUpInside)
+        return button
+    }()
+    
+    @objc fileprivate func handleSortBlurrViewButton() {
+        sortBlurrViewButton.removeFromSuperview()
+        sortOptionsView.removeFromSuperview()
+        isSortOptionsViewPresent = false
+    }
+    
     // Display activity indicator while changing categories
     let activityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
@@ -85,7 +102,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         animateAndShowActivityIndicator(true)
         
         setupTopNavigationBar()
-        queryTasksByDate()
+        queryTasks()
     }
     
     fileprivate func setupTopNavigationBar() {
@@ -110,19 +127,26 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         self.tasksFetched = 0
         
         if self.currentCategory == Constants.TaskCategories.all {
-            queryTasksByDate()
+            queryTasks()
         } else {
             self.fetchFilteredTasksFor(category: self.currentCategory)
         }
     }
     
-    fileprivate func queryTasksByDate() {
+    fileprivate func queryTasks() {
         if !canFetchTasks {
             return
         }
         self.canFetchTasks = false
         
         let databaseRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef)
+        
+//        var queryChild = ""
+//        
+//        if self.selectedSortOption == 0 {
+//            
+//        }
+        
         var query = databaseRef.queryOrdered(byChild: Constants.FirebaseDatabase.creationDate)
         
         var numberOfTasksToFetch: UInt = 20
@@ -275,7 +299,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         //Fetch again more tasks if collectionView hits bottom and if there are more tasks to fetch
         if indexPath.item == self.allTasks.count - 1 && (Double(self.tasksFetched % 20) == 0.0)  {
             if self.currentCategory == Constants.TaskCategories.all {
-                self.queryTasksByDate()
+                self.queryTasks()
             }
         }
         
@@ -310,7 +334,7 @@ extension ViewTasksVC: ViewTasksHeaderCellDelegate {
         self.collectionView.reloadData()
         
         if category == Constants.TaskCategories.all {
-            self.queryTasksByDate()
+            self.queryTasks()
         } else {
             self.fetchFilteredTasksFor(category: category)
         }
@@ -321,5 +345,34 @@ extension ViewTasksVC: ViewTasksHeaderCellDelegate {
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)
         }
+    }
+    
+    func handleSortButton() {
+        if self.isSortOptionsViewPresent {
+            self.sortOptionsView.removeFromSuperview()
+            self.sortBlurrViewButton.removeFromSuperview()
+            self.isSortOptionsViewPresent = false
+            
+            return
+        }
+        
+        view.addSubview(sortBlurrViewButton)
+        sortBlurrViewButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        
+        view.addSubview(sortOptionsView)
+        sortOptionsView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: view.frame.width * 0.66, height: 265)
+        
+        sortOptionsView.headerDelegate = self
+        sortOptionsView.delegate = self
+        sortOptionsView.selectedSortOption = self.selectedSortOption
+        self.isSortOptionsViewPresent = true
+    }
+}
+
+extension ViewTasksVC: SortOptionsViewDelegate {
+    func sort(forSortOption sortOption: Int) {
+        self.selectedSortOption = sortOption
+        self.animateAndShowActivityIndicator(true)
+        self.queryTasks()
     }
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4407527323D4AAA00025D8AA /* TaskSpecificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */; };
+		440A76E5242A7C6900D09F0E /* SortOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440A76E4242A7C6900D09F0E /* SortOptionsView.swift */; };
 		44103509240EBFAB00C9BCED /* ReviewProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44103508240EBFAB00C9BCED /* ReviewProfileVC.swift */; };
 		441FB4B323D8A39800D8B115 /* UserProfileStatisticsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */; };
 		441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */; };
@@ -71,6 +72,7 @@
 		04890BF0E14186AEA33503B3 /* Pods_JuggleTechnologies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JuggleTechnologies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2496946D5B215D5F762AE27C /* Pods-JuggleTechnologies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JuggleTechnologies.release.xcconfig"; path = "Target Support Files/Pods-JuggleTechnologies/Pods-JuggleTechnologies.release.xcconfig"; sourceTree = "<group>"; };
 		4407527223D4AAA00025D8AA /* TaskSpecificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSpecificationsVC.swift; sourceTree = "<group>"; };
+		440A76E4242A7C6900D09F0E /* SortOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOptionsView.swift; sourceTree = "<group>"; };
 		44103508240EBFAB00C9BCED /* ReviewProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewProfileVC.swift; sourceTree = "<group>"; };
 		441FB4B223D8A39800D8B115 /* UserProfileStatisticsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStatisticsCell.swift; sourceTree = "<group>"; };
 		441FB4B423D8AA6200D8B115 /* UserSelfDescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelfDescriptionCell.swift; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 				44203CA523DB290B00F6D71A /* ViewTasksHeaderCell.swift */,
 				44203CA323DB278A00F6D71A /* ViewTaskCollectionViewCell.swift */,
 				4483FCFB23DF2F5600178E84 /* TaskInteraction */,
+				440A76E4242A7C6900D09F0E /* SortOptionsView.swift */,
 			);
 			path = ViewTasks;
 			sourceTree = "<group>";
@@ -545,6 +548,7 @@
 				44FB732D23D37460000B8987 /* TermsAndConditionsVC.swift in Sources */,
 				445D530223FAFBAC002C1939 /* AcceptTaskVC.swift in Sources */,
 				4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */,
+				440A76E5242A7C6900D09F0E /* SortOptionsView.swift in Sources */,
 				4446E0FB23D3533F007933AF /* NotificationsVC.swift in Sources */,
 				44FB732623D36CAA000B8987 /* Constants.swift in Sources */,
 				441FB4B523D8AA6200D8B115 /* UserSelfDescriptionCell.swift in Sources */,
