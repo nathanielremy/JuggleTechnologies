@@ -40,7 +40,7 @@ class ReviewCell: UICollectionViewCell {
             
             self.fetchTask(withId: review.taskId)
             
-            Database.fetchUserFromUserID(userID: review.reviewerUserId) { (usr) in
+            Database.fetchUserFromUserID(userId: review.reviewerUserId) { (usr) in
                 if let user = usr {
                     self.user = user
                 }

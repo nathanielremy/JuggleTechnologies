@@ -84,7 +84,7 @@ class AssignedTaskCell: UICollectionViewCell {
     }
     
     fileprivate func fetchTaskPartner(forUserId userId: String) {
-        Database.fetchUserFromUserID(userID: userId) { (user) in
+        Database.fetchUserFromUserID(userId: userId) { (user) in
             self.taskPartner = user
         }
     }

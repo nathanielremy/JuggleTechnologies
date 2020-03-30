@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 
 var userCache = [String : User]()
+var likedTasksCache = [String : Int]()
 
 //MARK: Firebase Auth
 extension Auth {
@@ -24,7 +25,7 @@ extension Auth {
                 completion(nil, "Ext/Auth: No firebaseUser returned in closure."); return
             }
             
-            Database.fetchUserFromUserID(userID: firebaseData.user.uid, completion: { (usr) in
+            Database.fetchUserFromUserID(userId: firebaseData.user.uid, completion: { (usr) in
                 guard let user = usr else {
                     completion(nil, "Ext/Auth: No firebaseUser returned in closure."); return
                 }
@@ -37,15 +38,15 @@ extension Auth {
 
 //MARK: Firebase Database
 extension Database {
-    static func fetchUserFromUserID(userID: String, completion: @escaping (User?) -> Void) {
+    static func fetchUserFromUserID(userId: String, completion: @escaping (User?) -> Void) {
         // Check if we have already fetched the user
-        if let user = userCache[userID] {
+        if let user = userCache[userId] {
             completion(user)
             
             return
         }
         
-        Database.database().reference().child(Constants.FirebaseDatabase.usersRef).child(userID).observeSingleEvent(of: .value, with: { (datasnapshot) in
+        Database.database().reference().child(Constants.FirebaseDatabase.usersRef).child(userId).observeSingleEvent(of: .value, with: { (datasnapshot) in
 
             guard let userDictionary = datasnapshot.value as? [String : Any] else {
                 completion(nil)
@@ -54,14 +55,37 @@ extension Database {
                 return
             }
 
-            let user = User(userId: userID, dictionary: userDictionary)
-            userCache[userID] = user
+            let user = User(userId: userId, dictionary: userDictionary)
+            userCache[userId] = user
             
             completion(user)
 
         }) { (error) in
             print("Ext/Database: Error from fetchUserFromUserID: ", error)
             completion(nil)
+        }
+    }
+    
+    static func fetchLikedTasks(forUserId userId: String, completion: @escaping (Bool) -> Void) {
+        Database.database().reference().child(Constants.FirebaseDatabase.likedTasksRef).child(userId).observeSingleEvent(of: .value, with: { (datasnapshot) in
+            
+            guard let likedTasksIds = datasnapshot.value as? [String : Any] else {
+                completion(false)
+                
+                return
+            }
+            
+            likedTasksIds.forEach { (key, _) in
+                likedTasksCache[key] = 1
+            }
+            
+            completion(true)
+            
+        }) { (error) in
+            print("Error fetching likedTasks:  \(error)")
+            completion(false)
+            
+            return
         }
     }
 }

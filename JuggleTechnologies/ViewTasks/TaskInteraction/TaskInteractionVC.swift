@@ -103,7 +103,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     }
     
     fileprivate func setupTaskInteractionDetailsView(forTask task: Task) {
-        Database.fetchUserFromUserID(userID: task.userId) { (usr) in
+        Database.fetchUserFromUserID(userId: task.userId) { (usr) in
             if let user = usr {
                 self.taskInteractionView.user = user
                 if self.chatPartner == nil && user.userId != Auth.auth().currentUser?.uid {
@@ -394,7 +394,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     fileprivate func fetchCurrentUser() {
         let currentUserId = Auth.auth().currentUser?.uid ?? "No currentUserId"
         userCache.removeValue(forKey: currentUserId)
-        Database.fetchUserFromUserID(userID: currentUserId) { (usr) in
+        Database.fetchUserFromUserID(userId: currentUserId) { (usr) in
             self.currentUser = usr
         }
     }
@@ -734,7 +734,7 @@ extension TaskInteractionVC: ChatMessageCellDelegate {
             return
         }
         
-        Database.fetchUserFromUserID(userID: chatPartnerId) { (user) in
+        Database.fetchUserFromUserID(userId: chatPartnerId) { (user) in
             self.disableViews(false)
             let profileVC = ProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
             profileVC.user = user

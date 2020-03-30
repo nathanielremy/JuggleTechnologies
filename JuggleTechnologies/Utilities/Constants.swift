@@ -76,6 +76,8 @@ class Constants {
         static let reviewDescription = "reviewDescription"
         
         static let juggleIOSAppReviewsRef = "juggleIOSAppReviews"
+        
+        static let likedTasksRef = "likedTasks"
     }
     
     struct TaskCategories {

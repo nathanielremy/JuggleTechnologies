@@ -21,7 +21,7 @@ class OnGoingTaskCell: UICollectionViewCell {
     var messages = [String : [String : Any]]()
     
     func fetchUser(withUserId userId: String) {
-        Database.fetchUserFromUserID(userID: userId) { (usr) in
+        Database.fetchUserFromUserID(userId: userId) { (usr) in
             guard let user = usr else {
                 return
             }

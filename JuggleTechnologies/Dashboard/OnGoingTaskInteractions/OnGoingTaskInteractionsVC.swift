@@ -256,7 +256,7 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
     fileprivate func fetchCurrentUser() {
         let currentUserId = Auth.auth().currentUser?.uid ?? "No currentUserId"
         userCache.removeValue(forKey: currentUserId)
-        Database.fetchUserFromUserID(userID: currentUserId) { (usr) in
+        Database.fetchUserFromUserID(userId: currentUserId) { (usr) in
             self.currentUser = usr
         }
     }
@@ -354,7 +354,7 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
             
             if self.messages.count >= indexPath.row {
                 if let uId = message.chatPartnerId() {
-                    Database.fetchUserFromUserID(userID: uId) { (jglr) in
+                    Database.fetchUserFromUserID(userId: uId) { (jglr) in
                         guard let juggler = jglr else { print("Could not fetch Juggler from Database"); return }
                         DispatchQueue.main.async {
                             chatMessageCell.message = (message, juggler)
@@ -391,7 +391,7 @@ class OnGoingTaskInteractionsVC: UICollectionViewController, UICollectionViewDel
             return
         }
         
-        Database.fetchUserFromUserID(userID: jugglerId) { (usr) in
+        Database.fetchUserFromUserID(userId: jugglerId) { (usr) in
             self.animateAndShowActivityIndicator(false)
             guard let user = usr, let task = self.task else {
                 let alert = UIView.okayAlert(title: "Error Grabando Mensajes", message: "Error al grabar de los mensajes. Sal e intente nuevamente")

@@ -9,13 +9,17 @@
 import UIKit
 import Firebase
 
+protocol ViewTaskCollectionViewCellDelegate {
+    func likeTask(_ task: Task, completion: @escaping (Bool) -> Void)
+}
+
 class ViewTaskCollectionViewCell: UICollectionViewCell {
-    
     //MARK: Stored properties
-    var delegate: OnGoingTaskCellDelegate?
+    var delegate: ViewTaskCollectionViewCellDelegate?
+    var onGoingDelegate: OnGoingTaskCellDelegate?
     
     func fetchUser(withUserId userId: String) {
-        Database.fetchUserFromUserID(userID: userId) { (usr) in
+        Database.fetchUserFromUserID(userId: userId) { (usr) in
             guard let user = usr else {
                 return
             }
@@ -42,7 +46,8 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
             taskCategoryImageView.image = setTaskCategory(forCategory: task.category)
             taskDurationLabel.text = String(task.duration) + (task.duration > 1 ? " hrs" : " hr")
             taskBudgetLabel.text = "€\(task.budget)"
-            delegate?.addJugglerOnGoingTaskToDictionary(forTask: task)
+            onGoingDelegate?.addJugglerOnGoingTaskToDictionary(forTask: task)
+            likeTaskButton.setImage((likedTasksCache[task.id] == nil) ? #imageLiteral(resourceName: "taskUnLiked").withTintColor(UIColor.mainBlue()) : #imageLiteral(resourceName: "taskLiked").withTintColor(UIColor.mainBlue()), for: .normal)
         }
     }
     
@@ -101,9 +106,8 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         return categoryImage.withTintColor(UIColor.gray)
     }
     
-    lazy var saveTaskButton: UIButton = {
+    lazy var likeTaskButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "taskUnsaved"), for: .normal)
         button.tintColor = UIColor.mainBlue()
         button.addTarget(self, action: #selector(handleSaveTaskButton), for: .touchUpInside)
         
@@ -111,7 +115,27 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
     }()
     
     @objc fileprivate func handleSaveTaskButton() {
-        print("Handeling saveTaskButton")
+        guard let task = self.task else {
+            return
+        }
+        
+        if likedTasksCache[task.id] == nil {
+            delegate?.likeTask(task, completion: { (succes) in
+                if succes {
+                    DispatchQueue.main.async {
+                        self.likeTaskButton.setImage(#imageLiteral(resourceName: "taskLiked").withTintColor(UIColor.mainBlue()), for: .normal)
+                        return
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.likeTaskButton.setImage(#imageLiteral(resourceName: "taskUnLiked").withTintColor(UIColor.mainBlue()), for: .normal)
+                        return
+                    }
+                }
+            })
+        } else {
+            //delegate.unLikeTask
+        }
     }
     
     let profileImageView: CustomImageView = {
@@ -244,8 +268,8 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         addSubview(taskLocationLabel)
         taskLocationLabel.anchor(top: taskTitleLabel.bottomAnchor, left: taskLocationPin.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 4, paddingBottom: 0, paddingRight: -20, width: nil, height: 14)
         
-        addSubview(saveTaskButton)
-        saveTaskButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: 27, height: 27)
+        addSubview(likeTaskButton)
+        likeTaskButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: 27, height: 27)
         
         let taskDetailIconsStackView = UIStackView(arrangedSubviews: [taskCategoryImageView, taskDurationImageView])
         taskDetailIconsStackView.axis = .horizontal

@@ -206,7 +206,7 @@ class DashboardHeaderCell: UICollectionViewCell {
             return
         }
         
-        Database.fetchUserFromUserID(userID: currentUserId) { (user) in
+        Database.fetchUserFromUserID(userId: currentUserId) { (user) in
             if let currentUser = user {
                 self.currentUser = currentUser
             }

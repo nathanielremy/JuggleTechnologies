@@ -60,7 +60,7 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
         
         let taskDetailsVC = TaskDetailsVC()
         taskDetailsVC.task = task
-        Database.fetchUserFromUserID(userID: task.userId) { (usr) in
+        Database.fetchUserFromUserID(userId: task.userId) { (usr) in
             if let user = usr {
                 taskDetailsVC.user = user
             }
@@ -296,7 +296,7 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
     fileprivate func fetchCurrentUser() {
         let currentUserId = Auth.auth().currentUser?.uid ?? "No currentUserId"
         userCache.removeValue(forKey: currentUserId)
-        Database.fetchUserFromUserID(userID: currentUserId) { (usr) in
+        Database.fetchUserFromUserID(userId: currentUserId) { (usr) in
             self.currentUser = usr
         }
     }

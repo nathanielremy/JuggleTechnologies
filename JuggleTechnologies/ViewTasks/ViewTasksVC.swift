@@ -55,6 +55,8 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         } else {
             self.activityIndicator.stopAnimating()
         }
+        
+        self.collectionView.isUserInteractionEnabled = !bool
     }
     
     let noResultsView: UIView = {
@@ -103,6 +105,15 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         
         setupTopNavigationBar()
         queryTasks()
+        
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            return
+        }
+        Database.fetchLikedTasks(forUserId: currentUserId) { (refresh) in
+            if refresh && self.canFetchTasks {
+                self.collectionView.reloadData()
+            }
+        }
     }
     
     fileprivate func setupTopNavigationBar() {
@@ -331,6 +342,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         
         let task = self.currentCategory == Constants.TaskCategories.all ? self.allTasks[indexPath.item] : self.filteredTasks[indexPath.item]
         viewTaskCollectionViewCell.task = task
+        viewTaskCollectionViewCell.delegate = self
         
         //Fetch again more tasks if collectionView hits bottom and if there are more tasks to fetch
         if indexPath.item == self.allTasks.count - 1 && (Double(self.tasksFetched % 20) == 0.0)  {
@@ -410,5 +422,83 @@ extension ViewTasksVC: SortOptionsViewDelegate {
         self.selectedSortOption = sortOption
         self.animateAndShowActivityIndicator(true)
         self.handleRefresh()
+    }
+}
+
+extension ViewTasksVC: ViewTaskCollectionViewCellDelegate {
+    fileprivate func updateLikedTasks(forUser user: User, task: Task, completion: @escaping (Bool) -> Void) {
+        let values = [task.id : 1]
+        
+        let likedTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.likedTasksRef).child(user.userId)
+        likedTasksRef.updateChildValues(values) { (err, _) in
+            if let error = err {
+                print("Error liking task: \(error)")
+                let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                completion(false)
+                
+                return
+            }
+            
+            likedTasksCache[task.id] = 1
+            completion(true)
+        }
+    }
+    
+    func likeTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+            self.present(alert, animated: true, completion: nil)
+            completion(false)
+            
+            return
+        }
+        
+        if currentUserId == task.userId {
+            completion(false)
+            return
+        }
+        
+        self.animateAndShowActivityIndicator(true)
+        
+        Database.fetchUserFromUserID(userId: currentUserId) { (usr) in
+            guard let user = usr else {
+                self.animateAndShowActivityIndicator(false)
+                let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                completion(false)
+                
+                return
+            }
+            
+            if user.isJuggler {
+                self.updateLikedTasks(forUser: user, task: task) { (succes) in
+                    self.animateAndShowActivityIndicator(false)
+                    completion(succes)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.animateAndShowActivityIndicator(false)
+                    
+                    let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieres, cuando quieras con Juggle", preferredStyle: .alert)
+                    
+                    let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+                    let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
+                        let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
+                        let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
+                        jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
+                        self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
+                    }
+                    
+                    alert.addAction(cancelAction)
+                    alert.addAction(becomeAJuggleAction)
+                    
+                    self.present(alert, animated: true, completion: nil)
+                }
+                
+                completion(false)
+            }
+        }
+        
     }
 }

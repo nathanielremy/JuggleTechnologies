@@ -202,7 +202,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             userCache.removeValue(forKey: userId)
         }
         
-        Database.fetchUserFromUserID(userID: userId) { (usr) in
+        Database.fetchUserFromUserID(userId: userId) { (usr) in
             guard let user = usr else {
                 return
             }

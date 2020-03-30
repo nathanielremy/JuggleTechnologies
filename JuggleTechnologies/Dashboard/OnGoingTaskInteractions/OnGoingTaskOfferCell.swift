@@ -44,7 +44,7 @@ class OnGoingTaskOfferCell: UICollectionViewCell {
     }
     
     fileprivate func fetchOfferOwner(withUserId userId: String) {
-        Database.fetchUserFromUserID(userID: userId) { (usr) in
+        Database.fetchUserFromUserID(userId: userId) { (usr) in
             if let user = usr {
                 self.offerOwner = user
             }

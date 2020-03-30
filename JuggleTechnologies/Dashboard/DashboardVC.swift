@@ -343,7 +343,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             }
             
             viewTaskCollectionViewCell.taskId = self.jugglerOnGoingTasks[indexPath.item].id
-            viewTaskCollectionViewCell.delegate = self
+            viewTaskCollectionViewCell.onGoingDelegate = self
             
             return viewTaskCollectionViewCell
             
@@ -433,7 +433,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             
             let chatPartnerId = self.isUserMode ? assignedJugglerId : task.userId
             
-            Database.fetchUserFromUserID(userID: chatPartnerId) { (user) in
+            Database.fetchUserFromUserID(userId: chatPartnerId) { (user) in
                 if let chatPartner = user {
                     let dashboardChatlogVC = DashboardChatLogVC(collectionViewLayout: UICollectionViewFlowLayout())
                     dashboardChatlogVC.chatPartner = chatPartner
@@ -551,7 +551,7 @@ extension DashboardVC: AssignedTaskCellDelegate {
         guard task.status == 1 else {
             let taskDetailsVC = TaskDetailsVC()
             taskDetailsVC.task = task
-            Database.fetchUserFromUserID(userID: task.userId) { (usr) in
+            Database.fetchUserFromUserID(userId: task.userId) { (usr) in
                 if let user = usr {
                     taskDetailsVC.user = user
                 }

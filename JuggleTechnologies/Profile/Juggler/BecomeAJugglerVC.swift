@@ -250,7 +250,7 @@ class BecomeAJugglerVC: UIViewController, UIImagePickerControllerDelegate, UINav
             return
         }
         
-        Database.fetchUserFromUserID(userID: currentUserId) { (user) in
+        Database.fetchUserFromUserID(userId: currentUserId) { (user) in
             if let currentUser = user {
                 self.currentUser = currentUser
             }
