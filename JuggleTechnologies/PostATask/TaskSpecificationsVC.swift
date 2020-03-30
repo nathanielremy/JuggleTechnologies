@@ -367,7 +367,7 @@ class TaskSpecificationsVC: UIViewController {
             // Simply return since alert message gets display from within verifyTaskValues()
             return
         }
-
+        
         postTask(withValues: taskValues)
     }
     
@@ -411,7 +411,7 @@ class TaskSpecificationsVC: UIViewController {
                 return
             }
             
-            self.disableAndAnimate(true)
+            self.disableAndAnimate(false)
             let postCompleteVC = PostCompleteVC()
             postCompleteVC.task = task
             self.navigationController?.pushViewController(postCompleteVC, animated: true)

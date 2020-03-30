@@ -141,26 +141,33 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         
         let databaseRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef)
         
-//        var queryChild = ""
-//        
-//        if self.selectedSortOption == 0 {
-//            
-//        }
+        var queryChild = ""
+
+        if self.selectedSortOption == 0 || self.selectedSortOption == 1 {
+            queryChild = Constants.FirebaseDatabase.creationDate
+        } else if self.selectedSortOption == 2 || self.selectedSortOption == 3 {
+            queryChild = Constants.FirebaseDatabase.taskBudget
+        }
         
-        var query = databaseRef.queryOrdered(byChild: Constants.FirebaseDatabase.creationDate)
+        var query = databaseRef.queryOrdered(byChild: queryChild)
         
         var numberOfTasksToFetch: UInt = 20
         
         if self.tempAllTasks.count > 0 {
-            let value = self.tempAllTasks.last?.creationDate.timeIntervalSince1970
+            let creationDate = self.tempAllTasks.last?.creationDate.timeIntervalSince1970
+            let budget = self.tempAllTasks.last?.budget
+            
             //Remove last task in array so it does not get duplicated when re-fetching
             self.tempAllTasks.removeLast()
             self.tasksFetched -= 1
             numberOfTasksToFetch = 21
-            query = query.queryEnding(atValue: value)
+            query = (self.selectedSortOption == 0 || self.selectedSortOption == 2) ? query.queryEnding(atValue: self.selectedSortOption <= 1 ? creationDate : budget) : query.queryStarting(atValue: self.selectedSortOption <= 1 ? creationDate : budget)
+            query = (self.selectedSortOption == 0 || self.selectedSortOption == 2) ? query.queryLimited(toLast: numberOfTasksToFetch) : query.queryLimited(toFirst: numberOfTasksToFetch)
+        } else if self.tempAllTasks.count == 0 {
+            query = (self.selectedSortOption == 0 || self.selectedSortOption == 2) ? query.queryLimited(toLast: numberOfTasksToFetch) : query.queryLimited(toFirst: numberOfTasksToFetch)
         }
         
-        query.queryLimited(toLast: numberOfTasksToFetch).observeSingleEvent(of: .value, with: { (taskDataSnapshot) in
+        query.observeSingleEvent(of: .value, with: { (taskDataSnapshot) in
             guard let tasksJSON = taskDataSnapshot.value as? [String : [String : Any]] else {
                 self.filteredTasks.removeAll()
                 self.allTasks.removeAll()
@@ -181,9 +188,23 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                     self.tempAllTasks.append(task)
                 }
                 
-                self.tempAllTasks.sort(by: { (task1, task2) -> Bool in
-                    return task1.creationDate.compare(task2.creationDate) == .orderedDescending
-                })
+                if self.selectedSortOption == 0 { //Reciente a Antiguo
+                    self.tempAllTasks.sort(by: { (task1, task2) -> Bool in
+                        return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                    })
+                }  else if self.selectedSortOption == 1 { //Antiguo a Reciente
+                    self.tempAllTasks.sort(by: { (task1, task2) -> Bool in
+                        return task1.creationDate.compare(task2.creationDate) == .orderedAscending
+                    })
+                } else if self.selectedSortOption == 2 { //Presupuesto Mayor a Menor
+                    self.tempAllTasks.sort(by: { (task1, task2) -> Bool in
+                        return task1.budget > task2.budget
+                    })
+                } else if self.selectedSortOption == 3 { //Presupuesto Menor a Mayor
+                    self.tempAllTasks.sort(by: { (task1, task2) -> Bool in
+                        return task1.budget < task2.budget
+                    })
+                }
                 
                 if tasksCreated == tasksJSON.count {
                     self.allTasks = self.tempAllTasks
@@ -230,9 +251,23 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                     self.tempFilteredTask.append(task)
                 }
                 
-                self.tempFilteredTask.sort(by: { (task1, task2) -> Bool in
-                    return task1.creationDate.compare(task2.creationDate) == .orderedDescending
-                })
+                if self.selectedSortOption == 0 { //Reciente a Antiguo
+                    self.tempFilteredTask.sort(by: { (task1, task2) -> Bool in
+                        return task1.creationDate.compare(task2.creationDate) == .orderedDescending
+                    })
+                } else if self.selectedSortOption == 1 { //Antiguo a Reciente
+                    self.tempFilteredTask.sort(by: { (task1, task2) -> Bool in
+                        return task1.creationDate.compare(task2.creationDate) == .orderedAscending
+                    })
+                } else if self.selectedSortOption == 2 { //Presupuesto Mayor a Menor
+                    self.tempFilteredTask.sort(by: { (task1, task2) -> Bool in
+                        return task1.budget > task2.budget
+                    })
+                } else if self.selectedSortOption == 3 { //Presupuesto Menor a Mayor
+                    self.tempFilteredTask.sort(by: { (task1, task2) -> Bool in
+                        return task1.budget < task2.budget
+                    })
+                }
                 
                 if tasksCreated == tasksJSON.count {
                     self.filteredTasks = self.tempFilteredTask
@@ -264,6 +299,7 @@ class ViewTasksVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         guard let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.CollectionViewCellIds.viewTasksHeaderCell, for: indexPath) as? ViewTasksHeaderCell else { fatalError("Unable to dequeue ViewTasksHeaderCell")}
         
         headerCell.delegate = self
+        headerCell.selectedSortOption = self.selectedSortOption
         
         return headerCell
     }
@@ -373,6 +409,6 @@ extension ViewTasksVC: SortOptionsViewDelegate {
     func sort(forSortOption sortOption: Int) {
         self.selectedSortOption = sortOption
         self.animateAndShowActivityIndicator(true)
-        self.queryTasks()
+        self.handleRefresh()
     }
 }

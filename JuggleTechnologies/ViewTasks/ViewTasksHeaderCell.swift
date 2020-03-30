@@ -19,6 +19,24 @@ class ViewTasksHeaderCell: UICollectionViewCell {
     var currentCategory = Constants.TaskCategories.all
     var delegate: ViewTasksHeaderCellDelegate?
     
+    var selectedSortOption: Int? {
+        didSet {
+            guard let option = self.selectedSortOption else {
+                return
+            }
+            
+            if option == 0 {
+                self.sortOptionLabel.text = "Más reciente al más antiguo"
+            } else if option == 1 {
+                self.sortOptionLabel.text = "Más antiguo al más reciente"
+            } else if option == 2 {
+                self.sortOptionLabel.text = "Presupuesto de mayor a menor"
+            } else if option == 3 {
+                self.sortOptionLabel.text = "Presupuesto de menor a mayor"
+            }
+        }
+    }
+    
     var scrollView: UIScrollView = {
         let sv = UIScrollView()
         sv.bounces = true
@@ -29,7 +47,6 @@ class ViewTasksHeaderCell: UICollectionViewCell {
     }()
     
     // UIButtons for task categories
-    
     lazy var allCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle(Constants.TaskCategories.all, for: .normal)
@@ -264,6 +281,15 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         delegate?.handleMapViewUIOption()
     }
     
+    let sortOptionLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 10)
+        label.textAlignment = .left
+        label.textColor = UIColor.gray
+        
+        return label
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
@@ -301,6 +327,10 @@ class ViewTasksHeaderCell: UICollectionViewCell {
         UIOptionButtonStackView.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -25).isActive = true
         
         setupCategorySeperatorView(forButton: allCategoryButton)
+        
+        addSubview(sortOptionLabel)
+        sortOptionLabel.anchor(top: nil, left: sortButton.rightAnchor, bottom: nil, right: UIOptionButtonStackView.leftAnchor, paddingTop: 0, paddingLeft: 4, paddingBottom: 0, paddingRight: -8, width: nil, height: nil)
+        sortOptionLabel.centerYAnchor.constraint(equalTo: sortButton.centerYAnchor).isActive = true
         
         let bottomSeperatorView = UIView()
         bottomSeperatorView.backgroundColor = UIColor.darkText
