@@ -499,6 +499,40 @@ extension ViewTasksVC: ViewTaskCollectionViewCellDelegate {
                 completion(false)
             }
         }
+    }
+    
+    func unLikeTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+            self.present(alert, animated: true, completion: nil)
+            completion(false)
+            
+            return
+        }
         
+        if currentUserId == task.userId {
+            completion(false)
+            return
+        }
+        
+        self.animateAndShowActivityIndicator(true)
+        
+        let likedTaskRef = Database.database().reference().child(Constants.FirebaseDatabase.likedTasksRef).child(currentUserId).child(task.id)
+        likedTaskRef.removeValue { (err, _) in
+            
+            self.animateAndShowActivityIndicator(false)
+            
+            if let error = err {
+                print("Error unLiking task: \(error)")
+                let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                completion(false)
+                
+                return
+            }
+            
+            likedTasksCache.removeValue(forKey: task.id)
+            completion(true)
+        }
     }
 }

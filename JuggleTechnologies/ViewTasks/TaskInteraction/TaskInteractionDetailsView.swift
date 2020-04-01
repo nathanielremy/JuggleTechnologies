@@ -15,7 +15,7 @@ protocol TaskInteractionDetailsViewDelegate {
     func acceptTask()
     func handleProfileImageView(forUser user: User)
     func cancelOffer()
-    func changeOffer()
+    func changeOffer(forTask task: Task?)
 }
 
 class TaskInteractionDetailsView: UIView {
@@ -314,7 +314,7 @@ class TaskInteractionDetailsView: UIView {
     
     @objc fileprivate func handleAcceptTaskButton() {
         if self.currentJugglerOffer != nil {
-            delegate?.changeOffer()
+            delegate?.changeOffer(forTask: self.task)
         } else {
             delegate?.acceptTask()
         }

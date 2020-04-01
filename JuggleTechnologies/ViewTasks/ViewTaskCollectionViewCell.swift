@@ -11,6 +11,7 @@ import Firebase
 
 protocol ViewTaskCollectionViewCellDelegate {
     func likeTask(_ task: Task, completion: @escaping (Bool) -> Void)
+    func unLikeTask(_ task: Task, completion: @escaping (Bool) -> Void)
 }
 
 class ViewTaskCollectionViewCell: UICollectionViewCell {
@@ -120,8 +121,8 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
         }
         
         if likedTasksCache[task.id] == nil {
-            delegate?.likeTask(task, completion: { (succes) in
-                if succes {
+            delegate?.likeTask(task, completion: { (success) in
+                if success {
                     DispatchQueue.main.async {
                         self.likeTaskButton.setImage(#imageLiteral(resourceName: "taskLiked").withTintColor(UIColor.mainBlue()), for: .normal)
                         return
@@ -134,7 +135,19 @@ class ViewTaskCollectionViewCell: UICollectionViewCell {
                 }
             })
         } else {
-            //delegate.unLikeTask
+            self.delegate?.unLikeTask(task, completion: { (success) in
+                if success {
+                    DispatchQueue.main.async {
+                        self.likeTaskButton.setImage(#imageLiteral(resourceName: "taskUnLiked").withTintColor(UIColor.mainBlue()), for: .normal)
+                        return
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.likeTaskButton.setImage(#imageLiteral(resourceName: "taskLiked").withTintColor(UIColor.mainBlue()), for: .normal)
+                        return
+                    }
+                }
+            })
         }
     }
     

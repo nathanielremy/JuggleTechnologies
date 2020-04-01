@@ -719,9 +719,19 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func changeOffer() {
-        let alert = UIView.okayAlert(title: "Still working on changing offers", message: "")
-        self.present(alert, animated: true, completion: nil)
+    func changeOffer(forTask task: Task?) {
+        guard let task = self.task else {
+            let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intenta nuevamente.")
+            self.present(alert, animated: true, completion: nil)
+            
+            return
+        }
+        
+        let taskOfferVC = TaskOfferVC()
+        taskOfferVC.task = task
+        taskOfferVC.user = self.taskInteractionView.user
+        let taskOfferNavVC = UINavigationController(rootViewController: taskOfferVC)
+        self.present(taskOfferNavVC, animated: true, completion: nil)
     }
 }
 
