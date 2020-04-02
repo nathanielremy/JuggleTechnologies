@@ -13,7 +13,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     
     //MARK: Stored properties
     var isUserMode: Bool = true
-    var filterOptionsValue = 1 // 1 == onGoing, 2 == accepted, 3 == completed, 4 == saved
+    var filterOptionsValue = 1 // 1 == onGoing, 2 == accepted, 3 == completed, 4 == liked
     
     var canFetchTasks = true
     
@@ -155,9 +155,17 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             jugglerTempCompletedTasks.removeAll()
             jugglerOnGoingTasksDictionary.removeAll()
             jugglerTempSavedTasks.removeAll()
-            //self.fetchSavedTasks()
         }
         
+        if !didFetchLikedTasks {
+            Database.fetchLikedTasks(forUserId: currentUserId) { (success) in
+                print("\(success ? "Successfuly fetched likedTasks" : "Unable to fetch likedTasks")")
+                
+                if success && self.filterOptionsValue == 4 {
+                    self.removeNoResultsView()
+                }
+            }
+        }
         self.fetchTasks(forUserId: currentUserId, isUserMode: self.isUserMode)
     }
     
@@ -560,7 +568,7 @@ extension DashboardVC: AssignedTaskCellDelegate {
             return
         }
         
-        
+        // Cancel Acceptance of task
     }
     
     func completeOrReviewTask(task: Task?, taskPartner: User?, index: Int?) {

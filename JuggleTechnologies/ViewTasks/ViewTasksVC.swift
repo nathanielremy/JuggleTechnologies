@@ -427,7 +427,7 @@ extension ViewTasksVC: SortOptionsViewDelegate {
 
 extension ViewTasksVC: ViewTaskCollectionViewCellDelegate {
     fileprivate func updateLikedTasks(forUser user: User, task: Task, completion: @escaping (Bool) -> Void) {
-        let values = [task.id : 1]
+        let values = [task.id : task.creationDate.timeIntervalSince1970]
         
         let likedTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.likedTasksRef).child(user.userId)
         likedTasksRef.updateChildValues(values) { (err, _) in
@@ -440,7 +440,7 @@ extension ViewTasksVC: ViewTaskCollectionViewCellDelegate {
                 return
             }
             
-            likedTasksCache[task.id] = 1
+            likedTasksCache[task.id] = task.creationDate.timeIntervalSince1970 as Double
             completion(true)
         }
     }

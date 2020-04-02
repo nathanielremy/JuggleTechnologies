@@ -66,6 +66,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         let profileNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "profileTab"), selectedImage: #imageLiteral(resourceName: "profileTab"), title: "Perfil", rootViewController: ProfileVC(collectionViewLayout: UICollectionViewFlowLayout()))
         
         likedTasksCache.removeAll()
+        orderedLikedTasksCache.removeAll()
+        didFetchLikedTasks = false
         
         tabBar.tintColor = UIColor.mainBlue()
         self.viewControllers = [

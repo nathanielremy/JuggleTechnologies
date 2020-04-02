@@ -14,8 +14,8 @@ protocol TaskInteractionDetailsViewDelegate {
     func makeOffer()
     func acceptTask()
     func handleProfileImageView(forUser user: User)
-    func cancelOffer()
-    func changeOffer(forTask task: Task?)
+    func editOffer(forTask task: Task?)
+    func cancelOffer(forTask task: Task?)
 }
 
 class TaskInteractionDetailsView: UIView {
@@ -25,6 +25,15 @@ class TaskInteractionDetailsView: UIView {
     var currentJugglerOffer: Offer? {
         didSet {
             guard let offer = self.currentJugglerOffer else {
+                DispatchQueue.main.async {
+                    self.makeOfferButton.tintColor = UIColor.mainBlue()
+                    self.makeOfferButton.layer.borderColor = UIColor.mainBlue().cgColor
+                    self.makeOfferButton.setTitle("Haz Oferta", for: .normal)
+                    
+                    self.acceptTaskButton.tintColor = UIColor.mainBlue()
+                    self.acceptTaskButton.layer.borderColor = UIColor.mainBlue().cgColor
+                    self.acceptTaskButton.setTitle("Aceptar Tarea", for: .normal)
+                }
                 return
             }
             
@@ -292,7 +301,7 @@ class TaskInteractionDetailsView: UIView {
     
     @objc fileprivate func handleMakeOfferButton() {
         if self.currentJugglerOffer != nil {
-            delegate?.cancelOffer()
+            delegate?.cancelOffer(forTask: self.task)
         } else {
             delegate?.makeOffer()
         }
@@ -314,7 +323,7 @@ class TaskInteractionDetailsView: UIView {
     
     @objc fileprivate func handleAcceptTaskButton() {
         if self.currentJugglerOffer != nil {
-            delegate?.changeOffer(forTask: self.task)
+            delegate?.editOffer(forTask: self.task)
         } else {
             delegate?.acceptTask()
         }

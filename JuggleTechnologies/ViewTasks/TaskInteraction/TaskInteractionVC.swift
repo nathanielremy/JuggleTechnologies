@@ -29,6 +29,7 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
     var jugglerFilteredTask: FilteredTask? {
         didSet {
             guard let filteredTask = self.jugglerFilteredTask, let currentUser = self.currentUser else {
+                self.taskInteractionView.currentJugglerOffer = nil // To change the buttons back to grean
                 return
             }
             
@@ -114,6 +115,11 @@ class TaskInteractionVC: UICollectionViewController, UICollectionViewDelegateFlo
         
         self.taskInteractionView.task = task
         self.taskInteractionView.delegate = self
+        
+        //Needed to fetch any new offers
+        let currentUser = self.currentUser
+        self.currentUser = currentUser
+        
         view.addSubview(self.taskInteractionView)
         self.taskInteractionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: 295)
         
@@ -697,6 +703,8 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
             return
         }
         
+        self.hideTaskInteractionDetailsView(andScroll: true, keyBoardHeight: 0)
+        
         let acceptTaskVC = AcceptTaskVC()
         acceptTaskVC.task = task
         acceptTaskVC.user = self.taskInteractionView.user
@@ -714,12 +722,7 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         navigationController?.pushViewController(profileVC, animated: true)
     }
     
-    func cancelOffer() {
-        let alert = UIView.okayAlert(title: "Still working on canceling offers", message: "")
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    func changeOffer(forTask task: Task?) {
+    func editOffer(forTask task: Task?) {
         guard let task = self.task else {
             let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intenta nuevamente.")
             self.present(alert, animated: true, completion: nil)
@@ -732,6 +735,58 @@ extension TaskInteractionVC: TaskInteractionDetailsViewDelegate {
         taskOfferVC.user = self.taskInteractionView.user
         let taskOfferNavVC = UINavigationController(rootViewController: taskOfferVC)
         self.present(taskOfferNavVC, animated: true, completion: nil)
+    }
+    
+    func cancelOffer(forTask task: Task?) {
+        let alert = UIAlertController(title: "¿Seguro?", message: "Su oferta será eliminada indefinidamente", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Atrás", style: .cancel) { (_) in
+            return
+        }
+        let okayAction = UIAlertAction(title: "Okay", style: .default) { (_) in
+            self.updateCanceledTask(forTask: task)
+            return
+        }
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    fileprivate func updateCanceledTask(forTask task: Task?) {
+        //Delete values in taskOffers and jugglerTasks nodes
+        guard let task = self.task, let currentUserId = Auth.auth().currentUser?.uid else {
+            let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        self.disableViews(true)
+        
+        let taskOffersRef = Database.database().reference().child(Constants.FirebaseDatabase.taskOffersRef).child(task.id).child(currentUserId)
+        taskOffersRef.removeValue { (err, _) in
+            if let error = err {
+                print("Error removing taskOffers values from db: \(error)")
+                self.disableViews(false)
+                let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            
+            let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(currentUserId).child(task.id)
+            jugglerTasksRef.removeValue { (err, _) in
+                if let error = err {
+                    print("Error removing taskOffers values from db: \(error)")
+                    self.disableViews(false)
+                    let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
+                
+                self.disableViews(false)
+                self.jugglerFilteredTask = nil // To change the buttons back to grean
+            }
+        }
     }
 }
 

@@ -10,7 +10,9 @@ import UIKit
 import Firebase
 
 var userCache = [String : User]()
-var likedTasksCache = [String : Int]()
+var likedTasksCache = [String : Double]()
+var orderedLikedTasksCache = [Dictionary<String, Double>.Element]()
+var didFetchLikedTasks = false
 
 //MARK: Firebase Auth
 extension Auth {
@@ -69,14 +71,19 @@ extension Database {
     static func fetchLikedTasks(forUserId userId: String, completion: @escaping (Bool) -> Void) {
         Database.database().reference().child(Constants.FirebaseDatabase.likedTasksRef).child(userId).observeSingleEvent(of: .value, with: { (datasnapshot) in
             
-            guard let likedTasksIds = datasnapshot.value as? [String : Any] else {
+            guard let likedTasksIds = datasnapshot.value as? [String : Double] else {
                 completion(false)
                 
                 return
             }
             
-            likedTasksIds.forEach { (key, _) in
-                likedTasksCache[key] = 1
+            didFetchLikedTasks = true
+            
+            likedTasksIds.forEach { (key, value) in
+                likedTasksCache[key] = value
+                orderedLikedTasksCache = likedTasksCache.sorted { (task1, task2) -> Bool in
+                    task1.value > task2.value
+                }
             }
             
             completion(true)
@@ -99,11 +106,11 @@ extension UIColor {
     static func mainBlue() -> UIColor {
         return rgb(58, 202, 187)
     }
-//
+
 //    static func mainAmarillo() -> UIColor {
 //        return rgb(249, 186, 0)
 //    }
-//
+
     static func chatBubbleGray() -> UIColor {
         return rgb(240, 240, 240)
     }
