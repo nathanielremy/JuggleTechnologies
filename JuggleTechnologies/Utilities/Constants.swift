@@ -107,7 +107,6 @@ class Constants {
         static let dashboardHeaderCell = "dashboardHeaderCellId"
         static let onGoingTaskCell = "onGoingTaskCellId"
         static let assignedTaskCell = "assignedTaskCellId"
-        static let savedTaskCell = "savedTaskCellId"
         static let onGoingTaskInteractionsHeaderCell = "onGoingTaskInteractionsHeaderCellId"
         static let onGoingTaskOfferCell = "onGoingTaskOfferCellId"
         static let onGoingTaskChatMessageCell = "onGoingTaskChatMessageCellId"

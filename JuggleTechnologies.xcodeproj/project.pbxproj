@@ -41,13 +41,13 @@
 		4468CA0E23D751F400B9C8F8 /* UserProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */; };
 		4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */; };
 		447C128823EF24DA00947FE8 /* TaskOfferVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447C128723EF24DA00947FE8 /* TaskOfferVC.swift */; };
+		447DD8ED2436373B00B92DBF /* TaskLocationMapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447DD8EC2436373B00B92DBF /* TaskLocationMapVC.swift */; };
 		447FA36023E1FF150020247E /* TaskDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447FA35F23E1FF150020247E /* TaskDetailsVC.swift */; };
 		4483FCF823DF28E000178E84 /* TaskInteractionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */; };
 		4483FCFA23DF2E9C00178E84 /* TaskInteractionDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */; };
 		4483FCFD23DF320A00178E84 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */; };
 		44972CCB23E9E34900798745 /* OnGoingTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */; };
 		44972CCD23E9E38900798745 /* AssignedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CCC23E9E38900798745 /* AssignedTaskCell.swift */; };
-		44972CD123E9E8EF00798745 /* SavedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44972CD023E9E8EF00798745 /* SavedTaskCell.swift */; };
 		44A91E042400451D0082D903 /* OnGoingTaskChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A91E032400451D0082D903 /* OnGoingTaskChatMessageCell.swift */; };
 		44BECA8C23F15F8500014A59 /* JugglerApplicationStepsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BECA8B23F15F8500014A59 /* JugglerApplicationStepsVC.swift */; };
 		44BECA8E23F1608700014A59 /* JugglerSignupRequirementsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BECA8D23F1608700014A59 /* JugglerSignupRequirementsVC.swift */; };
@@ -107,13 +107,13 @@
 		4468CA0D23D751F400B9C8F8 /* UserProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeaderCell.swift; sourceTree = "<group>"; };
 		4468CA0F23D759D700B9C8F8 /* CustomImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
 		447C128723EF24DA00947FE8 /* TaskOfferVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskOfferVC.swift; sourceTree = "<group>"; };
+		447DD8EC2436373B00B92DBF /* TaskLocationMapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskLocationMapVC.swift; sourceTree = "<group>"; };
 		447FA35F23E1FF150020247E /* TaskDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailsVC.swift; sourceTree = "<group>"; };
 		4483FCF723DF28E000178E84 /* TaskInteractionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInteractionVC.swift; sourceTree = "<group>"; };
 		4483FCF923DF2E9C00178E84 /* TaskInteractionDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInteractionDetailsView.swift; sourceTree = "<group>"; };
 		4483FCFC23DF320A00178E84 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnGoingTaskCell.swift; sourceTree = "<group>"; };
 		44972CCC23E9E38900798745 /* AssignedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignedTaskCell.swift; sourceTree = "<group>"; };
-		44972CD023E9E8EF00798745 /* SavedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedTaskCell.swift; sourceTree = "<group>"; };
 		44A91E032400451D0082D903 /* OnGoingTaskChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnGoingTaskChatMessageCell.swift; sourceTree = "<group>"; };
 		44BECA8B23F15F8500014A59 /* JugglerApplicationStepsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JugglerApplicationStepsVC.swift; sourceTree = "<group>"; };
 		44BECA8D23F1608700014A59 /* JugglerSignupRequirementsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JugglerSignupRequirementsVC.swift; sourceTree = "<group>"; };
@@ -205,7 +205,6 @@
 				4438EBA823E71F6D000CF489 /* DashboardHeaderCell.swift */,
 				44972CCA23E9E34900798745 /* OnGoingTaskCell.swift */,
 				44972CCC23E9E38900798745 /* AssignedTaskCell.swift */,
-				44972CD023E9E8EF00798745 /* SavedTaskCell.swift */,
 			);
 			path = DashboardCollectionViewCells;
 			sourceTree = "<group>";
@@ -347,6 +346,7 @@
 				447C128723EF24DA00947FE8 /* TaskOfferVC.swift */,
 				445D530123FAFBAC002C1939 /* AcceptTaskVC.swift */,
 				443C4FB223F9D1B20070309E /* OfferCompleteVC.swift */,
+				447DD8EC2436373B00B92DBF /* TaskLocationMapVC.swift */,
 			);
 			path = TaskInteractions;
 			sourceTree = "<group>";
@@ -566,6 +566,7 @@
 				44972CCD23E9E38900798745 /* AssignedTaskCell.swift in Sources */,
 				4438EBA923E71F6D000CF489 /* DashboardHeaderCell.swift in Sources */,
 				44972CCB23E9E34900798745 /* OnGoingTaskCell.swift in Sources */,
+				447DD8ED2436373B00B92DBF /* TaskLocationMapVC.swift in Sources */,
 				442698A523D610870095A495 /* PostCompleteVC.swift in Sources */,
 				441FB4B323D8A39800D8B115 /* UserProfileStatisticsCell.swift in Sources */,
 				44FB732B23D37427000B8987 /* SignupVC.swift in Sources */,
@@ -578,7 +579,6 @@
 				443C4FB523F9DD050070309E /* Offer.swift in Sources */,
 				44D4E8922418097E00DD6DC8 /* UserReviewsVC.swift in Sources */,
 				4483FCFA23DF2E9C00178E84 /* TaskInteractionDetailsView.swift in Sources */,
-				44972CD123E9E8EF00798745 /* SavedTaskCell.swift in Sources */,
 				4483FCF823DF28E000178E84 /* TaskInteractionVC.swift in Sources */,
 				4468CA1023D759D700B9C8F8 /* CustomImageView.swift in Sources */,
 				44203CA623DB290B00F6D71A /* ViewTasksHeaderCell.swift in Sources */,

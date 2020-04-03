@@ -41,9 +41,6 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
     var jugglerCompletedTasks = [FilteredTask]()
     var jugglerTempCompletedTasks = [FilteredTask]()
     
-    var jugglerSavedTasks = [FilteredTask]()
-    var jugglerTempSavedTasks = [FilteredTask]()
-    
     var didFetchJugglerTasks = false
     
     var acceptedIndex: Int? {
@@ -110,7 +107,6 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         collectionView.register(DashboardHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.dashboardHeaderCell)
         collectionView.register(OnGoingTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.onGoingTaskCell)
         collectionView.register(AssignedTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.assignedTaskCell)
-        collectionView.register(SavedTaskCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.savedTaskCell)
         collectionView.register(ViewTaskCollectionViewCell.self, forCellWithReuseIdentifier: Constants.CollectionViewCellIds.viewTaskCollectionViewCell)
         
         // Manualy refresh the collectionView
@@ -127,6 +123,19 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             self.animateAndShowActivityIndicator(false)
             self.showNoResultsFoundView()
             return
+        }
+        
+        self.animateAndShowActivityIndicator(true)
+        
+        if !didFetchLikedTasks {
+            Database.fetchLikedTasks(forUserId: currentUserId) { (success) in
+                print("\(success ? "Successfuly fetched likedTasks" : "Unable to fetch likedTasks")")
+                
+                if success && self.filterOptionsValue == 4 {
+                    self.animateAndShowActivityIndicator(false)
+                    self.removeNoResultsView()
+                }
+            }
         }
         
         self.fetchTasks(forUserId: currentUserId, isUserMode: true)
@@ -154,18 +163,22 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             jugglerTempAcceptedTasks.removeAll()
             jugglerTempCompletedTasks.removeAll()
             jugglerOnGoingTasksDictionary.removeAll()
-            jugglerTempSavedTasks.removeAll()
         }
         
-        if !didFetchLikedTasks {
-            Database.fetchLikedTasks(forUserId: currentUserId) { (success) in
-                print("\(success ? "Successfuly fetched likedTasks" : "Unable to fetch likedTasks")")
-                
-                if success && self.filterOptionsValue == 4 {
-                    self.removeNoResultsView()
+        didFetchLikedTasks = false
+        Database.fetchLikedTasks(forUserId: currentUserId) { (success) in
+            print("\(success ? "Successfuly fetched likedTasks" : "Unable to fetch likedTasks")")
+            
+            if success && self.filterOptionsValue == 4 {
+                if orderedLikedTasksCache.count == 0 {
+                    self.showNoResultsFoundView()
+                    return
                 }
+                
+                self.removeNoResultsView()
             }
         }
+        
         self.fetchTasks(forUserId: currentUserId, isUserMode: self.isUserMode)
     }
     
@@ -290,6 +303,9 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                         } else if self.filterOptionsValue == 3 && self.jugglerCompletedTasks.isEmpty {
                             self.showNoResultsFoundView()
                             return
+                        } else if self.filterOptionsValue == 4 {
+                            self.collectionView.refreshControl?.endRefreshing()
+                            return
                         }
                     }
                     
@@ -326,7 +342,7 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
         } else if self.filterOptionsValue == 3 {
             return self.isUserMode ? self.userCompletedTasks.count : self.jugglerCompletedTasks.count
         } else if self.filterOptionsValue == 4 {
-            return self.isUserMode ? 0 : self.jugglerSavedTasks.count
+            return self.isUserMode ? 0 : orderedLikedTasksCache.count
         } else {
             return 0
         }
@@ -344,14 +360,15 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             
             return onGoingTaskCell
             
-        } else if self.filterOptionsValue == 1 && !self.isUserMode {
+        } else if (self.filterOptionsValue == 1 && !self.isUserMode) || self.filterOptionsValue == 4 {
 
             guard let viewTaskCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.viewTaskCollectionViewCell, for: indexPath) as? ViewTaskCollectionViewCell else {
                 return UICollectionViewCell()
             }
             
-            viewTaskCollectionViewCell.taskId = self.jugglerOnGoingTasks[indexPath.item].id
+            viewTaskCollectionViewCell.taskId = self.filterOptionsValue == 1 ? self.jugglerOnGoingTasks[indexPath.item].id : orderedLikedTasksCache[indexPath.item].key
             viewTaskCollectionViewCell.onGoingDelegate = self
+            viewTaskCollectionViewCell.delegate = self
             
             return viewTaskCollectionViewCell
             
@@ -393,14 +410,6 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
             }
             
             return completedTaskCell
-            
-        } else if self.filterOptionsValue == 4 {
-            
-            guard let savedTaskCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCellIds.savedTaskCell, for: indexPath) as? SavedTaskCell else {
-                return UICollectionViewCell()
-            }
-            
-            return savedTaskCell
             
         } else {
             return UICollectionViewCell()
@@ -505,7 +514,7 @@ extension DashboardVC: DashboardHeaderCellDelegate {
             } else if filterValue == 3 && self.jugglerCompletedTasks.isEmpty {
                 self.showNoResultsFoundView()
                 return
-            } else if filterValue == 4 && self.jugglerSavedTasks.isEmpty {
+            } else if filterValue == 4 && orderedLikedTasksCache.isEmpty {
                 self.showNoResultsFoundView()
                 return
             }
@@ -567,7 +576,7 @@ extension DashboardVC: AssignedTaskCellDelegate {
             self.present(taskDetailsVC, animated: true, completion: nil)
             return
         }
-        
+        print("Cancel acceptance of Task")
         // Cancel Acceptance of task
     }
     
@@ -698,6 +707,134 @@ extension DashboardVC: AssignedTaskCellDelegate {
             self.userAcceptedTasksDictionary[task.id] = task
         } else {
             self.jugglerAcceptedTasksDictionary[task.id] = task
+        }
+    }
+}
+
+extension DashboardVC: ViewTaskCollectionViewCellDelegate {
+    fileprivate func updateLikedTasks(forUser user: User, task: Task, completion: @escaping (Bool) -> Void) {
+        let values = [task.id : task.creationDate.timeIntervalSince1970]
+        
+        let likedTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.likedTasksRef).child(user.userId)
+        likedTasksRef.updateChildValues(values) { (err, _) in
+            if let error = err {
+                print("Error liking task: \(error)")
+                let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                completion(false)
+                
+                return
+            }
+            
+            likedTasksCache[task.id] = task.creationDate.timeIntervalSince1970 as Double
+            
+            orderedLikedTasksCache = likedTasksCache.sorted { (task1, task2) -> Bool in
+                task1.value > task2.value
+            }
+            
+            completion(true)
+        }
+    }
+    
+    func likeTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+            self.present(alert, animated: true, completion: nil)
+            completion(false)
+            
+            return
+        }
+        
+        if currentUserId == task.userId {
+            completion(false)
+            return
+        }
+        
+        self.animateAndShowActivityIndicator(true)
+        
+        Database.fetchUserFromUserID(userId: currentUserId) { (usr) in
+            guard let user = usr else {
+                self.animateAndShowActivityIndicator(false)
+                let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                completion(false)
+                
+                return
+            }
+            
+            if user.isJuggler {
+                self.updateLikedTasks(forUser: user, task: task) { (succes) in
+                    self.animateAndShowActivityIndicator(false)
+                    completion(succes)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.animateAndShowActivityIndicator(false)
+                    
+                    let alert = UIAlertController(title: "¡Se un Juggler!", message: "Gana dinero trabajando en las cosas que quieres, cuando quieras con Juggle", preferredStyle: .alert)
+                    
+                    let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+                    let becomeAJuggleAction = UIAlertAction(title: "¡Se un Juggler!", style: .default) { (_) in
+                        let jugglerApplicationStepsVC = JugglerApplicationStepsVC()
+                        let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: jugglerApplicationStepsVC)
+                        jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
+                        self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
+                    }
+                    
+                    alert.addAction(cancelAction)
+                    alert.addAction(becomeAJuggleAction)
+                    
+                    self.present(alert, animated: true, completion: nil)
+                }
+                
+                completion(false)
+            }
+        }
+    }
+    
+    func unLikeTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+            self.present(alert, animated: true, completion: nil)
+            completion(false)
+            
+            return
+        }
+        
+        if currentUserId == task.userId {
+            completion(false)
+            return
+        }
+        
+        self.animateAndShowActivityIndicator(true)
+        
+        let likedTaskRef = Database.database().reference().child(Constants.FirebaseDatabase.likedTasksRef).child(currentUserId).child(task.id)
+        likedTaskRef.removeValue { (err, _) in
+            
+            self.animateAndShowActivityIndicator(false)
+            
+            if let error = err {
+                print("Error unLiking task: \(error)")
+                let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente")
+                self.present(alert, animated: true, completion: nil)
+                completion(false)
+                
+                return
+            }
+            
+            likedTasksCache.removeValue(forKey: task.id)
+            
+            orderedLikedTasksCache = likedTasksCache.sorted { (task1, task2) -> Bool in
+                task1.value > task2.value
+            }
+            
+            if likedTasksCache.count > 0 {
+                self.removeNoResultsView()
+            } else {
+                self.showNoResultsFoundView()
+            }
+            
+            completion(true)
         }
     }
 }

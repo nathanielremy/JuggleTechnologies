@@ -53,11 +53,10 @@ class TaskDetailsVC: UIViewController {
             taskLocationLabel.attributedText = setupAttributedText(withTitle: "Ubicación de la Tarea", value: task.isOnline ? "Por internet o teléfono" : "\(task.stringLocation ?? "")")
             
             if !task.isOnline {
-                setupMapView()
-                let taskCoordinate = CLLocationCoordinate2D(latitude: task.latitude ?? 0.0, longitude: task.longitude ?? 0.0)
-                self.placePinAt(coordinate: taskCoordinate)
+                view.addSubview(verMapaButton)
+                verMapaButton.anchor(top: taskLocationLabel.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: -8, paddingLeft: 0, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
             } else {
-                self.mapView.removeFromSuperview()
+                verMapaButton.removeFromSuperview()
             }
         }
     }
@@ -184,17 +183,32 @@ class TaskDetailsVC: UIViewController {
         return label
     }()
     
-    // MKMapView's previous annotation
-    var previousAnnotation: MKAnnotation?
-    lazy var mapView: MKMapView = {
-        let map = MKMapView()
-        map.delegate = self
-        map.layer.masksToBounds = true
-        map.layer.borderWidth = 1
-        map.layer.borderColor = UIColor.mainBlue().cgColor
+    lazy var verMapaButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitleColor(UIColor.mainBlue(), for: .normal)
+        button.setTitle("Ver mapa", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+        button.addTarget(self, action: #selector(handleVerMapaButton), for: .touchUpInside)
         
-        return map
+        return button
     }()
+    
+    @objc fileprivate func handleVerMapaButton() {
+        guard let task = self.task, let longitude = task.longitude, let latitude = task.latitude else {
+            let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente.")
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+
+        let mapView = TaskLocationMapViewVC()
+        mapView.coordinnate = coordinate
+        mapView.addressString = task.stringLocation
+        
+        let mapNavController = UINavigationController(rootViewController: mapView)
+        self.present(mapNavController, animated: true, completion: nil)
+    }
     
     @objc fileprivate func handleEditNavBarButton() {
         guard let task = self.task, task.status == 0 else {
@@ -219,7 +233,7 @@ class TaskDetailsVC: UIViewController {
     fileprivate func setupViews() {
         view.addSubview(scrollView)
         scrollView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
-        scrollView.contentSize = CGSize(width: view.frame.width, height: 930)
+        scrollView.contentSize = CGSize(width: view.frame.width, height: 615)
         
         scrollView.addSubview(profileImageView)
         profileImageView.anchor(top: scrollView.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
@@ -262,43 +276,5 @@ class TaskDetailsVC: UIViewController {
         scrollView.addSubview(button)
         button.anchor(top: profileImageView.topAnchor, left: profileImageView.leftAnchor, bottom: profileImageView.bottomAnchor, right: profileImageView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
         button.addTarget(self, action: #selector(handleProfileImageView), for: .touchUpInside)
-    }
-    
-    fileprivate func setupMapView() {
-        scrollView.addSubview(mapView)
-        mapView.anchor(top: taskLocationLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 300)
-        mapView.layer.cornerRadius = 5
-    }
-}
-
-//MARK: MapView extension
-extension TaskDetailsVC: MKMapViewDelegate {
-    func placePinAt(coordinate: CLLocationCoordinate2D) {
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = coordinate
-        self.mapView.addAnnotation(annotation)
-        self.mapView.centerCoordinate = coordinate
-        
-        if let oldAnnotation = self.previousAnnotation {
-            self.mapView.removeAnnotation(oldAnnotation)
-            self.previousAnnotation = annotation
-        } else {
-            self.previousAnnotation = annotation
-        }
-    }
-    
-    //Delegate methods
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        let reuseIdentifier = "pin"
-        
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier) as? MKPinAnnotationView
-        
-        if let pinView = pinView {
-            pinView.annotation = annotation
-        } else {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
-            pinView!.pinTintColor = UIColor.mainBlue()
-        }
-        return pinView
     }
 }
