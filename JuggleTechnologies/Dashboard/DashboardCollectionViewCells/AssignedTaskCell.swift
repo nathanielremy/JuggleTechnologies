@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 
 protocol AssignedTaskCellDelegate {
-    func cancelOrShowDetails(forTask task: Task?, taskPartner: User?)
+    func cancelOrShowDetails(forTask task: Task?, taskPartner: User?, indexPath: Int?)
     func completeOrReviewTask(task: Task?, taskPartner: User?, index: Int?)
     func addAssignedTaskToDictionary(forTask task: Task)
     func loadProfile(forUser user: User)
@@ -190,7 +190,7 @@ class AssignedTaskCell: UICollectionViewCell {
     }()
     
     @objc fileprivate func handleCancelOrDetailsButton() {
-        self.delegate?.cancelOrShowDetails(forTask: self.task, taskPartner: self.taskPartner)
+        self.delegate?.cancelOrShowDetails(forTask: self.task, taskPartner: self.taskPartner, indexPath: self.acceptedIndex)
     }
     
     lazy var completeOrReviewButton: UIButton = {

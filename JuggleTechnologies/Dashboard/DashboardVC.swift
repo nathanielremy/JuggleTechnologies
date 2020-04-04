@@ -560,7 +560,90 @@ extension DashboardVC: AssignedTaskCellDelegate {
         self.navigationController?.pushViewController(profileVC, animated: true)
     }
     
-    func cancelOrShowDetails(forTask task: Task?, taskPartner: User?) {
+    fileprivate func cancelTaskAcceptance(forTask task: Task, taskPartner: User, indexPath: Int?) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        self.animateAndShowActivityIndicator(true)
+        
+        //Edit the task status in tasksRef
+        let tasksRefValues: [String : Any] = [
+            Constants.FirebaseDatabase.taskStatus : 0,
+            Constants.FirebaseDatabase.acceptedBudget : -1,
+            Constants.FirebaseDatabase.acceptedDate : -1,
+            Constants.FirebaseDatabase.assignedJugglerId : -1
+        ]
+        
+        let userId = task.userId
+        let jugglerId = task.userId == currentUserId ? taskPartner.userId : currentUserId
+        
+        let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(task.id)
+        tasksRef.updateChildValues(tasksRefValues) { (err, _) in
+            if let error = err {
+                self.animateAndShowActivityIndicator(false)
+                print("Error updating canceletaion of acceptance of task for tasksRef: \(error)")
+                let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente.")
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            
+            //Edit task status is userTasksRef
+            let userTasksRefValues: [String : Any] = [
+                Constants.FirebaseDatabase.acceptedDate : -1,
+                Constants.FirebaseDatabase.taskStatus : 0
+            ]
+            
+            let userTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.userTasksRef).child(userId).child(task.id)
+            userTasksRef.updateChildValues(userTasksRefValues) { (err, _) in
+                if let error = err {
+                    self.animateAndShowActivityIndicator(false)
+                    print("Error updating canceletaion of acceptance of task for tasksRef: \(error)")
+                    let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente.")
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
+                
+                //Edit task status is jugglerTasksRef
+                let jugglerTasksRef = Database.database().reference().child(Constants.FirebaseDatabase.jugglerTasksRef).child(jugglerId).child(task.id)
+                jugglerTasksRef.updateChildValues(userTasksRefValues) { (err, _) in
+                    if let error = err {
+                        self.animateAndShowActivityIndicator(false)
+                        print("Error updating canceletaion of acceptance of task for tasksRef: \(error)")
+                        let alert = UIView.okayAlert(title: "Error al Grabar", message: "Sal e intente nuevamente.")
+                        self.present(alert, animated: true, completion: nil)
+                        return
+                    }
+                    
+                    self.animateAndShowActivityIndicator(false)
+                    
+                    guard let index = indexPath else {
+                        return
+                    }
+                    
+                    if self.isUserMode {
+                        self.userTempAcceptedTasks.remove(at: index)
+                        self.userAcceptedTasks = self.userTempAcceptedTasks
+                        if self.userAcceptedTasks.count == 0 {
+                            self.showNoResultsFoundView()
+                            return
+                        }
+                    } else {
+                        self.jugglerTempAcceptedTasks.remove(at: index)
+                        self.jugglerAcceptedTasks = self.jugglerTempAcceptedTasks
+                        if self.jugglerAcceptedTasks.count == 0 {
+                            self.showNoResultsFoundView()
+                            return
+                        }
+                    }
+                    
+                    self.removeNoResultsView()
+                }
+            }
+        }
+    }
+    
+    func cancelOrShowDetails(forTask task: Task?, taskPartner: User?, indexPath: Int?) {
         guard let task = task, let taskPartner = taskPartner else {
             return
         }
@@ -576,8 +659,17 @@ extension DashboardVC: AssignedTaskCellDelegate {
             self.present(taskDetailsVC, animated: true, completion: nil)
             return
         }
-        print("Cancel acceptance of Task")
-        // Cancel Acceptance of task
+        
+        let cancelarAlert = UIAlertController(title: "¿Seguro?", message: "Su tarea volverá a la sección pendiente.", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "No Atrás", style: .cancel, handler: nil)
+        let cancelarAction = UIAlertAction(title: "Si Cancelar", style: .default) { (_) in
+            self.cancelTaskAcceptance(forTask: task, taskPartner: taskPartner, indexPath: indexPath)
+        }
+        
+        cancelarAlert.addAction(cancelAction)
+        cancelarAlert.addAction(cancelarAction)
+        
+        self.present(cancelarAlert, animated: true, completion: nil)
     }
     
     func completeOrReviewTask(task: Task?, taskPartner: User?, index: Int?) {
@@ -596,8 +688,8 @@ extension DashboardVC: AssignedTaskCellDelegate {
             
             let completeAlert = UIAlertController(title: "¿Seguro?", message: "Esta tarea se marcará como completada indefinidamente.", preferredStyle: .alert)
             
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
-            let completarAction = UIAlertAction(title: "Completar", style: .default) { (_) in
+            let cancelAction = UIAlertAction(title: "No Cancelar", style: .cancel, handler: nil)
+            let completarAction = UIAlertAction(title: "Si Completar", style: .default) { (_) in
                 self.completeTask(forTask: task, taskPartner: taskPartner, currentUserId: currentUserId, acceptedIndex: index)
             }
             
