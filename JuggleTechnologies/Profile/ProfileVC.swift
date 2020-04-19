@@ -40,6 +40,8 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             collectionView.refreshControl?.endRefreshing()
             collectionView.reloadData()
             
+            self.navigationItem.title = user.firstName
+            
             self.didFetchUserTasks = false
             self.didFetchJugglerTasks = false
             self.userTasksPostedCount = 0
@@ -78,7 +80,13 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             if self.isUserMode {
                 self.userTasksPostedCount = filteredTasks.count
             } else {
-                self.jugglerCompletedTasksCount = filteredTasks.count
+                var completedTasksCount = 0
+                filteredTasks.forEach { (_, value) in
+                    if let status = value[Constants.FirebaseDatabase.taskStatus] as? Int, status == 2 {
+                        completedTasksCount += 1
+                    }
+                }
+                self.jugglerCompletedTasksCount = completedTasksCount
             }
             
             self.collectionView.reloadData()
@@ -151,7 +159,7 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         
         collectionView.backgroundColor = .white
         collectionView?.alwaysBounceVertical = true
-        navigationController?.navigationBar.tintColor = .black
+        navigationController?.navigationBar.tintColor = .darkText
         
         //Register the CollectionViewCells
         collectionView.register(UserProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.CollectionViewCellIds.userProfileHeaderCell)
@@ -208,7 +216,6 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             }
             
             self.user = user
-            self.navigationItem.title = user.firstName
         }
     }
     

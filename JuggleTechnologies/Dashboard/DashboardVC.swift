@@ -458,6 +458,40 @@ class DashboardVC: UICollectionViewController, UICollectionViewDelegateFlowLayou
                     self.navigationController?.pushViewController(dashboardChatlogVC, animated: true)
                 }
             }
+        } else if self.filterOptionsValue == 4 {
+            let likedTaskId = orderedLikedTasksCache[indexPath.item].key
+            
+            self.animateAndShowActivityIndicator(true)
+            
+            let tasksRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(likedTaskId)
+            tasksRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                
+                self.animateAndShowActivityIndicator(false)
+                
+                guard let taskDictionary = snapshot.value as? [String : Any] else {
+                    return
+                }
+                
+                let task = Task(id: snapshot.key, dictionary: taskDictionary)
+                
+                if task.status != 0 {
+                    let alert = UIView.okayAlert(title: "Esta tarea ya esta \(task.status == 1 ? "aceptada" : "completada") por otro Juggler", message: "")
+                    DispatchQueue.main.async {
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                    return
+                }
+                
+                let taskInteractionVC = TaskInteractionVC(collectionViewLayout: UICollectionViewFlowLayout())
+                taskInteractionVC.chatPartner = userCache[task.userId]
+                taskInteractionVC.task = task
+                self.navigationController?.pushViewController(taskInteractionVC, animated: true)
+                
+            }) { (error) in
+                print("Error fetching liked task: \(error)")
+                self.animateAndShowActivityIndicator(false)
+            }
+            
         }
     }
     
@@ -656,7 +690,8 @@ extension DashboardVC: AssignedTaskCellDelegate {
                     taskDetailsVC.user = user
                 }
             }
-            self.present(taskDetailsVC, animated: true, completion: nil)
+            let taskDetailsNavVC = UINavigationController(rootViewController: taskDetailsVC)
+            self.present(taskDetailsNavVC, animated: true, completion: nil)
             return
         }
         

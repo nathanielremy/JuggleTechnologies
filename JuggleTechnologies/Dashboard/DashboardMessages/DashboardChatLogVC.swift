@@ -65,7 +65,9 @@ class DashboardChatLogVC: UICollectionViewController, UICollectionViewDelegateFl
                 taskDetailsVC.user = user
             }
         }
-        self.present(taskDetailsVC, animated: true, completion: nil)
+        
+        let taskDetailsNavVC = UINavigationController(rootViewController: taskDetailsVC)
+        self.present(taskDetailsNavVC, animated: true, completion: nil)
     }
     
     //MARK: Views

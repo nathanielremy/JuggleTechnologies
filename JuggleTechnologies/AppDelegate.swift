@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,8 +17,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         FirebaseApp.configure()
+        attemptRegisterForAPNS(withApplication: application)
         
         return true
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("Successfully registered for APNS!")
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for APNS: \(error.localizedDescription)")
+    }
+    
+    fileprivate func attemptRegisterForAPNS(withApplication application: UIApplication) {
+        
+        // User push notification authorization
+        let options: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { (success, err) in
+            if let error = err {
+                print("Request for push notification auth rejected: \(error)")
+                return
+            }
+            
+            print(success ? "APNS success" : "APNS fail")
+        }
+        
+        application.registerForRemoteNotifications()
     }
 
     // MARK: UISceneSession Lifecycle
