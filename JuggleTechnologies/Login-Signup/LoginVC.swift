@@ -53,7 +53,7 @@ class LoginVC: UIViewController {
     
     lazy var emailTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Email"
+        tf.placeholder = "Correo Electrónico"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = UIColor.darkText
@@ -65,7 +65,7 @@ class LoginVC: UIViewController {
     
     lazy var passwordTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Password (atleast 6 characters)"
+        tf.placeholder = "Contraseña"
         tf.isSecureTextEntry = true
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
@@ -91,7 +91,7 @@ class LoginVC: UIViewController {
     
     let loginButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Log in", for: .normal)
+        button.setTitle("Iniciar Sesión", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.tintColor = .white
         button.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.3)
@@ -163,8 +163,8 @@ class LoginVC: UIViewController {
     let switchToSignupButton: UIButton = {
         let button = UIButton(type: .system)
 
-        let attributedTitle = NSMutableAttributedString(string: "Don't have an account?  ", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.lightGray])
-        attributedTitle.append(NSAttributedString(string: "Sign up.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.mainBlue()]))
+        let attributedTitle = NSMutableAttributedString(string: "No tienes cuenta?  ", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.lightGray])
+        attributedTitle.append(NSAttributedString(string: "Regístrate.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.mainBlue()]))
 
         button.setAttributedTitle(attributedTitle, for: .normal)
         button.addTarget(self, action: #selector(handleSwitchToSignup), for: .touchUpInside)

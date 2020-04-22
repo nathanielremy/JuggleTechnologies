@@ -69,7 +69,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     
     lazy var firstNameTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "First Name"
+        tf.placeholder = "Nombre"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = UIColor.darkText
@@ -81,7 +81,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     
     lazy var lastNameTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Last Name"
+        tf.placeholder = "Apellido"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = UIColor.darkText
@@ -93,7 +93,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     
     lazy var emailTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Email Address"
+        tf.placeholder = "Correo Electrónico"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = UIColor.darkText
@@ -106,7 +106,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     lazy var passwordOneTextField: UITextField = {
         let tf = UITextField()
         tf.isSecureTextEntry = true
-        tf.placeholder = "Password (atleast 6 characters)"
+        tf.placeholder = "Contraseña (mínimo 6 caracteres)"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = UIColor.darkText
@@ -119,7 +119,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     lazy var passwordTwoTextField: UITextField = {
         let tf = UITextField()
         tf.isSecureTextEntry = true
-        tf.placeholder = "Re-enter Password"
+        tf.placeholder = "Misma Contraseña"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.tintColor = UIColor.darkText
@@ -156,8 +156,8 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         let button = UIButton(type: .system)
         button.backgroundColor = .clear
         
-        var attributedText = NSMutableAttributedString(string: "Accept ", attributes: [.foregroundColor : UIColor.lightGray])
-        attributedText.append(NSAttributedString(string: "Terms and Conditions", attributes: [.foregroundColor : UIColor.mainBlue()]))
+        var attributedText = NSMutableAttributedString(string: "Aceptar ", attributes: [.foregroundColor : UIColor.lightGray])
+        attributedText.append(NSAttributedString(string: "Terms & Conditions", attributes: [.foregroundColor : UIColor.mainBlue()]))
         
         button.setAttributedTitle(attributedText, for: .normal)
         button.addTarget(self, action: #selector(handleTermsAndConditions), for: .touchUpInside)
@@ -183,7 +183,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     
     let signUpButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Sign up", for: .normal)
+        button.setTitle("Registrar", for: .normal)
         button.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.3)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 5
@@ -382,8 +382,8 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     let switchToLoginButton: UIButton = {
         let button = UIButton(type: .system)
         
-        let attributedTitle = NSMutableAttributedString(string: "Already have an account?  ", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.lightGray])
-        attributedTitle.append(NSAttributedString(string: "Log in.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.mainBlue()]))
+        let attributedTitle = NSMutableAttributedString(string: "Ya tengo una cuenta? ", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.lightGray])
+        attributedTitle.append(NSAttributedString(string: "Iniciar Sesión.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.mainBlue()]))
         
         button.setAttributedTitle(attributedTitle, for: .normal)
         button.addTarget(self, action: #selector(handleSwitchToLogin), for: .touchUpInside)

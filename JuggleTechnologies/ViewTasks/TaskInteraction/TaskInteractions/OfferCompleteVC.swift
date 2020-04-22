@@ -28,7 +28,21 @@ class OfferCompleteVC: UIViewController {
             attributedText.append(NSAttributedString(string: "\n\nEsta Enviada!", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
             
             detailsLabel.attributedText = attributedText
+            
+            setupNextStepsLabel()
         }
+    }
+    
+    fileprivate func setupNextStepsLabel() {
+        let attributedText = NSMutableAttributedString(string: "• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText])
+        attributedText.append(NSAttributedString(string: "Puedes ver tu oferta en la sección \"Mis Tareas\" -> Modo Juggler -> \"Pendiente\".", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
+        
+        attributedText.append(NSMutableAttributedString(string: "\n\n• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText]))
+        attributedText.append(NSAttributedString(string: "Desde esta sección, puedes enviar mensajes, modificar su oferta y cualquier otra interacción que desee.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSMutableAttributedString(string: "\n\n• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText]))
+        attributedText.append(NSAttributedString(string: "Cuando tu oferta es aceptada, la tarea sera visible en la sección \"Mis Tareas\" -> Modo Juggler -> \"Aceptada\".", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
+        
+        nextStepsDetailsLabel.attributedText = attributedText
     }
 
     let congratulationsLabel: UILabel = {
@@ -46,6 +60,24 @@ class OfferCompleteVC: UIViewController {
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textColor = .gray
+        label.textAlignment = .left
+        
+        return label
+    }()
+    
+    let nextStepsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Próximos pasos y consejos"
+        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.textColor = .darkText
+        label.textAlignment = .center
+        
+        return label
+    }()
+    
+    let nextStepsDetailsLabel: UILabel =  {
+        let label = UILabel()
+        label.numberOfLines = 0
         label.textAlignment = .left
         
         return label
@@ -79,10 +111,16 @@ class OfferCompleteVC: UIViewController {
         congratulationsLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 30, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 30)
         
         view.addSubview(detailsLabel)
-        detailsLabel.anchor(top: congratulationsLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 50, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+        detailsLabel.anchor(top: congratulationsLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 30, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+        
+        view.addSubview(nextStepsLabel)
+        nextStepsLabel.anchor(top: detailsLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 50, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
+        
+        view.addSubview(nextStepsDetailsLabel)
+        nextStepsDetailsLabel.anchor(top: nextStepsLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 30, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: nil)
         
         view.addSubview(doneButton)
-        doneButton.anchor(top: detailsLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 50, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
+        doneButton.anchor(top: nextStepsDetailsLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 30, paddingLeft: 20, paddingBottom: 0, paddingRight: -20, width: nil, height: 50)
         doneButton.layer.cornerRadius = 5
     }
 }
