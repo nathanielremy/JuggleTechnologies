@@ -35,12 +35,12 @@ class OfferCompleteVC: UIViewController {
     
     fileprivate func setupNextStepsLabel() {
         let attributedText = NSMutableAttributedString(string: "• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText])
-        attributedText.append(NSAttributedString(string: "Puedes ver tu oferta en la sección \"Mis Tareas\" -> Modo Juggler -> \"Pendiente\".", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSAttributedString(string: "Puedes ver tu oferta en la sección \"Mis Tareas\" -> Modo Juggler -> \"Pendiente\".", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
         
         attributedText.append(NSMutableAttributedString(string: "\n\n• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText]))
-        attributedText.append(NSAttributedString(string: "Desde esta sección, puedes enviar mensajes, modificar su oferta y cualquier otra interacción que desee.", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSAttributedString(string: "Desde esta sección, puedes enviar mensajes, modificar su oferta y cualquier otra interacción que desee.", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
         attributedText.append(NSMutableAttributedString(string: "\n\n• ", attributes: [.font : UIFont.boldSystemFont(ofSize: 16), .foregroundColor : UIColor.darkText]))
-        attributedText.append(NSAttributedString(string: "Cuando tu oferta es aceptada, la tarea sera visible en la sección \"Mis Tareas\" -> Modo Juggler -> \"Aceptada\".", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
+        attributedText.append(NSAttributedString(string: "Cuando su oferta es aceptada, la tarea sera visible en la sección \"Mis Tareas\" -> Modo Juggler -> \"Aceptada\".", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor : UIColor.gray]))
         
         nextStepsDetailsLabel.attributedText = attributedText
     }
@@ -102,6 +102,10 @@ class OfferCompleteVC: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        navigationItem.hidesBackButton = true
+        navigationItem.title = "Oferta Enviada"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "¡Listo!", style: .done, target: self, action: #selector(handleDoneButton))
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.mainBlue()
         
         setupViews()
     }

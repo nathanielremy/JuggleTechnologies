@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0089DE7B803C98559A4C8D9FF604A3AB"
+               BlueprintIdentifier = "8E2928904A8DE28B25BC2DA697DE5F35"
                BuildableName = "Pods_JuggleTechnologies.framework"
                BlueprintName = "Pods-JuggleTechnologies"
                ReferencedContainer = "container:Pods.xcodeproj">
