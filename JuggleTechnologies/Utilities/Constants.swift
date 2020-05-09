@@ -24,6 +24,7 @@ class Constants {
         static let isJuggler = "isJuggler"
         static let hasAppliedForJuggler = "hasAppliedForJuggler"
         static let description = "description"
+        static let fcmToken = "fcmToken"
         
         static let creationDate = "creationDate"
         static let acceptedDate = "acceptedDate"

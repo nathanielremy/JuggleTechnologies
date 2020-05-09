@@ -126,7 +126,7 @@
 		44F6F6A02410EA580063CAC4 /* JuggleAppReviewsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleAppReviewsVC.swift; sourceTree = "<group>"; };
 		44FB732023D36BEC000B8987 /* LoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		44FB732323D36C13000B8987 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		44FB732523D36CAA000B8987 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		44FB732523D36CAA000B8987 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		44FB732823D36D96000B8987 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		44FB732A23D37427000B8987 /* SignupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupVC.swift; sourceTree = "<group>"; };
 		44FB732C23D37460000B8987 /* TermsAndConditionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsVC.swift; sourceTree = "<group>"; };

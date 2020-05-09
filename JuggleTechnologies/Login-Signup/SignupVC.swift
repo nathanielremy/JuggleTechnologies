@@ -263,7 +263,7 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                 return
             }
             
-            guard let user = newUser?.user else {
+            guard let user = newUser?.user, let fcmToken = Messaging.messaging().fcmToken else {
                 DispatchQueue.main.async {
                     self.disableAndAnimate(false)
                 }
@@ -314,7 +314,8 @@ class SignupVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                         Constants.FirebaseDatabase.lastName : textFields.lastName,
                         Constants.FirebaseDatabase.profileImageURLString : profileImageURLString,
                         Constants.FirebaseDatabase.isJuggler : 0,
-                        Constants.FirebaseDatabase.creationDate : Date().timeIntervalSince1970
+                        Constants.FirebaseDatabase.creationDate : Date().timeIntervalSince1970,
+                        Constants.FirebaseDatabase.fcmToken : fcmToken
                     ]
                     
                     let values = [user.uid : userValues]

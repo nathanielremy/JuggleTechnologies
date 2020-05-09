@@ -10,6 +10,41 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send('Hello from Juggle!');
 });
 
+exports.observeReview = functions.database.ref('/reviews/{uid}/{reviewId}')
+  .onCreate((snapshot, context) => {
+    var uid = context.params.uid;
+    var review = snapshot.val();
+
+    return admin.database().ref('/users/' + uid).once('value', snapshot => {
+
+      var user = snapshot.val();
+
+      console.log('User: ' + user.firstName);
+
+      var message = {
+        notification : {
+          title : 'Nueva reseña de ' + review.rating + ' estrellas!!'
+        },
+        data : {
+          score : '850',
+          time : '2:45'
+        },
+        token : user.fcmToken
+      };
+
+      // Send a message to the device corresponding to the provided
+      // registration token.
+      admin.messaging().send(message)
+        .then((res) => {
+          // Response is a message ID string.
+          console.log('Successfully sent message:', res);
+          return
+        })
+        .catch((error) => {
+          console.log('Error sending message:', error);
+        });
+    });
+});
 
 // //This fucntion sends test push notifications to Remy's iPhone 8
 exports.sendTestPushNotification = functions.https.onRequest((req, res) => {
