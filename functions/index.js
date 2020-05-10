@@ -6,28 +6,27 @@ admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  response.send('Hello from Juggle!');
-});
 
-exports.observeReview = functions.database.ref('/reviews/{uid}/{reviewId}')
+exports.observeOffer = functions.database.ref('/taskOffers/{taskId}/{userId}')
   .onCreate((snapshot, context) => {
-    var uid = context.params.uid;
-    var review = snapshot.val();
+    var userId = context.params.userId;
+    var taskId = context.params.taskId;
 
-    return admin.database().ref('/users/' + uid).once('value', snapshot => {
+    var offer = snapshot.val();
+    console.log(offer.offerPrice);
 
+    return admin.database().ref('/users/' + offer.taskOwnerUserId).once('value', snapshot => {
       var user = snapshot.val();
 
-      console.log('User: ' + user.firstName);
+      console.log(user.firstName);
 
       var message = {
         notification : {
-          title : 'Nueva reseña de ' + review.rating + ' estrellas!!'
+          title : 'Tienes una nueva oferta de €' + offer.offerPrice + '!!'
         },
         data : {
-          score : '850',
-          time : '2:45'
+          notificationType : 'offer',
+          taskId : taskId
         },
         token : user.fcmToken
       };
@@ -39,8 +38,39 @@ exports.observeReview = functions.database.ref('/reviews/{uid}/{reviewId}')
           // Response is a message ID string.
           console.log('Successfully sent message:', res);
           return
-        })
-        .catch((error) => {
+        }).catch((error) => {
+          console.log('Error sending message:', error);
+        });
+     });
+  });
+
+exports.observeReview = functions.database.ref('/reviews/{userId}/{reviewId}')
+  .onCreate((snapshot, context) => {
+    var userId = context.params.userId;
+    var review = snapshot.val();
+
+    return admin.database().ref('/users/' + userId).once('value', snapshot => {
+      var user = snapshot.val();
+
+      var message = {
+        notification : {
+          title : 'Tienes una nueva reseña de ' + review.rating + ' estrellas!!'
+        },
+        data : {
+          notificationType : 'review',
+          isFromUserPerspective : review.isFromUserPerspective === true ? 'true' : 'false'
+        },
+        token : user.fcmToken
+      };
+
+      // Send a message to the device corresponding to the provided
+      // registration token.
+      admin.messaging().send(message)
+        .then((res) => {
+          // Response is a message ID string.
+          console.log('Successfully sent message:', res);
+          return
+        }).catch((error) => {
           console.log('Error sending message:', error);
         });
     });
@@ -54,7 +84,7 @@ exports.sendTestPushNotification = functions.https.onRequest((req, res) => {
   var message = {
     notification : {
       title : 'My name is Leo',
-      body : 'Open to see my dick'
+      body : 'Open to see my 😂'
     },
     data : {
       score : '850',

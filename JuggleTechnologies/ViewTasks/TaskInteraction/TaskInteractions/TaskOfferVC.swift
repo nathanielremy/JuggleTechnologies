@@ -215,6 +215,7 @@ class TaskOfferVC: UIViewController {
         offerValues[Constants.FirebaseDatabase.isOfferAccepted] = false
         offerValues[Constants.FirebaseDatabase.isOfferRejected] = false
         offerValues[Constants.FirebaseDatabase.taskId] = task.id
+        offerValues[Constants.FirebaseDatabase.taskOwnerUserId] = task.userId
         offerValues[Constants.FirebaseDatabase.offerOwnerId] = currentUserId
         
         return offerValues
