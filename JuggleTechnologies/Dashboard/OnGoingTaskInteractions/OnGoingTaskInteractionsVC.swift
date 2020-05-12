@@ -482,7 +482,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
     func handleAcceptOffer(_ offer: Offer?, offerOwner: User?) {
         self.animateAndShowActivityIndicator(true)
         
-        guard let offer = offer, let index = self.dashboardVCTaskIndex, let offerOwner = offerOwner, let task = self.task else {
+        guard let offer = offer, let offerOwner = offerOwner, let task = self.task else {
             print("Error accepting offer")
             let alert = UIView.okayAlert(title: "No se Puede Acceptar Esta Oferta", message: "Sal e intente nuevamente")
             self.present(alert, animated: true, completion: nil)
@@ -495,14 +495,6 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
             self.animateAndShowActivityIndicator(false)
         }
         let acceptAction = UIAlertAction(title: "Aceptar", style: .default) { (_) in
-            if self.dashboardVC == nil {
-                print("self.dashboardVC == nil")
-                let alert = UIView.okayAlert(title: "No se Puede Acceptar Esta Oferta", message: "Sal e intente nuevamente")
-                self.present(alert, animated: true, completion: nil)
-                self.animateAndShowActivityIndicator(false)
-                return
-            }
-            
             let acceptedDate = Date().timeIntervalSince1970
             let tasksRefValues: [String : Any] = [
                 Constants.FirebaseDatabase.acceptedDate : acceptedDate,
@@ -551,7 +543,7 @@ extension OnGoingTaskInteractionsVC: OnGoingTaskOfferCellDelegate {
                             return
                         }
                         
-                        self.dashboardVC?.acceptedIndex = index
+                        self.dashboardVC?.acceptedIndex = self.dashboardVCTaskIndex
                         self.navigationController?.popViewController(animated: true)
                     }
                 }

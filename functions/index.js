@@ -7,6 +7,77 @@ admin.initializeApp();
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
 
+exports.observeMessage = functions.database.ref('/messages/{messageId}')
+  .onCreate((snapshot, context) => {
+    var userMessage = snapshot.val();
+
+    return admin.database().ref('/users/' + userMessage.toUserId).once('value', snapshot1 => {
+      var toUser = snapshot1.val();
+
+      return admin.database().ref('/users/' + userMessage.fromUserId).once('value', snapshot2 => {
+        var fromUser = snapshot2.val();
+
+        var message = {
+          notification : {
+            title : 'Mensaje de ' + fromUser.firstName + ' ' + fromUser.lastName + ':',
+            body : userMessage.text
+          },
+          data : {
+            notificationType : 'message'
+          },
+          token : toUser.fcmToken
+        };
+
+        // Send a message to the device corresponding to the provided
+        // registration token.
+        admin.messaging().send(message)
+          .then((res) => {
+            // Response is a message ID string.
+            console.log('Successfully sent message:', res);
+            return
+         }).catch((error) => {
+            console.log('Error sending message:', error);
+         });
+      });
+    });
+});
+
+exports.observeOffer = functions.database.ref('/taskOffers/{taskId}/{userId}')
+  .onCreate((snapshot, context) => {
+    var userId = context.params.userId;
+    var taskId = context.params.taskId;
+
+    var offer = snapshot.val();
+
+    console.log('OFFEer: ' + offer.offerPrice);
+
+    return admin.database().ref('/users/' + offer.taskOwnerUserId).once('value', snapshot => {
+      var user = snapshot.val();
+
+      var message = {
+        notification : {
+          title : 'Tienes una nueva oferta de €' + offer.offerPrice + '!!'
+        },
+        data : {
+          notificationType : 'offer',
+          taskId : taskId
+        },
+        token : user.fcmToken
+      };
+
+      // Send a message to the device corresponding to the provided
+      // registration token.
+      admin.messaging().send(message)
+        .then((res) => {
+          // Response is a message ID string.
+          console.log('Successfully sent message:', res);
+          return
+       }).catch((error) => {
+          console.log('Error sending message:', error);
+       });
+    });
+});
+
 exports.observeJugglerTaskStatus = functions.database.ref('/jugglerTasks/{userId}/{taskId}/taskStatus')
  .onWrite((snapshot, context) => {
     var userId = context.params.userId;
@@ -43,40 +114,6 @@ exports.observeJugglerTaskStatus = functions.database.ref('/jugglerTasks/{userId
           console.log('Error sending message:', error);
         });
      });
-});
-
-exports.observeOffer = functions.database.ref('/taskOffers/{taskId}/{userId}')
-  .onCreate((snapshot, context) => {
-    var userId = context.params.userId;
-    var taskId = context.params.taskId;
-
-    var offer = snapshot.val();
-
-    return admin.database().ref('/users/' + offer.taskOwnerUserId).once('value', snapshot => {
-      var user = snapshot.val();
-
-      var message = {
-        notification : {
-          title : 'Tienes una nueva oferta de €' + offer.offerPrice + '!!'
-        },
-        data : {
-          notificationType : 'offer',
-          taskId : taskId
-        },
-        token : user.fcmToken
-      };
-
-      // Send a message to the device corresponding to the provided
-      // registration token.
-      admin.messaging().send(message)
-        .then((res) => {
-          // Response is a message ID string.
-          console.log('Successfully sent message:', res);
-          return
-       }).catch((error) => {
-          console.log('Error sending message:', error);
-       });
-    });
 });
 
 exports.observeReview = functions.database.ref('/reviews/{userId}/{reviewId}')
