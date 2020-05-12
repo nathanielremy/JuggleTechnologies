@@ -63,7 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUser
         }
         
         if type == "review" {
-            // Sow user reviews
+            // Show user reviews
             guard let isFromUserPerspective = userInfo["isFromUserPerspective"] as? String else {
                 return
             }
@@ -74,6 +74,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUser
                 return
             }
             showOffer(forTaskId: taskId)
+        } else if type == "offerAcceptance" {
+            guard let mainTabBarController = SceneDelegate.window?.rootViewController as? MainTabBarController else {
+                return
+            }
+            
+            mainTabBarController.selectedIndex = 3
+            return
         }
     }
     
