@@ -30,6 +30,20 @@ class ReviewProfileVC: UIViewController {
         }
     }
     
+    var userId: String? {
+        didSet {
+            guard let uid = self.userId else {
+                return
+            }
+            
+            Database.fetchUserFromUserID(userId: uid) { (usr) in
+                if let taskPartner = usr {
+                    self.user = taskPartner
+                }
+            }
+        }
+    }
+    
     let activityIndicator: UIActivityIndicatorView = {
         let ai = UIActivityIndicatorView()
         ai.hidesWhenStopped = true

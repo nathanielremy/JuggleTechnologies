@@ -31,7 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUser
     }
     
     fileprivate func attemptRegisterForAPNS(withApplication application: UIApplication) {
-        
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
         
@@ -80,6 +79,102 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUser
             }
             
             mainTabBarController.selectedIndex = 3
+            return
+        } else if type == "message" {
+            guard let toUserId = userInfo["toUserId"] as? String, let fromUserId = userInfo["fromUserId"] as? String, let taskId = userInfo["taskId"] as? String else {
+                return
+            }
+            
+            showMessageLog(forTaskId: taskId, toUserId: toUserId, fromUserId: fromUserId)
+            return
+        } else if type == "taskCompletion" {
+            guard let taskId = userInfo["taskId"] as? String else {
+                return
+            }
+            
+            showReviewProfileVC(forTaskId: taskId)
+        }
+    }
+    
+    fileprivate func showReviewProfileVC(forTaskId taskId: String) {
+        print("TaskId: \(taskId)")
+        let taskRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(taskId)
+        taskRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            guard let dictionary = snapshot.value as? [String : Any] else {
+                return
+            }
+            
+            let task = Task(id: snapshot.key, dictionary: dictionary)
+            
+            let reviewProfileVC = ReviewProfileVC()
+            reviewProfileVC.task = task
+            reviewProfileVC.userId = task.assignedJugglerId
+            
+            guard let mainTabBarController = SceneDelegate.window?.rootViewController as? MainTabBarController, let viewTasksNavVC = mainTabBarController.viewControllers?.first as? UINavigationController else {
+                return
+            }
+            
+            mainTabBarController.selectedIndex = 0
+            viewTasksNavVC.present(UINavigationController(rootViewController: reviewProfileVC), animated: true)
+        }) { (error) in
+            print("AppDelegate completedTask fetchTaskError: \(error)")
+            return
+        }
+    }
+    
+    fileprivate func showMessageLog(forTaskId taskId: String, toUserId: String, fromUserId: String) {
+        var fetchedTask: Task? {
+            didSet {
+                guard let task = fetchedTask, let currentUserId = Auth.auth().currentUser?.uid else {
+                    return
+                }
+                
+                if task.status == 1 {
+                    Database.fetchUserFromUserID(userId: currentUserId == toUserId ? fromUserId : toUserId) { (user) in
+                        guard let chatPartner = user else {
+                            return
+                        }
+                        
+                        let dashboardChatlogVC = DashboardChatLogVC(collectionViewLayout: UICollectionViewFlowLayout())
+                        dashboardChatlogVC.chatPartner = chatPartner
+                        dashboardChatlogVC.task = task
+                        self.presentVC(vc: dashboardChatlogVC)
+                        
+                        return
+                    }
+                } else if currentUserId == task.userId {
+                    if task.status == 0 {
+                        let onGoingTaskInteractionsVC = OnGoingTaskInteractionsVC(collectionViewLayout: UICollectionViewFlowLayout())
+                        onGoingTaskInteractionsVC.task = task
+                        self.presentVC(vc: onGoingTaskInteractionsVC)
+                    }
+                } else {
+                    Database.fetchUserFromUserID(userId: currentUserId == toUserId ? fromUserId : toUserId) { (user) in
+                        guard let chatPartner = user else {
+                            return
+                        }
+                        
+                        let taskInteractionVC = TaskInteractionVC(collectionViewLayout: UICollectionViewFlowLayout())
+                        taskInteractionVC.chatPartner = chatPartner
+                        taskInteractionVC.task = task
+                        self.presentVC(vc: taskInteractionVC)
+                    }
+                }
+            }
+        }
+        
+        let taskRef = Database.database().reference().child(Constants.FirebaseDatabase.tasksRef).child(taskId)
+        taskRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let dictionary = snapshot.value as? [String : Any] else {
+                return
+            }
+            
+            let task = Task(id: snapshot.key, dictionary: dictionary)
+            fetchedTask = task
+            return
+        }) { (error) in
+            print("AppDelegate fetchTaskError: \(error)")
             return
         }
     }

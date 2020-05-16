@@ -51,7 +51,7 @@ class OnGoingTaskCell: UICollectionViewCell {
                 self.task = task
                 
             }) { (error) in
-                print(error)
+                print("OnGoingTaskCell fetchTaskError: \(error)")
                 return
             }
         }
