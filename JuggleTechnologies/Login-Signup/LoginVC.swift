@@ -31,16 +31,16 @@ class LoginVC: UIViewController {
     let logoContainerView: UIView = {
         let view = UIView()
         
-        let logoImage = UIImageView(image: #imageLiteral(resourceName: "SigninLogo").withRenderingMode(.alwaysOriginal))
-        logoImage.clipsToBounds = true
-        logoImage.contentMode = .scaleToFill
+        let logoLabel = UILabel()
+        logoLabel.textAlignment = .center
+        logoLabel.textColor = UIColor.mainBlue()
+        logoLabel.font = UIFont.boldSystemFont(ofSize: 60)
+        logoLabel.text = "Juggle"
         
-        logoImage.backgroundColor = .red
-        
-        view.addSubview(logoImage)
-        logoImage.anchor(top: view.topAnchor, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 35, paddingBottom: 0, paddingRight: -35, width: 200, height: nil)
-        logoImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        logoImage.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        view.addSubview(logoLabel)
+        logoLabel.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        logoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        logoLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
         let seperatorView = UIView()
         seperatorView.backgroundColor = .lightGray
