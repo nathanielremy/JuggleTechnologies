@@ -26,7 +26,7 @@ class UserSelfDescriptionCell: UICollectionViewCell {
             userDescriptionTextView.text = user.description != "" ? user.description : "No hay descripción"
             
             if user.userId == Auth.auth().currentUser?.uid {
-                userDescriptionLabel.text = "Descripción de mi mismo"
+                userDescriptionLabel.text = "Mi descripción"
                 addEditButtonToView()
             } else {
                 userDescriptionLabel.text = "Descripción de \(user.firstName) \(user.lastName)"

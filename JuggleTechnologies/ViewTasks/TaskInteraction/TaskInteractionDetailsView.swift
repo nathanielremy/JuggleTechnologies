@@ -202,7 +202,7 @@ class TaskInteractionDetailsView: UIView {
         button.setTitle("Más detalles", for: .normal)
         button.titleLabel?.textAlignment = .center
         button.tintColor = UIColor.mainBlue()
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
         button.addTarget(self, action: #selector(handleMoreDetailsButton), for: .touchUpInside)
         
         return button

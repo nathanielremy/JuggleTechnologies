@@ -27,6 +27,22 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     
     var didFetchReviews: Bool = false
     
+    let profileSettingsView = ProfileSettingsView()
+    var isProfileSettingsViewPresent = false
+    
+    lazy var profileSettingsBlurrViewButton: UIButton = {
+        let  button = UIButton()
+        button.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        button.addTarget(self, action: #selector(handleProfileSettingsBlurrViewButton), for: .touchUpInside)
+        return button
+    }()
+    
+    @objc fileprivate func handleProfileSettingsBlurrViewButton() {
+        profileSettingsBlurrViewButton.removeFromSuperview()
+        profileSettingsView.removeFromSuperview()
+        isProfileSettingsViewPresent = false
+    }
+    
     var user: User? {
         didSet {
             guard let user = self.user else {
@@ -220,25 +236,26 @@ class ProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     }
     
     @objc fileprivate func handleSettingsBarButton() {
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alertController.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { (_) in
-            do {
-                try Auth.auth().signOut()
-                
-                let loginVC = LoginVC()
-                let signupNavController = UINavigationController(rootViewController: loginVC)
-                signupNavController.modalPresentationStyle = .fullScreen
-                
-                self.present(signupNavController, animated: true, completion: nil)
-                
-            } catch let signOutError {
-                print("Unable to sign out: \(signOutError)")
-                let alert = UIView.okayAlert(title: "Unable to Log out", message: "You are unnable to log out at this moment.")
-                self.present(alert, animated: true, completion: nil)
-            }
-        }))
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        present(alertController, animated: true, completion: nil)
+        guard Auth.auth().currentUser?.uid == self.user?.userId else {
+            return
+        }
+        
+        if self.isProfileSettingsViewPresent {
+            self.profileSettingsView.removeFromSuperview()
+            self.profileSettingsBlurrViewButton.removeFromSuperview()
+            self.isProfileSettingsViewPresent = false
+            
+            return
+        }
+        
+        view.addSubview(profileSettingsBlurrViewButton)
+        profileSettingsBlurrViewButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+        
+        view.addSubview(profileSettingsView)
+        profileSettingsView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: view.frame.width * 0.66, height: 265)
+        
+        isProfileSettingsViewPresent = true
+        profileSettingsView.delegate = self
     }
     
     //MARK: UserProfileHeaderCell Methods
@@ -386,6 +403,25 @@ extension ProfileVC: UserProfileHeaderCellDelegate {
         
         return
     }
+    
+    func handleProfileImageView() {
+        let alert = UIAlertController(title: "¿Quieres cambiar tu foto de perfil?", message: "", preferredStyle: .alert)
+        let yesAction = UIAlertAction(title: "¡Si!", style: .default) { (_) in
+            
+            let imagePickerController = UIImagePickerController()
+            imagePickerController.allowsEditing = true
+            imagePickerController.delegate = self
+            self.present(imagePickerController, animated: true, completion: nil)
+            
+            return
+        }
+        let cancelAction =  UIAlertAction(title: "Cancelar", style: .default, handler: nil)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(yesAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 
 extension ProfileVC: UserProfileStatisticsCellDelegate {
@@ -393,5 +429,80 @@ extension ProfileVC: UserProfileStatisticsCellDelegate {
         let userReviewsVC = UserReviewsVC(collectionViewLayout: UICollectionViewFlowLayout())
         userReviewsVC.reviews = self.isUserMode ? self.userReviews : self.jugglerReviews
         self.navigationController?.pushViewController(userReviewsVC, animated: true)
+    }
+}
+
+extension ProfileVC: ProfileSettingsViewDelegete {
+    func handleSettingsOption(option: Int) {
+        if option == 0 { //Become a Juggler
+            
+            guard let isJuggler = self.user?.isJuggler, !isJuggler else {
+                
+                let okayAlert = UIView.okayAlert(title: "¡Felicidades! Ya eres Juggler", message: "")
+                self.present(okayAlert, animated: true, completion: nil)
+                return
+            }
+            
+            let jugglerApplicationStepsNavVC = UINavigationController(rootViewController: JugglerApplicationStepsVC())
+            jugglerApplicationStepsNavVC.modalPresentationStyle = .fullScreen
+            
+            self.present(jugglerApplicationStepsNavVC, animated: true, completion: nil)
+            
+        } else if option == 1 { //Terms and Consitions
+            
+            let termsAndConditionsVC = TermsAndConditionsVC()
+            let navigationController = UINavigationController(rootViewController: termsAndConditionsVC)
+            self.present(navigationController, animated: true, completion: nil)
+            
+        } else if option == 2 { //Logout
+            
+            let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            alertController.addAction(UIAlertAction(title: "Cerrar Sesión", style: .destructive, handler: { (_) in
+                do {
+                    try Auth.auth().signOut()
+    
+                    let loginVC = LoginVC()
+                    let signupNavController = UINavigationController(rootViewController: loginVC)
+                    signupNavController.modalPresentationStyle = .fullScreen
+    
+                    self.present(signupNavController, animated: true, completion: nil)
+    
+                } catch let signOutError {
+                    print("Unable to sign out: \(signOutError)")
+                    let alert = UIView.okayAlert(title: "Unable to Log out", message: "You are unnable to log out at this moment.")
+                    self.present(alert, animated: true, completion: nil)
+                }
+            }))
+            alertController.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: nil))
+            present(alertController, animated: true, completion: nil)
+        }
+        
+        self.handleSettingsBarButton() //Will simply remove side settings bar from superview and return
+    }
+}
+
+// UIImagePickerControllerDelegate Delegate Extension
+extension ProfileVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    // Set the selected image from image picker as profile picture
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+//        if let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            
+//            plusPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+//        } else if let originalImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            
+//            plusPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
+//        }
+        
+        // Make button perfectly round
+//        plusPhotoButton.layer.cornerRadius = plusPhotoButton.frame.width / 2
+//        plusPhotoButton.layer.masksToBounds = true
+//        plusPhotoButton.layer.borderColor = UIColor.mainBlue().cgColor
+//        plusPhotoButton.layer.borderWidth = 3
+        
+        // Dismiss image picker view
+//        picker.dismiss(animated: true, completion: nil)
     }
 }

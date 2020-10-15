@@ -12,6 +12,7 @@ import Firebase
 protocol UserProfileHeaderCellDelegate {
     func switchuserMode(forMode mode: Int)
     func dispalayBecomeAJugglerAlert()
+    func handleProfileImageView()
 }
 
 class UserProfileHeaderCell: UICollectionViewCell {
@@ -27,6 +28,13 @@ class UserProfileHeaderCell: UICollectionViewCell {
             
             profileImageView.loadImage(from: user.profileImageURLString)
             fullNameLabel.text = user.firstName + " " + user.lastName
+            
+            if user.userId == Auth.auth().currentUser?.uid  { // Add button to allow users to edit their profile pictures.
+                let button = UIButton()
+                addSubview(button)
+                button.anchor(top: profileImageView.topAnchor, left: profileImageView.leftAnchor, bottom: profileImageView.bottomAnchor, right: profileImageView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: nil, height: nil)
+                button.addTarget(self, action: #selector(handleProfileImageView), for: .touchUpInside)
+            }
         }
     }
     
@@ -40,6 +48,10 @@ class UserProfileHeaderCell: UICollectionViewCell {
         
         return image
     }()
+    
+    @objc fileprivate func handleProfileImageView() {
+        delegate?.handleProfileImageView()
+    }
     
     let fullNameLabel: UILabel = {
         let label = UILabel()
