@@ -15,7 +15,7 @@
   "dependencies": {
     "8": "0.0.1",
     "check-node-version": "^4.0.3",
-    "firebase-admin": "^8.13.0",
+    "firebase-admin": "^11.4.1",
     "firebase-functions": "^3.11.0"
   },
   "devDependencies": {
